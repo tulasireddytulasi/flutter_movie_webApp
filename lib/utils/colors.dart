@@ -48,3 +48,7 @@ const LIGHT_BLUE = Color(0xFFE6F0FF);
 // MOVIE COLORS
 const DARK_JUNGLE_GREEN_1 = Color(0xFF1A2421);
 const RANGOON_GREEN_1 = Color(0xFF1C1E13);
+const pickledBlueWood = Color(0xFF2F444F);
+const tealishBlue = Color(0xFF1B2230);
+const tuna = Color(0xFF323944);
+const azul = Color(0xFF1F58FF);

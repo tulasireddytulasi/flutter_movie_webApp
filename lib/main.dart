@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:moviewebapp/pages/movie_info_screen/movie_info.dart';
 import 'package:moviewebapp/providers/movies_provider.dart';
 import 'package:provider/provider.dart';
-
-import 'pages/home_page/movie_home_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,7 +22,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const MovieHomePage(),
+        home: const MovieInfoScreen(),
       ),
     );
   }

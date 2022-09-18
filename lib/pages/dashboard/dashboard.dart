@@ -40,7 +40,7 @@ class _MovieHomePageState extends State<MovieHomePage> {
     log("cardHeight: ${getCardWidth(screenWidth: screenWidth)}");
     screenValues = getCardWidth(screenWidth: screenWidth);
     cardHeight = screenValues[0];
-    columns = screenValues[1] as int;
+    columns = screenValues[1].toInt();
     log("cardHeight 2: ${cardHeight}");
 
     return Consumer<MoviesProvider>(builder: (context, movieProvider, child) {
