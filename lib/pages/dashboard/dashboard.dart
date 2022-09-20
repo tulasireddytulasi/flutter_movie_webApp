@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:moviewebapp/pages/movie_info_screen/movie_info.dart';
 import 'package:moviewebapp/providers/movies_provider.dart';
 import 'package:moviewebapp/utils/colors.dart';
 import 'package:moviewebapp/utils/commom_functions.dart';
@@ -44,15 +45,14 @@ class _MovieHomePageState extends State<MovieHomePage> {
     log("cardHeight 2: ${cardHeight}");
 
     return Consumer<MoviesProvider>(builder: (context, movieProvider, child) {
+      final double screenWidth = MediaQuery.of(context).size.width;
       return Scaffold(
         backgroundColor: DARK_JUNGLE_GREEN_1,
         appBar: AppBar(
           backgroundColor: DARK_JUNGLE_GREEN_1,
           centerTitle: true,
-          title: Text(
-              "Marvel Movies $screenWidth, $cardHeight, Aspect: ${2 / cardHeight}",
-              style:
-                  const TextStyle(fontSize: 18, fontFamily: "d", color: WHITE)),
+          title: const Text("Marvel Movies",
+              style: TextStyle(fontSize: 18, fontFamily: "d", color: WHITE)),
           leading: IconButton(
             icon: Image.asset("assets/images/movie_icon.png"),
             iconSize: 22,
@@ -60,7 +60,6 @@ class _MovieHomePageState extends State<MovieHomePage> {
           ),
         ),
         body: Container(
-          decoration: BoxDecoration(border: Border.all(color: RED, width: 1)),
           padding: const EdgeInsets.only(left: 70, right: 70),
           child: GridView.count(
             crossAxisCount: columns,
@@ -69,7 +68,35 @@ class _MovieHomePageState extends State<MovieHomePage> {
             childAspectRatio: 2 / cardHeight,
             children: List.generate(movieProvider.title.length, (index) {
               return InkWell(
-                onTap: () {},
+                onTap: () {
+                  if (screenWidth >= 600) {
+                    showModalBottomSheet(
+                        context: context,
+                        backgroundColor: Colors.transparent,
+                        isScrollControlled: true,
+                        isDismissible: false,
+                        enableDrag: false,
+                        elevation: 0,
+                        barrierColor: Colors.black.withAlpha(1),
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(50))),
+                        builder: (context) {
+                          return Container(
+                              constraints: const BoxConstraints(
+                                maxWidth: 600,
+                                minHeight: 300,
+                              ),
+                              child: const MovieInfoScreen());
+                        });
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const MovieInfoScreen()),
+                    );
+                  }
+                },
                 child: MovieCard(
                   movieName: (movieProvider.title[index]),
                   imageURL: movieProvider.img[index],

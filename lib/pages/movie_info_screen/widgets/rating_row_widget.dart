@@ -49,7 +49,9 @@ class _RatingWidgetState extends State<RatingWidget> {
                   color: LIGHTWHITE,
                 ),
               ),
-              onTap: () {},
+              onTap: () {
+                Navigator.pop(context);
+              },
             ),
           ),
           Container(

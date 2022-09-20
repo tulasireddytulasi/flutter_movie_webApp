@@ -11,8 +11,7 @@ class ApiConstants {
   static String posterUrl =
       "https://m.media-amazon.com/images/M/MV5BN2FjNmEyNWMtYzM0ZS00NjIyLTg5YzYtYThlMGVjNzE1OGViXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_FMjpg_UX509_.jpg";
 
-  static String backDropUrl =
-      "https://artfulwritercom.files.wordpress.com/2021/11/dune.jpg";
+  static String backDropUrl = "iCFFmXkK5FdIzqZyyQQEdpkTo8C.jpg";
 
   static List<Map<String, dynamic>> castList = [
     {
