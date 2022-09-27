@@ -6,7 +6,8 @@ import 'package:moviewebapp/utils/colors.dart';
 import 'package:provider/provider.dart';
 
 class SimilarMovies extends StatefulWidget {
-  const SimilarMovies({Key? key}) : super(key: key);
+  SimilarMovies({Key? key, required this.scrollController}) : super(key: key);
+  ScrollController scrollController;
 
   @override
   _SimilarMoviesState createState() => _SimilarMoviesState();
@@ -16,7 +17,7 @@ class _SimilarMoviesState extends State<SimilarMovies> {
   @override
   Widget build(BuildContext context) {
     return Consumer<MoviesProvider>(builder: (context, movieProvider, child) {
-      return movieProvider.similarMoviePosters.length > 0
+      return movieProvider.similarMoviePosters.isNotEmpty
           ? ListView.builder(
               itemCount: movieProvider.similarMoviePosters.length,
               scrollDirection: Axis.horizontal,
@@ -27,6 +28,7 @@ class _SimilarMoviesState extends State<SimilarMovies> {
                   castImage:
                       movieProvider.similarMoviePosters[index].toString(),
                   movieId: movieProvider.similarMovieId[index].toString(),
+                  scrollController: widget.scrollController,
                 );
               })
           : Container(
@@ -42,16 +44,18 @@ class _SimilarMoviesState extends State<SimilarMovies> {
 }
 
 class SimilarMovieCard extends StatelessWidget {
-  const SimilarMovieCard(
-      {Key? key,
-      required this.castImage,
-      required this.actorName,
-      required this.movieId})
-      : super(key: key);
+  SimilarMovieCard({
+    Key? key,
+    required this.castImage,
+    required this.actorName,
+    required this.movieId,
+    required this.scrollController,
+  }) : super(key: key);
 
   final String castImage;
   final String actorName;
   final String movieId;
+  ScrollController scrollController;
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +73,9 @@ class SimilarMovieCard extends StatelessWidget {
                   movieId: movieId, appendToResponse: "credits");
               movieProvider.getSimilarMoviesAPI(movieId: movieId);
             });
+            scrollController.animateTo(0,
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.ease);
           },
           child: Container(
             padding: const EdgeInsets.only(left: 10),

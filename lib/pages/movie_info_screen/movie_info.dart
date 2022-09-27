@@ -19,6 +19,8 @@ class MovieInfoScreen extends StatefulWidget {
 }
 
 class _MovieInfoScreenState extends State<MovieInfoScreen> {
+  final ScrollController scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -57,6 +59,7 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                 ),
               ),
         body: SingleChildScrollView(
+          controller: scrollController,
           child: Center(
             child: Container(
               alignment: Alignment.topCenter,
@@ -148,7 +151,8 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                         Container(
                           height: 180,
                           margin: const EdgeInsets.only(top: 20),
-                          child: const SimilarMovies(),
+                          child:
+                              SimilarMovies(scrollController: scrollController),
                         ),
                         Row(
                           mainAxisSize: MainAxisSize.min,
