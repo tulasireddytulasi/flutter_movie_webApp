@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:moviewebapp/providers/movie_info_provider.dart';
 import 'package:moviewebapp/responses/api_constants.dart';
 import 'package:moviewebapp/utils/colors.dart';
+import 'package:provider/provider.dart';
 
 class Cast extends StatefulWidget {
   const Cast({Key? key}) : super(key: key);
@@ -12,16 +14,19 @@ class Cast extends StatefulWidget {
 class _CastState extends State<Cast> {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: ApiConstants.castList.length,
-        scrollDirection: Axis.horizontal,
-        shrinkWrap: true,
-        itemBuilder: (BuildContext context, int index) {
-          return CastCard(
-            actorName: ApiConstants.castList[index]["name"].toString(),
-            castImage: ApiConstants.castList[index]["profile_path"].toString(),
-          );
-        });
+    return Consumer<MovieInfoProvider>(
+        builder: (context, movieInfoProvider, child) {
+      return ListView.builder(
+          itemCount: movieInfoProvider.actorImageUrl.length,
+          scrollDirection: Axis.horizontal,
+          shrinkWrap: true,
+          itemBuilder: (BuildContext context, int index) {
+            return CastCard(
+              actorName: movieInfoProvider.actorName[index].toString(),
+              castImage: movieInfoProvider.actorImageUrl[index].toString(),
+            );
+          });
+    });
   }
 }
 

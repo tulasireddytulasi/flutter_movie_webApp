@@ -74,7 +74,7 @@ class _MovieHomePageState extends State<MovieHomePage> {
                         context: context,
                         backgroundColor: Colors.transparent,
                         isScrollControlled: true,
-                        isDismissible: false,
+                        isDismissible: true,
                         enableDrag: false,
                         elevation: 0,
                         barrierColor: Colors.black.withAlpha(1),
@@ -87,13 +87,15 @@ class _MovieHomePageState extends State<MovieHomePage> {
                                 maxWidth: 600,
                                 minHeight: 300,
                               ),
-                              child: const MovieInfoScreen());
+                              child: MovieInfoScreen(
+                                  movieId: movieProvider.movieId[index]));
                         });
                   } else {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const MovieInfoScreen()),
+                          builder: (context) => MovieInfoScreen(
+                              movieId: movieProvider.movieId[index])),
                     );
                   }
                 },
