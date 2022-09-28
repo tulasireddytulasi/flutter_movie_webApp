@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/pages/movie_info_screen/movie_info.dart';
+import 'package:moviewebapp/pages/dashboard/dashboard.dart';
 import 'package:moviewebapp/providers/movies_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const MovieInfoScreen(),
+        home: const MovieHomePage(),
       ),
     );
   }

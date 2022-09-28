@@ -37,8 +37,6 @@ class MovieCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
                 child: Image.network(
                   ApiConstants.movieImageBaseUrl + imageURL,
-                  width: 170,
-                  height: 250,
                   fit: BoxFit.cover,
                 ),
               ),
