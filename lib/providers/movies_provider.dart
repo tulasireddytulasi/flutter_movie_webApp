@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/models/get_movies_model.dart';
+import 'package:moviewebapp/responses/api_constants.dart';
 import 'package:moviewebapp/responses/movie_apis.dart';
 
 class MoviesProvider extends ChangeNotifier {
@@ -41,22 +44,30 @@ class MoviesProvider extends ChangeNotifier {
   }
 
   getSimilarMoviesAPI({required String movieId}) async {
-    _getPopularMoviesModel = await getSimilarMoviesListData(
-        movieId: movieId, pageNo: "1", withOriginalLanguage: "en");
-
     _similarMovieTitle.clear();
     _similarMoviePosters.clear();
     _similarMovieId.clear();
+    try {
+      _getPopularMoviesModel = await getSimilarMoviesListData(
+          movieId: movieId, pageNo: "1", withOriginalLanguage: "en");
 
-    _getPopularMoviesModel.results?.forEach((element) {
-      _similarMovieTitle.add(element.title!);
-      // _date.add(element.releaseDate!.toIso8601String());
-      _similarMoviePosters.add(element.posterPath!);
-      _similarMovieId.add(element.id.toString());
-    });
+      _getPopularMoviesModel.results?.forEach((element) {
+        if (element.posterPath != null && element.posterPath!.isNotEmpty) {
+          _similarMovieTitle.add(element.title!);
+          // _date.add(element.releaseDate!.toIso8601String());
+          _similarMoviePosters.add(element.posterPath!);
+          _similarMovieId.add(element.id.toString());
+        }
+      });
 
-    print("_similarMoviePosters 55: ${_similarMoviePosters.length}");
-    print("_similarMovieTitle: ${_similarMovieTitle.length}");
+      _similarMoviePosters.forEach((element) {
+        log("_actorImageUrl: ${ApiConstants.movieImageBaseUrl + element}");
+      });
+      log("_similarMoviePosters 55: ${_similarMoviePosters.length}");
+      log("_similarMovieTitle: ${_similarMovieTitle.length}");
+    } catch (error) {
+      log("_similarMoviePosters error: ${error}");
+    }
 
     notifyListeners();
   }
