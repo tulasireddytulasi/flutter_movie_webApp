@@ -30,9 +30,9 @@ class MoviesProvider extends ChangeNotifier {
   final List<String> _similarMoviePosters = [];
   List<String> get similarMoviePosters => _similarMoviePosters;
 
-  getPopularMoviesAPI() async {
+  getPopularMoviesAPI({required String pageNo}) async {
     _getPopularMoviesModel = await getPopularMoviesList(
-        movieType: "popular", pageNo: "1", withOriginalLanguage: "en");
+        movieType: "popular", pageNo: pageNo, withOriginalLanguage: "en");
 
     _getPopularMoviesModel.results?.forEach((element) {
       _title.add(element.title!);
