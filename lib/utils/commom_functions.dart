@@ -3,7 +3,6 @@ Map<String, dynamic> getCardWidth({required double screenWidth}) {
   double columns = 7;
   double childAspectRatio = 9 / 16;
   bool isMovieTitleVisible = false;
-  List<double> screenValues = [];
   Map<String, dynamic> layoutData = {};
   if (screenWidth >= 1300) {
     cardHeight = 2.8;
@@ -63,13 +62,11 @@ Map<String, dynamic> getCardWidth({required double screenWidth}) {
     childAspectRatio = 9 / 13.3;
     isMovieTitleVisible = false;
   } else if (screenWidth <= 300 && screenWidth >= 200) {
-    print("screenWidth: $screenWidth");
     cardHeight = 7.0;
     columns = 2;
     childAspectRatio = 9 / 13.3;
     isMovieTitleVisible = false;
   } else if (screenWidth <= 200 && screenWidth >= 100) {
-    print("screenWidth: $screenWidth");
     cardHeight = 7.0;
     columns = 1;
     childAspectRatio = 9 / 13.4;

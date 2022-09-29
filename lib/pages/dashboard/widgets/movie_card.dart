@@ -9,59 +9,61 @@ class MovieCard extends StatelessWidget {
   final String imageURL;
   final String movieName;
   final String movieReleaseDate;
+  final bool isMovieTitleVisible;
 
   const MovieCard(
       {Key? key,
       required this.imageURL,
       required this.movieName,
-      required this.movieReleaseDate})
+      required this.movieReleaseDate,
+      required this.isMovieTitleVisible})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
     return Consumer<MoviesProvider>(builder: (context, movieProvider, child) {
-      return SizedBox(
-        width: 100,
+      return Card(
+        color: DARK_JUNGLE_GREEN_1,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: WHITE, width: 5),
-                borderRadius: BorderRadius.circular(10),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: Image.network(
+                ApiConstants.movieImageBaseUrl + imageURL,
+                fit: BoxFit.cover,
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                  ApiConstants.movieImageBaseUrl + imageURL,
-                  fit: BoxFit.cover,
+            ),
+            Visibility(
+              visible: isMovieTitleVisible,
+              child: Container(
+                alignment: Alignment.topLeft,
+                margin: const EdgeInsets.only(top: 10, left: 0),
+                child: Text(
+                  movieName,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                      color: WHITE,
+                      fontSize: 14,
+                      fontFamily: MONTSERRAT_MEDIUM),
                 ),
               ),
             ),
-            Container(
-              width: 190,
-              alignment: Alignment.topLeft,
-              margin: const EdgeInsets.only(top: 10, left: 10),
-              child: Text(
-                movieName,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                    color: WHITE, fontSize: 18, fontFamily: MONTSERRAT_MEDIUM),
-              ),
-            ),
-            Container(
-              width: 190,
-              // decoration: BoxDecoration(border: Border.all(color: RED, width: 1)),
-              alignment: Alignment.topLeft,
-              margin: const EdgeInsets.only(left: 10),
-              child: Text(
-                movieReleaseDate,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                    color: GRAY, fontSize: 14, fontFamily: MONTSERRAT_MEDIUM),
+            Visibility(
+              visible: isMovieTitleVisible,
+              child: Container(
+                alignment: Alignment.topLeft,
+                margin: const EdgeInsets.only(top: 0, left: 0),
+                child: const Text(
+                  "2022-12-22",
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                      color: WHITE,
+                      fontSize: 12,
+                      fontFamily: MONTSERRAT_MEDIUM),
+                ),
               ),
             ),
           ],
