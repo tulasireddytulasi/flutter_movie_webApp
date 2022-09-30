@@ -4,6 +4,7 @@ import 'package:moviewebapp/pages/movie_info_screen/widgets/cast.dart';
 import 'package:moviewebapp/pages/movie_info_screen/widgets/movie_banner_widget.dart';
 import 'package:moviewebapp/pages/movie_info_screen/widgets/rating_row_widget.dart';
 import 'package:moviewebapp/pages/movie_info_screen/widgets/similar_movies.dart';
+import 'package:moviewebapp/pages/movie_info_screen/widgets/trailer_button.dart';
 import 'package:moviewebapp/providers/movie_info_provider.dart';
 import 'package:moviewebapp/providers/movies_provider.dart';
 import 'package:moviewebapp/utils/colors.dart';
@@ -159,34 +160,7 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                                 style: TextStyle(fontSize: 20, color: WHITE),
                               ),
                             ),
-                            Container(
-                              margin: const EdgeInsets.only(
-                                  top: 20, bottom: 20, left: 10),
-                              alignment: Alignment.center,
-                              decoration: const BoxDecoration(
-                                  shape: BoxShape.rectangle,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5)),
-                                  color: Colors.blue),
-                              height: 50,
-                              width: 200,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
-                                  Icon(
-                                    Icons.play_arrow,
-                                    color: WHITE,
-                                  ),
-                                  SizedBox(width: 5),
-                                  Text(
-                                    "PLAY NOW",
-                                    style:
-                                        TextStyle(fontSize: 20, color: WHITE),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            const TrailerButtons(),
                           ],
                         ),
                       ],

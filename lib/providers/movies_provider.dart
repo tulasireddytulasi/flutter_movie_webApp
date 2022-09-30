@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/models/get_movies_model.dart';
-import 'package:moviewebapp/responses/api_constants.dart';
 import 'package:moviewebapp/responses/movie_apis.dart';
 
 class MoviesProvider extends ChangeNotifier {
@@ -61,7 +60,7 @@ class MoviesProvider extends ChangeNotifier {
       });
 
       _similarMoviePosters.forEach((element) {
-        log("_actorImageUrl: ${ApiConstants.movieImageBaseUrl + element}");
+        // log("_actorImageUrl: ${ApiConstants.movieImageBaseUrl + element}");
       });
       log("_similarMoviePosters 55: ${_similarMoviePosters.length}");
       log("_similarMovieTitle: ${_similarMovieTitle.length}");

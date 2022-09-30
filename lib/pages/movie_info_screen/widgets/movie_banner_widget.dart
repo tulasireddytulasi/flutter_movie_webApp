@@ -20,41 +20,72 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
+    final bool isVisible = screenWidth >= 525;
     return widget.showBanner
-        ? Container(
-            margin: const EdgeInsets.all(0),
-            child: ShaderMask(
-                shaderCallback: (rect) {
-                  return const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      pickledBlueWood,
-                      pickledBlueWood,
-                      Colors.transparent
-                    ],
-                  ).createShader(
-                    Rect.fromLTRB(0, 1, rect.width, rect.height),
-                  );
-                },
-                blendMode: BlendMode.dstIn,
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 1200),
-                  child: widget.movieBannerImage != ""
-                      ? Image.network(
-                          ApiConstants.movieImageBaseUrl +
-                              widget.movieBannerImage,
-                          width: getCardWidth2(screenWidth: screenWidth) + 30,
-                          fit: BoxFit.cover,
-                          key: UniqueKey(),
-                        )
-                      : Image.asset(
-                          movieBackDrop2,
-                          width: getCardWidth2(screenWidth: screenWidth) + 30,
-                          fit: BoxFit.cover,
-                          key: UniqueKey(),
-                        ),
-                )),
+        ? Stack(
+            children: [
+              Container(
+                margin: const EdgeInsets.all(0),
+                child: ShaderMask(
+                    shaderCallback: (rect) {
+                      return const LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          pickledBlueWood,
+                          pickledBlueWood,
+                          Colors.transparent
+                        ],
+                      ).createShader(
+                        Rect.fromLTRB(0, 1, rect.width, rect.height),
+                      );
+                    },
+                    blendMode: BlendMode.dstIn,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 1200),
+                      child: widget.movieBannerImage != ""
+                          ? Image.network(
+                              ApiConstants.movieImageBaseUrl +
+                                  widget.movieBannerImage,
+                              width:
+                                  getCardWidth2(screenWidth: screenWidth) + 30,
+                              fit: BoxFit.cover,
+                              key: UniqueKey(),
+                            )
+                          : Image.asset(
+                              movieBackDrop2,
+                              width:
+                                  getCardWidth2(screenWidth: screenWidth) + 30,
+                              fit: BoxFit.cover,
+                              key: UniqueKey(),
+                            ),
+                    )),
+              ),
+              Positioned(
+                top: isVisible ? 0 : 30,
+                right: isVisible ? 0 : null,
+                left: isVisible ? null : 0,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Container(
+                    decoration: isVisible
+                        ? BoxDecoration(
+                            border: Border.all(color: WHITE, width: 2),
+                            shape: BoxShape.circle,
+                          )
+                        : null,
+                    padding: const EdgeInsets.all(2),
+                    margin: const EdgeInsets.all(10),
+                    child: Icon(
+                      isVisible ? Icons.clear : Icons.arrow_back,
+                      color: WHITE,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           )
         : const SizedBox.shrink();
   }

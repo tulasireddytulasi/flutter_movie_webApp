@@ -69,10 +69,11 @@ class _MovieHomePageState extends State<MovieHomePage> {
           ),
         ),
         body: Container(
-          decoration: BoxDecoration(border: Border.all(color: RED, width: 1)),
+          // decoration: BoxDecoration(border: Border.all(color: RED, width: 1)),
           padding: const EdgeInsets.only(left: 5, right: 5),
           child: GridView.builder(
               scrollDirection: Axis.vertical,
+              physics: const ScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 childAspectRatio: _childAspectRatio,
                 crossAxisCount: columns,
