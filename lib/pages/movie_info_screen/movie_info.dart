@@ -41,23 +41,7 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
         builder: (context, movieInfoProvider, child) {
       return Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: kIsWeb
-            ? null
-            : AppBar(
-                toolbarHeight: 190,
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                flexibleSpace: Container(
-                  constraints: const BoxConstraints(
-                    minWidth: 320.0,
-                    maxWidth: 600.0,
-                  ),
-                  child: MovieBannerWidget(
-                    movieBannerImage: movieInfoProvider.backdropPath,
-                    showBanner: false,
-                  ),
-                ),
-              ),
+        extendBodyBehindAppBar: true,
         body: SingleChildScrollView(
           controller: scrollController,
           child: Center(
@@ -90,7 +74,7 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                     ),
                     child: MovieBannerWidget(
                       movieBannerImage: movieInfoProvider.backdropPath,
-                      showBanner: kIsWeb,
+                      showBanner: true,
                     ),
                   ),
                   Padding(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/models/get_movie_info_model.dart';
-import 'package:moviewebapp/responses/api_constants.dart';
 import 'package:moviewebapp/responses/movie_apis.dart';
 
 class MovieInfoProvider extends ChangeNotifier {
@@ -71,7 +70,7 @@ class MovieInfoProvider extends ChangeNotifier {
     });
 
     _actorImageUrl.forEach((element) {
-      print("_actorImageUrl: ${ApiConstants.movieImageBaseUrl + element}");
+      // print("_actorImageUrl: ${ApiConstants.movieImageBaseUrl + element}");
     });
     print("_actorName: ${_actorName}");
     print("_actorImageUrl 55: ${_actorImageUrl.length}");
