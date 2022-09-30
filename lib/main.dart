@@ -1,5 +1,7 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/pages/movie_info_screen/movie_info.dart';
+import 'package:moviewebapp/pages/dashboard/dashboard.dart';
+import 'package:moviewebapp/providers/movie_info_provider.dart';
 import 'package:moviewebapp/providers/movies_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -15,15 +17,26 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => MoviesProvider()),
+        ChangeNotifierProvider(create: (_) => MovieInfoProvider()),
       ],
       child: MaterialApp(
         title: 'Movie Flutter Web App',
         debugShowCheckedModeBanner: false,
+        scrollBehavior: MyCustomScrollBehavior(),
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const MovieInfoScreen(),
+        home: const MovieHomePage(),
       ),
     );
   }
+}
+
+class MyCustomScrollBehavior extends MaterialScrollBehavior {
+  // Override behavior methods and getters like dragDevices
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+      };
 }

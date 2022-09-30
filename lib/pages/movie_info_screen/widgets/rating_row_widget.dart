@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:moviewebapp/providers/movie_info_provider.dart';
 import 'package:moviewebapp/utils/colors.dart';
+import 'package:provider/provider.dart';
 
 class RatingWidget extends StatefulWidget {
   const RatingWidget({Key? key}) : super(key: key);
@@ -49,7 +51,12 @@ class _RatingWidgetState extends State<RatingWidget> {
                   color: LIGHTWHITE,
                 ),
               ),
-              onTap: () {},
+              onTap: () {
+                final movieInfoProvider =
+                    Provider.of<MovieInfoProvider>(context, listen: false);
+                movieInfoProvider.clearBackdropPath();
+                Navigator.pop(context);
+              },
             ),
           ),
           Container(
