@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/pages/dashboard/widgets/movie_card.dart';
+import 'package:moviewebapp/pages/all_movies_screen/widgets/movie_card.dart';
 import 'package:moviewebapp/pages/movie_info_screen/movie_info.dart';
 import 'package:moviewebapp/providers/movies_provider.dart';
 import 'package:moviewebapp/utils/colors.dart';

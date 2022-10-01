@@ -1,6 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/pages/dashboard/dashboard.dart';
+import 'package:moviewebapp/pages/all_movies_screen/all_movies_screen.dart';
 import 'package:moviewebapp/providers/movie_info_provider.dart';
 import 'package:moviewebapp/providers/movies_provider.dart';
 import 'package:provider/provider.dart';
