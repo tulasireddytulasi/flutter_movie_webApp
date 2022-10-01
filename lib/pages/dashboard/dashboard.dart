@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/pages/dashboard/widgets/movie_card.dart';
 import 'package:moviewebapp/pages/movie_info_screen/movie_info.dart';
@@ -18,6 +16,9 @@ class MovieHomePage extends StatefulWidget {
 class _MovieHomePageState extends State<MovieHomePage> {
   double cardHeight = 0;
   double _childAspectRatio = 9 / 16;
+  double leftPadding = 0;
+  double rightPadding = 0;
+  double crossAxisSpacing = 5;
   int columns = 5;
   List<double> screenValues = [];
   Map<String, dynamic> layoutData = {};
@@ -42,14 +43,14 @@ class _MovieHomePageState extends State<MovieHomePage> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    log("width: $screenWidth");
-    log("cardHeight: ${getCardWidth(screenWidth: screenWidth)}");
     layoutData = getCardWidth(screenWidth: screenWidth);
     cardHeight = layoutData["cardHeight"];
     columns = layoutData["columns"].toInt();
     _childAspectRatio = layoutData["childAspectRatio"];
     isMovieTitleVisible = layoutData["isMovieTitleVisible"];
-    log("cardHeight 2: ${cardHeight}");
+    leftPadding = layoutData["leftPadding"];
+    rightPadding = layoutData["rightPadding"];
+    crossAxisSpacing = layoutData["crossAxisSpacing"];
 
     return Consumer<MoviesProvider>(builder: (context, movieProvider, child) {
       final double screenWidth = MediaQuery.of(context).size.width;
@@ -70,13 +71,15 @@ class _MovieHomePageState extends State<MovieHomePage> {
         ),
         body: Container(
           // decoration: BoxDecoration(border: Border.all(color: RED, width: 1)),
-          padding: const EdgeInsets.only(left: 5, right: 5),
+          padding: EdgeInsets.only(left: leftPadding, right: rightPadding),
           child: GridView.builder(
               scrollDirection: Axis.vertical,
               physics: const ScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 childAspectRatio: _childAspectRatio,
                 crossAxisCount: columns,
+                // mainAxisSpacing: 20,
+                crossAxisSpacing: crossAxisSpacing,
               ),
               itemBuilder: (BuildContext context, int index) {
                 return InkWell(

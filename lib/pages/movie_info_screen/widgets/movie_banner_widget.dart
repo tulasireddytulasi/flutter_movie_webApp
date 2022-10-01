@@ -45,7 +45,7 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
                       duration: const Duration(milliseconds: 1200),
                       child: widget.movieBannerImage != ""
                           ? Image.network(
-                              ApiConstants.movieImageBaseUrl +
+                              ApiConstants.movieImageBaseUrlw1280 +
                                   widget.movieBannerImage,
                               width:
                                   getCardWidth2(screenWidth: screenWidth) + 30,
