@@ -99,8 +99,8 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                         Container(
                           alignment: Alignment.topLeft,
                           margin: const EdgeInsets.only(left: 15, top: 5),
-                          child: const Text(
-                            "2h 35m . Action, Adventure, Drama . 2021",
+                          child: Text(
+                            "${movieInfoProvider.runtime} . ${movieInfoProvider.genre} . ${movieInfoProvider.releaseYear}",
                             style: TextStyle(fontSize: 14, color: ICON_GREY),
                           ),
                         ),
