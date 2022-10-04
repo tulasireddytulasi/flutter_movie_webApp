@@ -47,8 +47,8 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
           controller: scrollController,
           child: Center(
             child: Container(
-              alignment: Alignment.topCenter,
-              width: getCardWidth2(screenWidth: screenWidth) + 30,
+              alignment: Alignment.bottomCenter,
+              width: getBottomSheetWidth(screenWidth: screenWidth) + 30,
               decoration: const BoxDecoration(
                 color: tealishBlue,
                 borderRadius: BorderRadius.only(
@@ -61,7 +61,7 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                 top: kIsWeb ? 50 : 0,
               ),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -101,7 +101,8 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                           margin: const EdgeInsets.only(left: 15, top: 5),
                           child: Text(
                             "${movieInfoProvider.runtime} . ${movieInfoProvider.genre} . ${movieInfoProvider.releaseYear}",
-                            style: TextStyle(fontSize: 14, color: ICON_GREY),
+                            style:
+                                const TextStyle(fontSize: 14, color: ICON_GREY),
                           ),
                         ),
                         Container(

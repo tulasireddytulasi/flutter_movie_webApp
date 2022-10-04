@@ -47,15 +47,17 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
                           ? Image.network(
                               ApiConstants.movieImageBaseUrlw1280 +
                                   widget.movieBannerImage,
-                              width:
-                                  getCardWidth2(screenWidth: screenWidth) + 30,
+                              width: getBottomSheetWidth(
+                                      screenWidth: screenWidth) +
+                                  30,
                               fit: BoxFit.cover,
                               key: UniqueKey(),
                             )
                           : Image.asset(
                               movieBackDrop2,
-                              width:
-                                  getCardWidth2(screenWidth: screenWidth) + 30,
+                              width: getBottomSheetWidth(
+                                      screenWidth: screenWidth) +
+                                  30,
                               fit: BoxFit.cover,
                               key: UniqueKey(),
                             ),
@@ -72,9 +74,9 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
                   child: Container(
                     decoration: isVisible
                         ? BoxDecoration(
-                            border: Border.all(color: WHITE, width: 2),
+                            border: Border.all(color: BLACK, width: 2),
                             shape: BoxShape.circle,
-                          )
+                            color: BLACK)
                         : null,
                     padding: const EdgeInsets.all(2),
                     margin: const EdgeInsets.all(10),
@@ -107,7 +109,7 @@ class ImageViewWidget extends StatelessWidget {
         print("error: $error, $stackTrace");
         return Image.asset(
           movieBackDrop,
-          width: getCardWidth2(screenWidth: width) + 30,
+          width: getBottomSheetWidth(screenWidth: width) + 30,
           fit: BoxFit.cover,
         );
       },

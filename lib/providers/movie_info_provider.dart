@@ -110,9 +110,9 @@ class MovieInfoProvider extends ChangeNotifier {
       }
     });
 
-    _actorImageUrl.forEach((element) {
+    for (var element in _actorImageUrl) {
       // print("_actorImageUrl: ${ApiConstants.movieImageBaseUrl + element}");
-    });
+    }
     print("_actorName: ${_actorName}");
     print("_actorImageUrl 55: ${_actorImageUrl.length}");
     print("_actorName55: ${_actorName.length}");

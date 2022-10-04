@@ -19,6 +19,7 @@ class _MovieHomePageState extends State<MovieHomePage> {
   double leftPadding = 0;
   double rightPadding = 0;
   double crossAxisSpacing = 5;
+  double maxBottomSheetWidth = 0;
   int columns = 5;
   List<double> screenValues = [];
   Map<String, dynamic> layoutData = {};
@@ -51,6 +52,7 @@ class _MovieHomePageState extends State<MovieHomePage> {
     leftPadding = layoutData["leftPadding"];
     rightPadding = layoutData["rightPadding"];
     crossAxisSpacing = layoutData["crossAxisSpacing"];
+    maxBottomSheetWidth = layoutData["maxBottomSheetWidth"];
 
     return Consumer<MoviesProvider>(builder: (context, movieProvider, child) {
       final double screenWidth = MediaQuery.of(context).size.width;

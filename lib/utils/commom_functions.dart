@@ -6,15 +6,38 @@ Map<String, dynamic> getCardWidth({required double screenWidth}) {
   double leftPadding = 5;
   double rightPadding = 5;
   double crossAxisSpacing = 5;
+  double maxBottomSheetWidth = 600;
   Map<String, dynamic> layoutData = {};
-  if (screenWidth >= 1300) {
+  // screenWidth <= 1900 &&
+  if (screenWidth >= 1700) {
     cardHeight = 2.8;
-    columns = 5;
+    columns = 8;
     isMovieTitleVisible = true;
     childAspectRatio = 9 / 16.0;
     leftPadding = 70;
     rightPadding = 70;
     crossAxisSpacing = 40;
+    isMovieTitleVisible = true;
+    maxBottomSheetWidth = 800;
+  } else if (screenWidth <= 1700 && screenWidth >= 1400) {
+    cardHeight = 2.8;
+    columns = 6;
+    isMovieTitleVisible = true;
+    childAspectRatio = 9 / 16.0;
+    leftPadding = 70;
+    rightPadding = 70;
+    crossAxisSpacing = 40;
+    isMovieTitleVisible = true;
+    maxBottomSheetWidth = 800;
+  } else if (screenWidth <= 1400 && screenWidth >= 1300) {
+    cardHeight = 2.8;
+    columns = 6;
+    isMovieTitleVisible = true;
+    childAspectRatio = 9 / 16.0;
+    leftPadding = 70;
+    rightPadding = 70;
+    crossAxisSpacing = 40;
+    isMovieTitleVisible = true;
   } else if (screenWidth <= 1300 && screenWidth >= 1200) {
     cardHeight = 3.1;
     isMovieTitleVisible = true;
@@ -86,16 +109,19 @@ Map<String, dynamic> getCardWidth({required double screenWidth}) {
   layoutData["leftPadding"] = leftPadding;
   layoutData["rightPadding"] = rightPadding;
   layoutData["crossAxisSpacing"] = crossAxisSpacing;
+  layoutData["maxBottomSheetWidth"] = maxBottomSheetWidth;
 
   return layoutData;
 }
 
-double getCardWidth2({required double screenWidth}) {
-  double cardWidth = 0;
-  if (screenWidth >= 1600) {
-    cardWidth = 700;
+double getBottomSheetWidth({required double screenWidth}) {
+  double cardWidth = 800;
+  if (screenWidth >= 1700) {
+    cardWidth = screenWidth / 2;
+  } else if (screenWidth >= 1700 && screenWidth <= 1600) {
+    cardWidth = 800;
   } else if (screenWidth >= 1400 && screenWidth <= 1600) {
-    cardWidth = 500;
+    cardWidth = 800;
   } else if (screenWidth >= 700 && screenWidth <= 1400) {
     cardWidth = 800;
   } else if (screenWidth <= 700) {
