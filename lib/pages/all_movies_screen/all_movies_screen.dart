@@ -44,7 +44,7 @@ class _MovieHomePageState extends State<MovieHomePage> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    layoutData = getCardWidth(screenWidth: screenWidth);
+    layoutData = getMovieCardWidth(screenWidth: screenWidth);
     cardHeight = layoutData["cardHeight"];
     columns = layoutData["columns"].toInt();
     _childAspectRatio = layoutData["childAspectRatio"];

@@ -82,7 +82,7 @@ class SimilarMovieCard extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(5.0),
               child: Image.network(
-                ApiConstants.similarMovieImageBaseUrl + castImage,
+                ApiConstants.movieImageBaseUrlw185 + castImage,
                 width: 100,
                 height: 130,
                 fit: BoxFit.cover,

@@ -1,4 +1,4 @@
-Map<String, dynamic> getCardWidth({required double screenWidth}) {
+Map<String, dynamic> getMovieCardWidth({required double screenWidth}) {
   double cardHeight = 0;
   double columns = 5;
   double childAspectRatio = 9 / 16;
@@ -128,4 +128,39 @@ double getBottomSheetWidth({required double screenWidth}) {
     cardWidth = screenWidth;
   }
   return cardWidth;
+}
+
+double getFontSize({required double fontSize}) {
+  double fontSize1 = fontSize;
+  if (fontSize1 <= 18) {
+    return 18;
+  } else if (fontSize1 >= 500) {
+    return 26;
+  } else {
+    return fontSize1;
+  }
+}
+
+double getCardWidth({required double cardSize}) {
+  double cardSize1 = cardSize;
+
+  if (cardSize1 <= 200) {
+    return 200;
+  } else if (cardSize1 >= 420) {
+    return 420;
+  } else {
+    return cardSize1;
+  }
+}
+
+double getCardHeight({required double cardSize}) {
+  double cardSize1 = cardSize;
+
+  if (cardSize1 <= 200) {
+    return 200;
+  } else if (cardSize1 >= 420) {
+    return 420;
+  } else {
+    return cardSize1;
+  }
 }

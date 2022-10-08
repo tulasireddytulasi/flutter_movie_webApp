@@ -8,6 +8,7 @@ const BLACK2 = Color(0xFF9C9C9C);
 const BLACK3 = Color(0xFF2C2C2C);
 const LIGHTBLACK2 = Color(0xFFDBDADA);
 const LIGHTWHITE = Color(0xFFDBDADA);
+const LIGHTWHITE2 = Color(0xFFFCFCFC);
 const WHITE = Color(0xFFFFFFFF);
 const DARKPINK = Color(0xFF7D2C7D);
 const GREY = Color(0xFFB6B6B6);
