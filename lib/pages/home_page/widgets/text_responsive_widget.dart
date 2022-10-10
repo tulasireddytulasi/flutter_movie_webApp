@@ -21,7 +21,7 @@ class _TextResponsiveWidgetState extends State<TextResponsiveWidget> {
         textAlign: TextAlign.left,
         style: TextStyle(
             color: LIGHTBLACK,
-            fontSize: getFontSize(fontSize: _screenWidth * 0.03),
+            fontSize: getFontSize(fontSize: _screenWidth),
             fontWeight: FontWeight.normal),
       ),
     );

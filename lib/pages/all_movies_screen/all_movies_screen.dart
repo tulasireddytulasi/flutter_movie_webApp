@@ -58,19 +58,6 @@ class _MovieHomePageState extends State<MovieHomePage> {
       final double screenWidth = MediaQuery.of(context).size.width;
       return Scaffold(
         backgroundColor: DARK_JUNGLE_GREEN_1,
-        appBar: AppBar(
-          backgroundColor: DARK_JUNGLE_GREEN_1,
-          centerTitle: true,
-          title: Text(
-              "Marvel Movies $screenWidth, $cardHeight, Aspect: ${2 / cardHeight}",
-              style:
-                  const TextStyle(fontSize: 18, fontFamily: "d", color: WHITE)),
-          leading: IconButton(
-            icon: Image.asset("assets/images/movie_icon.png"),
-            iconSize: 22,
-            onPressed: () {},
-          ),
-        ),
         body: Container(
           // decoration: BoxDecoration(border: Border.all(color: RED, width: 1)),
           padding: EdgeInsets.only(left: leftPadding, right: rightPadding),

@@ -16,16 +16,15 @@ class MovieCards extends StatelessWidget {
       child: Stack(
         children: [
           Container(
-            // height: 400,
             // decoration: BoxDecoration(
             //   border: Border.all(color: Colors.green, width: 1),
             // ),
             padding:
                 const EdgeInsets.only(top: 30, bottom: 30, left: 30, right: 30),
             child: PopularMovieCard(
-                cardWidth: getCardWidth(cardSize: cardWidth) - 100,
-                cardHeight: getCardHeight(cardSize: cardWidth) - 150,
-                actorName: "Titan",
+                cardWidth: getCardWidth(cardSize: screenWidth) - 100,
+                cardHeight: getCardHeight(cardSize: screenWidth) - 150,
+                actorName: "Fall",
                 castImage: "/rgZ3hdzgMgYgzvBfwNEVW01bpK1.jpg",
                 movieId: "455"),
           ),
@@ -40,8 +39,8 @@ class MovieCards extends StatelessWidget {
               padding: const EdgeInsets.only(
                   top: 30, bottom: 30, left: 30, right: 30),
               child: PopularMovieCard(
-                  cardWidth: getCardWidth(cardSize: cardWidth),
-                  cardHeight: getCardHeight(cardSize: cardWidth) - 150,
+                  cardWidth: getCardWidth(cardSize: screenWidth),
+                  cardHeight: getCardHeight(cardSize: screenWidth) - 150,
                   actorName: "Titan",
                   castImage: "/nnUQqlVZeEGuCRx8SaoCU4XVHJN.jpg",
                   movieId: "455"),

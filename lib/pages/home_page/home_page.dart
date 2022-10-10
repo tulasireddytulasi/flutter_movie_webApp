@@ -15,18 +15,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final Color borderColor = Colors.white;
 
-  double getCardSize({required double cardSize}) {
-    double cardSize1 = cardSize;
-
-    if (cardSize1 <= 200) {
-      return 200;
-    } else if (cardSize1 >= 420) {
-      return 420;
-    } else {
-      return cardSize1;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -114,13 +102,15 @@ class _HomePageState extends State<HomePage> {
         decoration: BoxDecoration(
           border: Border.all(color: borderColor, width: 1),
         ),
-        child: MainTextWidget(),
+        margin: const EdgeInsets.all(20),
+        child: const MainTextWidget(),
       ),
       Container(
         decoration: BoxDecoration(
           border: Border.all(color: borderColor, width: 1),
         ),
-        child: MovieCards(),
+        alignment: Alignment.center,
+        child: const MovieCards(),
       ),
     ];
   }

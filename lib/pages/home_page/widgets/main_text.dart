@@ -30,7 +30,7 @@ class _MainTextWidgetState extends State<MainTextWidget> {
           ),
         ),
         Container(
-          width: screenWidth / 3, //350,
+          width: getMainTextSize(cardSize: screenWidth),
           // decoration: BoxDecoration(border: Border.all(color: BLACK, width: 1)),
           margin: const EdgeInsets.only(left: 0),
           child: Text(
@@ -39,12 +39,12 @@ class _MainTextWidgetState extends State<MainTextWidget> {
             textAlign: TextAlign.left,
             style: TextStyle(
                 color: BLACK,
-                fontSize: getFontSize(fontSize: screenWidth * 0.04) - 5,
+                fontSize: getFontSize(fontSize: screenWidth),
                 fontWeight: FontWeight.bold),
           ),
         ),
         Container(
-          width: screenWidth / 3,
+          width: getMainTextSize(cardSize: screenWidth),
           // decoration: BoxDecoration(border: Border.all(color: BLACK, width: 1)),
           margin: const EdgeInsets.only(left: 0, top: 10),
           child: const Text(
@@ -55,7 +55,7 @@ class _MainTextWidgetState extends State<MainTextWidget> {
                 color: LIGHTBLACK, fontSize: 14, fontWeight: FontWeight.normal),
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [

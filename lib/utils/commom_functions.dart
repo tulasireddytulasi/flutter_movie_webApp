@@ -8,7 +8,6 @@ Map<String, dynamic> getMovieCardWidth({required double screenWidth}) {
   double crossAxisSpacing = 5;
   double maxBottomSheetWidth = 600;
   Map<String, dynamic> layoutData = {};
-  // screenWidth <= 1900 &&
   if (screenWidth >= 1700) {
     cardHeight = 2.8;
     columns = 8;
@@ -131,36 +130,46 @@ double getBottomSheetWidth({required double screenWidth}) {
 }
 
 double getFontSize({required double fontSize}) {
-  double fontSize1 = fontSize;
-  if (fontSize1 <= 18) {
-    return 18;
-  } else if (fontSize1 >= 500) {
-    return 26;
+  if (fontSize >= 1300) {
+    return 56;
   } else {
-    return fontSize1;
+    return (fontSize * 0.04) + 4;
   }
 }
 
 double getCardWidth({required double cardSize}) {
-  double cardSize1 = cardSize;
-
-  if (cardSize1 <= 200) {
-    return 200;
-  } else if (cardSize1 >= 420) {
-    return 420;
+  if (cardSize <= 350) {
+    return 300;
+  } else if (cardSize <= 450) {
+    return cardSize / 1.1;
+  } else if (cardSize <= 650) {
+    return cardSize / 1.3;
+  } else if (cardSize >= 1100) {
+    return 550;
   } else {
-    return cardSize1;
+    return cardSize / 2;
   }
 }
 
 double getCardHeight({required double cardSize}) {
-  double cardSize1 = cardSize;
-
-  if (cardSize1 <= 200) {
-    return 200;
-  } else if (cardSize1 >= 420) {
-    return 420;
+  if (cardSize <= 350) {
+    return 350;
+  } else if (cardSize <= 450) {
+    return cardSize / 1.2;
+  } else if (cardSize <= 650) {
+    return cardSize / 1.5;
+  } else if (cardSize >= 1100) {
+    return 550;
   } else {
-    return cardSize1;
+    return cardSize / 2;
+  }
+}
+
+double getMainTextSize({required double cardSize}) {
+  double cardSize1 = cardSize;
+  if (cardSize1 >= 650) {
+    return cardSize1 / 3;
+  } else {
+    return cardSize1 / 1.5;
   }
 }
