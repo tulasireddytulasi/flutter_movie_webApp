@@ -194,3 +194,24 @@ double getActorSectionHeight({required double screenSize}) {
   }
   return 150;
 }
+
+double getSimilarMoviesSectionHeight({required double screenSize}) {
+  if (screenSize >= 900) {
+    return 250;
+  }
+  return 180;
+}
+
+double getSimilarMoviesImageWidth({required double screenSize}) {
+  if (screenSize >= 900) {
+    return 150;
+  }
+  return 100;
+}
+
+double getSimilarMoviesImageHeight({required double screenSize}) {
+  if (screenSize >= 900) {
+    return 200;
+  }
+  return 130;
+}

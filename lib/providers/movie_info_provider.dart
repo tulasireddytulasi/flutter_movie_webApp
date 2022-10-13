@@ -66,7 +66,7 @@ class MovieInfoProvider extends ChangeNotifier {
     _backdropPath = "";
   }
 
-  getMoviesInfoAPI(
+  void getMoviesInfoAPI(
       {required String movieId, required String appendToResponse}) async {
     _getMovieInfo = await getMoviesInfoData(
         movieId: movieId, appendToResponse: appendToResponse);

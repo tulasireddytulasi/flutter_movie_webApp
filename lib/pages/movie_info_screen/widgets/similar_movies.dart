@@ -3,6 +3,7 @@ import 'package:moviewebapp/providers/movie_info_provider.dart';
 import 'package:moviewebapp/providers/movies_provider.dart';
 import 'package:moviewebapp/responses/api_constants.dart';
 import 'package:moviewebapp/utils/colors.dart';
+import 'package:moviewebapp/utils/commom_functions.dart';
 import 'package:provider/provider.dart';
 
 class SimilarMovies extends StatefulWidget {
@@ -59,6 +60,7 @@ class SimilarMovieCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double _screenWidth = MediaQuery.of(context).size.width;
     return Column(
       children: [
         InkWell(
@@ -83,8 +85,8 @@ class SimilarMovieCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(5.0),
               child: Image.network(
                 ApiConstants.movieImageBaseUrlw185 + castImage,
-                width: 100,
-                height: 130,
+                width: getSimilarMoviesImageWidth(screenSize: _screenWidth),
+                height: getSimilarMoviesImageHeight(screenSize: _screenWidth),
                 fit: BoxFit.cover,
               ),
             ),

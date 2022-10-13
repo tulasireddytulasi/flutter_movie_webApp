@@ -140,7 +140,8 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                           ),
                         ),
                         Container(
-                          height: 180,
+                          height: getSimilarMoviesSectionHeight(
+                              screenSize: _screenWidth),
                           margin: const EdgeInsets.only(top: 20),
                           child:
                               SimilarMovies(scrollController: scrollController),
