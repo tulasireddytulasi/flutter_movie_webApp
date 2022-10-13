@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moviewebapp/providers/movie_info_provider.dart';
 import 'package:moviewebapp/responses/api_constants.dart';
 import 'package:moviewebapp/utils/colors.dart';
+import 'package:moviewebapp/utils/commom_functions.dart';
 import 'package:provider/provider.dart';
 
 class Cast extends StatefulWidget {
@@ -39,16 +40,18 @@ class CastCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double _screenWidth = MediaQuery.of(context).size.width;
     return Column(
       children: [
         Container(
           padding: const EdgeInsets.only(left: 10),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(50.0),
+            borderRadius: BorderRadius.circular(
+                getActorImageRadius(screenSize: _screenWidth)),
             child: Image.network(
               ApiConstants.movieImageBaseUrlw500 + castImage,
-              height: 100,
-              width: 100,
+              height: getActorImageSize(screenSize: _screenWidth),
+              width: getActorImageSize(screenSize: _screenWidth),
               fit: BoxFit.cover,
               color: Colors.grey,
               colorBlendMode: BlendMode.saturation,

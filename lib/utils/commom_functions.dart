@@ -173,3 +173,24 @@ double getMainTextSize({required double cardSize}) {
     return cardSize1 / 1.5;
   }
 }
+
+double getActorImageSize({required double screenSize}) {
+  if (screenSize >= 900) {
+    return 160;
+  }
+  return 100;
+}
+
+double getActorImageRadius({required double screenSize}) {
+  if (screenSize >= 900) {
+    return 80;
+  }
+  return 50;
+}
+
+double getActorSectionHeight({required double screenSize}) {
+  if (screenSize >= 900) {
+    return 200;
+  }
+  return 150;
+}

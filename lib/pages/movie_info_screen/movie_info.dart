@@ -37,7 +37,7 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
+    final double _screenWidth = MediaQuery.of(context).size.width;
     return Consumer<MovieInfoProvider>(
         builder: (context, movieInfoProvider, child) {
       return Scaffold(
@@ -48,7 +48,7 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
           child: Center(
             child: Container(
               alignment: Alignment.bottomCenter,
-              width: getBottomSheetWidth(screenWidth: screenWidth) + 30,
+              width: getBottomSheetWidth(screenWidth: _screenWidth) + 30,
               decoration: const BoxDecoration(
                 color: tealishBlue,
                 borderRadius: BorderRadius.only(
@@ -80,8 +80,8 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                   ),
                   Padding(
                     padding: EdgeInsets.only(
-                        left: screenWidth <= 525 ? 0 : 40,
-                        right: screenWidth <= 525 ? 0 : 50),
+                        left: _screenWidth <= 525 ? 0 : 40,
+                        right: _screenWidth <= 525 ? 0 : 50),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -122,7 +122,12 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                           ),
                         ),
                         Container(
-                          height: 150,
+                          height:
+                              getActorSectionHeight(screenSize: _screenWidth),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: DARK_JUNGLE_GREEN_1, width: 1),
+                          ),
                           margin: const EdgeInsets.only(top: 20),
                           child: const Cast(),
                         ),

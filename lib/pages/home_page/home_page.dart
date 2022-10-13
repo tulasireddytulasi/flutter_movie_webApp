@@ -25,71 +25,62 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: WHITE,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              screenWidth > 650
-                  ? Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: listWidgets(),
-                    )
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: listWidgets(),
-                    ),
-
-              // Container(
-              //   margin: const EdgeInsets.all(02),
-              //   decoration: BoxDecoration(
-              //     border: Border.all(color: Colors.green, width: 1),
-              //   ),
-              //   child: PopularMovieCard(
-              //       cardWidth: getCardSize(cardSize: cardWidth), //cardWidth,
-              //       cardHeight:
-              //           getCardSize(cardSize: cardWidth) - 100, //cardWidth,
-              //       actorName: "Titan",
-              //       castImage: "/nnUQqlVZeEGuCRx8SaoCU4XVHJN.jpg",
-              //       movieId: "455"),
-              // ),
-              // TextResponsiveWidget(),
-              Container(
-                margin: const EdgeInsets.only(left: 10, right: 10, top: 30),
-                alignment: Alignment.topCenter,
-                child: LogosWidget(screenWidth: screenWidth),
-              ),
-              Container(
-                margin: const EdgeInsets.only(left: 10, right: 10, top: 40),
-                child: const Text(
-                  "10 Most Popular Movies this Week",
-                  textAlign: TextAlign.center,
-                  softWrap: true,
-                  textScaleFactor: 1.5,
-                  style: TextStyle(
-                      fontSize: 26, color: BLACK, fontWeight: FontWeight.w700),
+          child: Center(
+            child: Column(
+              children: [
+                screenWidth > 650
+                    ? Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: listWidgets(),
+                      )
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: listWidgets(),
+                      ),
+                Container(
+                  margin: const EdgeInsets.only(left: 10, right: 10, top: 30),
+                  alignment: Alignment.topCenter,
+                  child: LogosWidget(screenWidth: screenWidth),
                 ),
-              ),
-              Container(
-                margin: EdgeInsets.only(
-                    left: margin / 2, right: margin / 2, top: 10),
-                child: const Text(
-                  "Discover the top, most popular movies available now! Across theaters, streaming, and on-demand",
-                  textAlign: TextAlign.center,
-                  softWrap: true,
-                  textScaleFactor: 1.5,
-                  style: TextStyle(
-                      fontSize: 12, color: BLACK1, fontWeight: FontWeight.w100),
+                Container(
+                  margin: const EdgeInsets.only(left: 10, right: 10, top: 40),
+                  child: const Text(
+                    "10 Most Popular Movies this Week",
+                    textAlign: TextAlign.center,
+                    softWrap: true,
+                    textScaleFactor: 1.5,
+                    style: TextStyle(
+                        fontSize: 26,
+                        color: BLACK,
+                        fontWeight: FontWeight.w700),
+                  ),
                 ),
-              ),
-              Container(
-                height: 330,
-                padding: const EdgeInsets.only(top: 30, bottom: 30),
-                margin: const EdgeInsets.only(top: 20),
-                color: LIGHTWHITE2,
-                child: PopularMovies(),
-              ),
-              const SizedBox(height: 20),
-            ],
+                Container(
+                  margin: EdgeInsets.only(
+                      left: margin / 2, right: margin / 2, top: 10),
+                  child: const Text(
+                    "Discover the top, most popular movies available now! Across theaters, streaming, and on-demand",
+                    textAlign: TextAlign.center,
+                    softWrap: true,
+                    textScaleFactor: 1.5,
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: BLACK1,
+                        fontWeight: FontWeight.w100),
+                  ),
+                ),
+                Container(
+                  height: 330,
+                  padding: const EdgeInsets.only(top: 30, bottom: 30),
+                  margin: const EdgeInsets.only(top: 20),
+                  color: LIGHTWHITE2,
+                  child: PopularMovies(),
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),

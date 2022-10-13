@@ -33,11 +33,11 @@ class _MovieHomePageState extends State<MovieHomePage> {
       movieProvider.getPopularMoviesAPI(pageNo: "1");
       movieProvider.getPopularMoviesAPI(pageNo: "2");
       movieProvider.getPopularMoviesAPI(pageNo: "3");
-      movieProvider.getPopularMoviesAPI(pageNo: "4");
-      movieProvider.getPopularMoviesAPI(pageNo: "5");
-      movieProvider.getPopularMoviesAPI(pageNo: "6");
-      movieProvider.getPopularMoviesAPI(pageNo: "7");
-      movieProvider.getPopularMoviesAPI(pageNo: "8");
+      // movieProvider.getPopularMoviesAPI(pageNo: "4");
+      // movieProvider.getPopularMoviesAPI(pageNo: "5");
+      // movieProvider.getPopularMoviesAPI(pageNo: "6");
+      // movieProvider.getPopularMoviesAPI(pageNo: "7");
+      // movieProvider.getPopularMoviesAPI(pageNo: "8");
     });
   }
 
@@ -81,7 +81,7 @@ class _MovieHomePageState extends State<MovieHomePage> {
                           isDismissible: true,
                           enableDrag: false,
                           elevation: 0,
-                          barrierColor: Colors.black.withAlpha(1),
+                          //  barrierColor: Colors.black.withAlpha(1),
                           shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.vertical(
                                   top: Radius.circular(50))),
