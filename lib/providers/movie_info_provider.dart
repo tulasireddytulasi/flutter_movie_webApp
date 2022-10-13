@@ -10,6 +10,9 @@ class MovieInfoProvider extends ChangeNotifier {
   String _movieTitle = "";
   String get movieTitle => _movieTitle;
 
+  String _currentMovieId = "";
+  String get currentMovieId => _currentMovieId;
+
   String _backdropPath = "";
   String get backdropPath => _backdropPath;
 
@@ -62,6 +65,17 @@ class MovieInfoProvider extends ChangeNotifier {
   String _rating = "";
   String get rating => _rating;
 
+  final List<String> _previousMoviesIds = [];
+  List<String> get previousMoviesIds => _previousMoviesIds;
+
+  addPreviousMoviesIds({required String movieId}) {
+    _previousMoviesIds.insert(0, movieId);
+  }
+
+  removePreviousMoviesIds() {
+    _previousMoviesIds.removeAt(0);
+  }
+
   clearBackdropPath() {
     _backdropPath = "";
   }
@@ -71,6 +85,7 @@ class MovieInfoProvider extends ChangeNotifier {
     _getMovieInfo = await getMoviesInfoData(
         movieId: movieId, appendToResponse: appendToResponse);
     _movieTitle = _getMovieInfo.title ?? "";
+    _currentMovieId = _getMovieInfo.id.toString();
     _backdropPath = _getMovieInfo.backdropPath ?? "";
     if (_getMovieInfo.releaseDate!.toString() != null &&
         _getMovieInfo.releaseDate!.toString().isNotEmpty) {

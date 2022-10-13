@@ -30,14 +30,11 @@ class _MovieHomePageState extends State<MovieHomePage> {
     super.initState();
     final movieProvider = Provider.of<MoviesProvider>(context, listen: false);
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      movieProvider.getPopularMoviesAPI(pageNo: "1");
-      movieProvider.getPopularMoviesAPI(pageNo: "2");
-      movieProvider.getPopularMoviesAPI(pageNo: "3");
-      // movieProvider.getPopularMoviesAPI(pageNo: "4");
-      // movieProvider.getPopularMoviesAPI(pageNo: "5");
-      // movieProvider.getPopularMoviesAPI(pageNo: "6");
-      // movieProvider.getPopularMoviesAPI(pageNo: "7");
-      // movieProvider.getPopularMoviesAPI(pageNo: "8");
+      if (movieProvider.getPopularMoviesModel.results == null) {
+        movieProvider.getPopularMoviesAPI(pageNo: "1");
+        movieProvider.getPopularMoviesAPI(pageNo: "2");
+        movieProvider.getPopularMoviesAPI(pageNo: "3");
+      }
     });
   }
 

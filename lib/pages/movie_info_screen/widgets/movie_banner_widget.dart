@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:moviewebapp/providers/movie_info_provider.dart';
 import 'package:moviewebapp/responses/api_constants.dart';
 import 'package:moviewebapp/utils/assets_path.dart';
 import 'package:moviewebapp/utils/colors.dart';
 import 'package:moviewebapp/utils/commom_functions.dart';
+import 'package:provider/provider.dart';
 
 class MovieBannerWidget extends StatefulWidget {
   final String movieBannerImage;
@@ -69,7 +71,17 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
                 left: isVisible ? null : 0,
                 child: InkWell(
                   onTap: () {
-                    Navigator.of(context).pop();
+                    final movieInfoProvider =
+                        Provider.of<MovieInfoProvider>(context, listen: false);
+                    if (movieInfoProvider.previousMoviesIds.isNotEmpty) {
+                      String movieId =
+                          movieInfoProvider.previousMoviesIds.elementAt(0);
+                      movieInfoProvider.getMoviesInfoAPI(
+                          movieId: movieId, appendToResponse: "credits");
+                      movieInfoProvider.removePreviousMoviesIds();
+                    } else {
+                      Navigator.of(context).pop();
+                    }
                   },
                   child: Container(
                     decoration: isVisible

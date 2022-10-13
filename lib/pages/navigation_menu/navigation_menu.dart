@@ -31,8 +31,8 @@ class _NavigationMenuState extends State<NavigationMenu> {
             "Home",
             "TV Shows",
             "Movies",
-            "New & Popular",
-            "My List"
+            // "New & Popular",
+            // "My List"
           ],
         ),
         leading: IconButton(

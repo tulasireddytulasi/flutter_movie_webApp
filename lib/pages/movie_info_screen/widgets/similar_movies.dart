@@ -71,6 +71,8 @@ class SimilarMovieCard extends StatelessWidget {
                 Provider.of<MoviesProvider>(context, listen: false);
 
             WidgetsBinding.instance!.addPostFrameCallback((_) {
+              movieInfoProvider.addPreviousMoviesIds(
+                  movieId: movieInfoProvider.currentMovieId);
               movieInfoProvider.getMoviesInfoAPI(
                   movieId: movieId, appendToResponse: "credits");
               movieProvider.getSimilarMoviesAPI(movieId: movieId);
