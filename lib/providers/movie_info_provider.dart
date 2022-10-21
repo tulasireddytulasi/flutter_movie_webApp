@@ -43,6 +43,9 @@ class MovieInfoProvider extends ChangeNotifier {
   String _runtime = "";
   String get runtime => _runtime;
 
+  final List<String> _actorId = [];
+  List<String> get actorId => _actorId;
+
   final List<String> _actorImageUrl = [];
   List<String> get actorImageUrl => _actorImageUrl;
 
@@ -115,6 +118,7 @@ class MovieInfoProvider extends ChangeNotifier {
     }
     _genre = _genresList.join(", ");
 
+    _actorId.clear();
     _actorImageUrl.clear();
     _actorName.clear();
 
@@ -122,15 +126,18 @@ class MovieInfoProvider extends ChangeNotifier {
       if (castInfo.profilePath != null && castInfo.profilePath!.isNotEmpty) {
         _actorImageUrl.add(castInfo.profilePath ?? "");
         _actorName.add(castInfo.name ?? "");
+        _actorId.add(castInfo.id.toString());
+        print("_actorName: ${castInfo.name}");
+        print("_actorImageUrl 666: ${castInfo.profilePath}");
       }
     });
 
     for (var element in _actorImageUrl) {
       // print("_actorImageUrl: ${ApiConstants.movieImageBaseUrl + element}");
     }
-    print("_actorName: ${_actorName}");
-    print("_actorImageUrl 55: ${_actorImageUrl.length}");
-    print("_actorName55: ${_actorName.length}");
+    // print("_actorName: ${_actorName}");
+    // print("_actorImageUrl 55: ${_actorImageUrl.length}");
+    // print("_actorName55: ${_actorName.length}");
 
     notifyListeners();
   }

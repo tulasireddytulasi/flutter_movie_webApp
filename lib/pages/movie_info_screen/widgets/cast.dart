@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviewebapp/pages/actors_page/actors_page.dart';
 import 'package:moviewebapp/providers/movie_info_provider.dart';
 import 'package:moviewebapp/responses/api_constants.dart';
 import 'package:moviewebapp/utils/colors.dart';
@@ -25,6 +26,7 @@ class _CastState extends State<Cast> {
             return CastCard(
               actorName: movieInfoProvider.actorName[index].toString(),
               castImage: movieInfoProvider.actorImageUrl[index].toString(),
+              actorId: movieInfoProvider.actorId[index],
             );
           });
     });
@@ -32,9 +34,14 @@ class _CastState extends State<Cast> {
 }
 
 class CastCard extends StatelessWidget {
-  const CastCard({Key? key, required this.castImage, required this.actorName})
+  const CastCard(
+      {Key? key,
+      required this.castImage,
+      required this.actorName,
+      required this.actorId})
       : super(key: key);
 
+  final String actorId;
   final String castImage;
   final String actorName;
 
@@ -43,18 +50,27 @@ class CastCard extends StatelessWidget {
     final double _screenWidth = MediaQuery.of(context).size.width;
     return Column(
       children: [
-        Container(
-          padding: const EdgeInsets.only(left: 10),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(
-                getActorImageRadius(screenSize: _screenWidth)),
-            child: Image.network(
-              ApiConstants.movieImageBaseUrlw500 + castImage,
-              height: getActorImageSize(screenSize: _screenWidth),
-              width: getActorImageSize(screenSize: _screenWidth),
-              fit: BoxFit.cover,
-              color: Colors.grey,
-              colorBlendMode: BlendMode.saturation,
+        InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ActorsPage(actorId: actorId)),
+            );
+          },
+          child: Container(
+            padding: const EdgeInsets.only(left: 10),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(
+                  getActorImageRadius(screenSize: _screenWidth)),
+              child: Image.network(
+                ApiConstants.movieImageBaseUrlw500 + castImage,
+                height: getActorImageSize(screenSize: _screenWidth),
+                width: getActorImageSize(screenSize: _screenWidth),
+                fit: BoxFit.cover,
+                color: Colors.grey,
+                colorBlendMode: BlendMode.saturation,
+              ),
             ),
           ),
         ),

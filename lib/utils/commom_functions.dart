@@ -215,3 +215,10 @@ double getSimilarMoviesImageHeight({required double screenSize}) {
   }
   return 130;
 }
+
+double getProfileImageSize({required double screenSize}) {
+  if (screenSize >= 900) {
+    return 160;
+  }
+  return 120;
+}

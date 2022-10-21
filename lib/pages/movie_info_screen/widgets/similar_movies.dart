@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviewebapp/pages/movie_info_screen/movie_info.dart';
 import 'package:moviewebapp/providers/movie_info_provider.dart';
 import 'package:moviewebapp/providers/movies_provider.dart';
 import 'package:moviewebapp/responses/api_constants.dart';
@@ -7,8 +8,11 @@ import 'package:moviewebapp/utils/commom_functions.dart';
 import 'package:provider/provider.dart';
 
 class SimilarMovies extends StatefulWidget {
-  SimilarMovies({Key? key, required this.scrollController}) : super(key: key);
-  ScrollController scrollController;
+  SimilarMovies(
+      {Key? key, this.scrollController, this.canNavigateToNewPage = false})
+      : super(key: key);
+  ScrollController? scrollController;
+  bool canNavigateToNewPage;
 
   @override
   _SimilarMoviesState createState() => _SimilarMoviesState();
@@ -30,6 +34,7 @@ class _SimilarMoviesState extends State<SimilarMovies> {
                       movieProvider.similarMoviePosters[index].toString(),
                   movieId: movieProvider.similarMovieId[index].toString(),
                   scrollController: widget.scrollController,
+                  canNavigateToNewPage: widget.canNavigateToNewPage,
                 );
               })
           : Container(
@@ -50,13 +55,15 @@ class SimilarMovieCard extends StatelessWidget {
     required this.castImage,
     required this.actorName,
     required this.movieId,
-    required this.scrollController,
+    this.scrollController,
+    required this.canNavigateToNewPage,
   }) : super(key: key);
 
   final String castImage;
   final String actorName;
   final String movieId;
-  ScrollController scrollController;
+  bool canNavigateToNewPage;
+  ScrollController? scrollController;
 
   @override
   Widget build(BuildContext context) {
@@ -65,21 +72,31 @@ class SimilarMovieCard extends StatelessWidget {
       children: [
         InkWell(
           onTap: () {
-            final movieInfoProvider =
-                Provider.of<MovieInfoProvider>(context, listen: false);
-            final movieProvider =
-                Provider.of<MoviesProvider>(context, listen: false);
+            if (canNavigateToNewPage) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => MovieInfoScreen(movieId: movieId)),
+              );
+            } else {
+              final movieInfoProvider =
+                  Provider.of<MovieInfoProvider>(context, listen: false);
+              final movieProvider =
+                  Provider.of<MoviesProvider>(context, listen: false);
 
-            WidgetsBinding.instance!.addPostFrameCallback((_) {
-              movieInfoProvider.addPreviousMoviesIds(
-                  movieId: movieInfoProvider.currentMovieId);
-              movieInfoProvider.getMoviesInfoAPI(
-                  movieId: movieId, appendToResponse: "credits");
-              movieProvider.getSimilarMoviesAPI(movieId: movieId);
-            });
-            scrollController.animateTo(0,
-                duration: const Duration(milliseconds: 500),
-                curve: Curves.ease);
+              WidgetsBinding.instance!.addPostFrameCallback((_) {
+                movieInfoProvider.addPreviousMoviesIds(
+                    movieId: movieInfoProvider.currentMovieId);
+                movieInfoProvider.getMoviesInfoAPI(
+                    movieId: movieId, appendToResponse: "credits");
+                movieProvider.getSimilarMoviesAPI(movieId: movieId);
+              });
+              if (scrollController != null) {
+                scrollController!.animateTo(0,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.ease);
+              }
+            }
           },
           child: Container(
             padding: const EdgeInsets.only(left: 10),

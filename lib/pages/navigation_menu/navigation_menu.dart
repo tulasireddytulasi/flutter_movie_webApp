@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviewebapp/pages/actors_page/actors_page.dart';
 import 'package:moviewebapp/pages/all_movies_screen/all_movies_screen.dart';
 import 'package:moviewebapp/pages/home_page/home_page.dart';
 import 'package:moviewebapp/utils/colors.dart';
@@ -11,7 +12,13 @@ class NavigationMenu extends StatefulWidget {
 }
 
 class _NavigationMenuState extends State<NavigationMenu> {
-  final _screens = [const HomePage(), const MovieHomePage()];
+  final _screens = [
+    const HomePage(),
+    const MovieHomePage(),
+    const ActorsPage(
+      actorId: "",
+    )
+  ];
   int _currentScreen = 0;
 
   @override

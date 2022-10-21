@@ -1,4 +1,6 @@
 import 'package:http/http.dart';
+import 'package:moviewebapp/models/actor_images_model.dart';
+import 'package:moviewebapp/models/actors_info_model.dart';
 import 'package:moviewebapp/models/get_movie_info_model.dart';
 import 'package:moviewebapp/models/get_movies_model.dart';
 import 'package:moviewebapp/responses/api_constants.dart';
@@ -99,6 +101,33 @@ Future<GetMovies> getSimilarMoviesListData({
         withOriginalLanguage: withOriginalLanguage);
     getSimilarMoviesModel = getMoviesFromJson(response.body);
     return getSimilarMoviesModel;
+  } catch (error, stackTrace) {
+    rethrow;
+  }
+}
+
+Future<ActorImagesModel> getPopularActorsImages(
+    {required String actorId}) async {
+  ActorImagesModel getMoviesModel;
+  final String _popularActorsImages =
+      "person/$actorId/images?api_key=${ApiConstants.apiKey}";
+  try {
+    Response response = await getMethod(_popularActorsImages);
+    getMoviesModel = actorImagesModelFromJson(response.body);
+    return getMoviesModel;
+  } catch (error, stackTrace) {
+    rethrow;
+  }
+}
+
+Future<ActorInfoModel> getActorsInfo({required String actorId}) async {
+  ActorInfoModel getActorsInfo;
+  final String _actorsInfo = "person/$actorId?api_key=${ApiConstants.apiKey}";
+  try {
+    Response response = await getMethod(_actorsInfo);
+    print("info: ${response.body}");
+    getActorsInfo = actorInfoModelFromJson(response.body);
+    return getActorsInfo;
   } catch (error, stackTrace) {
     rethrow;
   }
