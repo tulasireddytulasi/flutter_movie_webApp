@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moviewebapp/pages/movie_info_screen/movie_info.dart';
 import 'package:moviewebapp/providers/movie_info_provider.dart';
 import 'package:moviewebapp/providers/movies_provider.dart';
+import 'package:moviewebapp/providers/navigation_provider.dart';
 import 'package:moviewebapp/responses/api_constants.dart';
 import 'package:moviewebapp/utils/colors.dart';
 import 'package:moviewebapp/utils/commom_functions.dart';
@@ -83,6 +84,13 @@ class SimilarMovieCard extends StatelessWidget {
                   Provider.of<MovieInfoProvider>(context, listen: false);
               final movieProvider =
                   Provider.of<MoviesProvider>(context, listen: false);
+              final navigationProvider =
+                  Provider.of<NavigationProvider>(context, listen: false);
+
+              if (navigationProvider.currentScreenIndex == 1) {
+                navigationProvider.setMovieInfoScreen(movieId: movieId);
+                navigationProvider.setCurrentScreenIndex(currentScreenIndex: 0);
+              }
 
               WidgetsBinding.instance!.addPostFrameCallback((_) {
                 movieInfoProvider.addPreviousMoviesIds(

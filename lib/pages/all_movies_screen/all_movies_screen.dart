@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/pages/all_movies_screen/widgets/movie_card.dart';
+import 'package:moviewebapp/pages/bottom_sheet/bottom_sheet_widget.dart';
 import 'package:moviewebapp/pages/movie_info_screen/movie_info.dart';
 import 'package:moviewebapp/providers/movies_provider.dart';
+import 'package:moviewebapp/providers/navigation_provider.dart';
 import 'package:moviewebapp/utils/colors.dart';
 import 'package:moviewebapp/utils/commom_functions.dart';
 import 'package:provider/provider.dart';
@@ -68,45 +70,52 @@ class _MovieHomePageState extends State<MovieHomePage> {
                 crossAxisSpacing: crossAxisSpacing,
               ),
               itemBuilder: (BuildContext context, int index) {
-                return InkWell(
-                  onTap: () {
-                    if (screenWidth >= 600) {
-                      showModalBottomSheet(
-                          context: context,
-                          backgroundColor: Colors.transparent,
-                          isScrollControlled: true,
-                          isDismissible: true,
-                          enableDrag: false,
-                          elevation: 0,
-                          //  barrierColor: Colors.black.withAlpha(1),
-                          shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(50))),
-                          builder: (context) {
-                            return Container(
+                return Consumer<NavigationProvider>(
+                    builder: (context, navigationProvider, child) {
+                  return InkWell(
+                    onTap: () {
+                      if (screenWidth >= 600) {
+                        navigationProvider.setMovieInfoScreen(
+                            movieId: movieProvider.movieId[index]);
+                        navigationProvider.setCurrentScreenIndex(
+                            currentScreenIndex: 0);
+                        showModalBottomSheet(
+                            context: context,
+                            backgroundColor: Colors.transparent,
+                            isScrollControlled: true,
+                            isDismissible: true,
+                            enableDrag: false,
+                            elevation: 0,
+                            //  barrierColor: Colors.black.withAlpha(1),
+                            shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(50))),
+                            builder: (context) {
+                              return Container(
                                 constraints: const BoxConstraints(
                                   maxWidth: 600,
                                   minHeight: 300,
                                 ),
-                                child: MovieInfoScreen(
-                                    movieId: movieProvider.movieId[index]));
-                          });
-                    } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MovieInfoScreen(
-                                movieId: movieProvider.movieId[index])),
-                      );
-                    }
-                  },
-                  child: MovieCard(
-                    movieName: movieProvider.title[index],
-                    imageURL: movieProvider.img[index],
-                    movieReleaseDate: movieProvider.date[index],
-                    isMovieTitleVisible: isMovieTitleVisible,
-                  ),
-                );
+                                child: const BottomSheetWidget(),
+                              );
+                            });
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MovieInfoScreen(
+                                  movieId: movieProvider.movieId[index])),
+                        );
+                      }
+                    },
+                    child: MovieCard(
+                      movieName: movieProvider.title[index],
+                      imageURL: movieProvider.img[index],
+                      movieReleaseDate: movieProvider.date[index],
+                      isMovieTitleVisible: isMovieTitleVisible,
+                    ),
+                  );
+                });
               },
               itemCount: movieProvider.title.length),
         ),

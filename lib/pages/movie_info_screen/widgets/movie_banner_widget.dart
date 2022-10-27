@@ -67,8 +67,28 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
               ),
               Positioned(
                 top: isVisible ? 0 : 30,
-                right: isVisible ? 0 : null,
-                left: isVisible ? null : 0,
+                right: 0,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(color: BLACK, width: 2),
+                        shape: BoxShape.circle,
+                        color: BLACK),
+                    padding: const EdgeInsets.all(2),
+                    margin: const EdgeInsets.all(10),
+                    child: const Icon(
+                      Icons.clear,
+                      color: WHITE,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: isVisible ? 0 : 30,
+                left: 0,
                 child: InkWell(
                   onTap: () {
                     final movieInfoProvider =
@@ -84,16 +104,10 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
                     }
                   },
                   child: Container(
-                    decoration: isVisible
-                        ? BoxDecoration(
-                            border: Border.all(color: BLACK, width: 2),
-                            shape: BoxShape.circle,
-                            color: BLACK)
-                        : null,
                     padding: const EdgeInsets.all(2),
                     margin: const EdgeInsets.all(10),
-                    child: Icon(
-                      isVisible ? Icons.clear : Icons.arrow_back,
+                    child: const Icon(
+                      Icons.arrow_back,
                       color: WHITE,
                     ),
                   ),

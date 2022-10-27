@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/pages/actors_page/actors_page.dart';
 import 'package:moviewebapp/providers/movie_info_provider.dart';
+import 'package:moviewebapp/providers/navigation_provider.dart';
 import 'package:moviewebapp/responses/api_constants.dart';
 import 'package:moviewebapp/utils/colors.dart';
 import 'package:moviewebapp/utils/commom_functions.dart';
@@ -33,7 +34,7 @@ class _CastState extends State<Cast> {
   }
 }
 
-class CastCard extends StatelessWidget {
+class CastCard extends StatefulWidget {
   const CastCard(
       {Key? key,
       required this.castImage,
@@ -46,40 +47,54 @@ class CastCard extends StatelessWidget {
   final String actorName;
 
   @override
+  State<CastCard> createState() => _CastCardState();
+}
+
+class _CastCardState extends State<CastCard> {
+  @override
   Widget build(BuildContext context) {
     final double _screenWidth = MediaQuery.of(context).size.width;
     return Column(
       children: [
-        InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ActorsPage(actorId: actorId)),
-            );
-          },
-          child: Container(
-            padding: const EdgeInsets.only(left: 10),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(
-                  getActorImageRadius(screenSize: _screenWidth)),
-              child: Image.network(
-                ApiConstants.movieImageBaseUrlw500 + castImage,
-                height: getActorImageSize(screenSize: _screenWidth),
-                width: getActorImageSize(screenSize: _screenWidth),
-                fit: BoxFit.cover,
-                color: Colors.grey,
-                colorBlendMode: BlendMode.saturation,
+        Consumer<NavigationProvider>(
+            builder: (context, navigationProvider, child) {
+          return InkWell(
+            onTap: () {
+              if (_screenWidth >= 600) {
+                navigationProvider.setActorsPage(actorId: widget.actorId);
+                navigationProvider.setCurrentScreenIndex(currentScreenIndex: 1);
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ActorsPage(actorId: widget.actorId)),
+                );
+              }
+            },
+            child: Container(
+              padding: const EdgeInsets.only(left: 10),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(
+                    getActorImageRadius(screenSize: _screenWidth)),
+                child: Image.network(
+                  ApiConstants.movieImageBaseUrlw500 + widget.castImage,
+                  height: getActorImageSize(screenSize: _screenWidth),
+                  width: getActorImageSize(screenSize: _screenWidth),
+                  fit: BoxFit.cover,
+                  color: Colors.grey,
+                  colorBlendMode: BlendMode.saturation,
+                ),
               ),
             ),
-          ),
-        ),
+          );
+        }),
         Container(
           alignment: Alignment.center,
           margin: const EdgeInsets.only(left: 15, top: 10),
           width: 100,
           child: Text(
-            actorName,
+            widget.actorName,
             style: const TextStyle(fontSize: 12, color: GREY),
             maxLines: 2,
             textAlign: TextAlign.center,

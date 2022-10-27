@@ -4,6 +4,8 @@ import 'package:moviewebapp/pages/navigation_menu/navigation_menu.dart';
 import 'package:moviewebapp/providers/actors_info_provider.dart';
 import 'package:moviewebapp/providers/movie_info_provider.dart';
 import 'package:moviewebapp/providers/movies_provider.dart';
+import 'package:moviewebapp/providers/navigation_provider.dart';
+import 'package:moviewebapp/providers/test_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -20,6 +22,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => MoviesProvider()),
         ChangeNotifierProvider(create: (_) => MovieInfoProvider()),
         ChangeNotifierProvider(create: (_) => ActorsInfoProvider()),
+        ChangeNotifierProvider(create: (_) => NavigationProvider()),
+        ChangeNotifierProvider(create: (_) => NavigationProvider2()),
       ],
       child: MaterialApp(
         title: 'Movie Flutter Web App',

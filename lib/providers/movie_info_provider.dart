@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:moviewebapp/models/get_movie_info_model.dart';
+import 'package:moviewebapp/pages/actors_page/actors_page.dart';
+import 'package:moviewebapp/pages/movie_info_screen/movie_info.dart';
 import 'package:moviewebapp/responses/movie_apis.dart';
 
 class MovieInfoProvider extends ChangeNotifier {
@@ -71,6 +75,39 @@ class MovieInfoProvider extends ChangeNotifier {
   final List<String> _previousMoviesIds = [];
   List<String> get previousMoviesIds => _previousMoviesIds;
 
+  String _currentActorId = "";
+  String get currentActorId => _currentActorId;
+
+  int _currentScreenIndex = 0;
+  int get currentScreenIndex => _currentScreenIndex;
+
+  setCurrentScreenIndex({required int currentScreenIndex}) {
+    _currentScreenIndex = currentScreenIndex;
+    notifyListeners();
+  }
+
+  final List _screensList = [
+    const MovieInfoScreen(movieId: ""),
+    const ActorsPage(
+      actorId: '',
+    ),
+  ];
+  List get screensList => _screensList;
+
+  /// Updating [_screensList] variable
+  setMovieInfoScreen({required String movieId}) {
+    _screensList[0] = MovieInfoScreen(
+      movieId: movieId,
+    );
+  }
+
+  /// Updating [_screensList] variable
+  setActorsPage({required String actorId}) {
+    _screensList[1] = ActorsPage(
+      actorId: actorId,
+    );
+  }
+
   addPreviousMoviesIds({required String movieId}) {
     _previousMoviesIds.insert(0, movieId);
   }
@@ -127,8 +164,8 @@ class MovieInfoProvider extends ChangeNotifier {
         _actorImageUrl.add(castInfo.profilePath ?? "");
         _actorName.add(castInfo.name ?? "");
         _actorId.add(castInfo.id.toString());
-        print("_actorName: ${castInfo.name}");
-        print("_actorImageUrl 666: ${castInfo.profilePath}");
+        log("_actorName: ${castInfo.name}");
+        log("_actorImageUrl 666: ${castInfo.profilePath}");
       }
     });
 

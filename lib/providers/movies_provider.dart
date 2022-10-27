@@ -59,15 +59,19 @@ class MoviesProvider extends ChangeNotifier {
         }
       });
 
-      _similarMoviePosters.forEach((element) {
-        // log("_actorImageUrl: ${ApiConstants.movieImageBaseUrl + element}");
-      });
+      // _similarMoviePosters.forEach((element) {
+      //   // log("_actorImageUrl: ${ApiConstants.movieImageBaseUrl + element}");
+      // });
       log("_similarMoviePosters 55: ${_similarMoviePosters.length}");
       log("_similarMovieTitle: ${_similarMovieTitle.length}");
     } catch (error) {
-      log("_similarMoviePosters error: ${error}");
+      log("_similarMoviePosters error: $error");
     }
 
+    notifyListeners();
+  }
+
+  void notify() {
     notifyListeners();
   }
 }
