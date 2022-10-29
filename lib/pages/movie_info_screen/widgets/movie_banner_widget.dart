@@ -70,6 +70,9 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
                 right: 0,
                 child: InkWell(
                   onTap: () {
+                    final movieInfoProvider =
+                        Provider.of<MovieInfoProvider>(context, listen: false);
+                    movieInfoProvider.removePreviousAllMoviesIds();
                     Navigator.of(context).pop();
                   },
                   child: Container(
@@ -100,6 +103,10 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
                           movieId: movieId, appendToResponse: "credits");
                       movieInfoProvider.removePreviousMoviesIds();
                     } else {
+                      final movieInfoProvider = Provider.of<MovieInfoProvider>(
+                          context,
+                          listen: false);
+                      movieInfoProvider.removePreviousAllMoviesIds();
                       Navigator.of(context).pop();
                     }
                   },

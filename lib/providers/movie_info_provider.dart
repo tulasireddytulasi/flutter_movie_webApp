@@ -116,6 +116,10 @@ class MovieInfoProvider extends ChangeNotifier {
     _previousMoviesIds.removeAt(0);
   }
 
+  removePreviousAllMoviesIds() {
+    _previousMoviesIds.clear();
+  }
+
   clearBackdropPath() {
     _backdropPath = "";
   }
