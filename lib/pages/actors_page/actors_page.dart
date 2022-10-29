@@ -61,7 +61,7 @@ class _ActorsPageState extends State<ActorsPage> {
                   topRight: Radius.circular(20),
                   topLeft: Radius.circular(20),
                 ),
-                color: WHITE,
+                color: tealishBlue,
                 shape: BoxShape.rectangle,
               ),
               child: Column(
@@ -81,7 +81,7 @@ class _ActorsPageState extends State<ActorsPage> {
                           margin: const EdgeInsets.all(10),
                           child: const Icon(
                             Icons.arrow_back,
-                            color: BLACK,
+                            color: WHITE,
                           ),
                         ),
                       ),
@@ -132,9 +132,9 @@ class _ActorsPageState extends State<ActorsPage> {
                         children: [
                           Container(
                             width: _pageWidth / 2,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: WHITE, width: 1),
-                            ),
+                            // decoration: BoxDecoration(
+                            //   border: Border.all(color: WHITE, width: 1),
+                            // ),
                             margin: const EdgeInsets.only(left: 0, top: 20),
                             child: Text(
                               actorsInfoProvider.actorName,
@@ -143,7 +143,7 @@ class _ActorsPageState extends State<ActorsPage> {
                               maxLines: 4,
                               style: const TextStyle(
                                   fontSize: 18,
-                                  color: BLACK,
+                                  color: WHITE,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -160,9 +160,9 @@ class _ActorsPageState extends State<ActorsPage> {
                                 ),
                               ),
                               Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: WHITE, width: 1),
-                                ),
+                                // decoration: BoxDecoration(
+                                //   border: Border.all(color: WHITE, width: 1),
+                                // ),
                                 margin: const EdgeInsets.only(left: 0, top: 10),
                                 child: RichText(
                                   softWrap: true,
@@ -173,14 +173,14 @@ class _ActorsPageState extends State<ActorsPage> {
                                       text: "20",
                                       style: TextStyle(
                                           fontSize: 18,
-                                          color: BLACK,
+                                          color: WHITE,
                                           fontWeight: FontWeight.bold),
                                     ),
                                     TextSpan(
                                       text: " movies",
                                       style: TextStyle(
                                           fontSize: 18,
-                                          color: BLACK,
+                                          color: WHITE,
                                           fontWeight: FontWeight.normal),
                                     ),
                                   ]),
@@ -190,9 +190,9 @@ class _ActorsPageState extends State<ActorsPage> {
                           ),
                           Container(
                             width: 55,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: WHITE, width: 1),
-                            ),
+                            // decoration: BoxDecoration(
+                            //   border: Border.all(color: WHITE, width: 1),
+                            // ),
                             margin: const EdgeInsets.only(left: 0, top: 10),
                             child: Text(
                               actorsInfoProvider.role,
@@ -201,7 +201,7 @@ class _ActorsPageState extends State<ActorsPage> {
                               maxLines: 4,
                               style: const TextStyle(
                                   fontSize: 18,
-                                  color: BLACK,
+                                  color: WHITE,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -215,9 +215,9 @@ class _ActorsPageState extends State<ActorsPage> {
                     thickness: 1,
                   ),
                   Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: WHITE, width: 1),
-                    ),
+                    // decoration: BoxDecoration(
+                    //   border: Border.all(color: WHITE, width: 1),
+                    // ),
                     padding: const EdgeInsets.only(
                         left: 0, right: 0, top: 10, bottom: 10),
                     child: Row(
@@ -233,9 +233,9 @@ class _ActorsPageState extends State<ActorsPage> {
                           ),
                         ),
                         Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: WHITE, width: 1),
-                          ),
+                          // decoration: BoxDecoration(
+                          //   border: Border.all(color: WHITE, width: 1),
+                          // ),
                           width: _pageWidth / 1.2,
                           child: RichText(
                             softWrap: true,
@@ -247,14 +247,14 @@ class _ActorsPageState extends State<ActorsPage> {
                                   text: actorsInfoProvider.dob,
                                   style: const TextStyle(
                                       fontSize: 14,
-                                      color: LIGHTBLACK,
+                                      color: WHITE,
                                       fontWeight: FontWeight.normal),
                                 ),
                                 TextSpan(
                                   text: " in ${actorsInfoProvider.birthPlace}",
                                   style: const TextStyle(
                                       fontSize: 14,
-                                      color: LIGHTBLACK,
+                                      color: WHITE,
                                       fontWeight: FontWeight.normal),
                                 ),
                               ],
@@ -267,7 +267,7 @@ class _ActorsPageState extends State<ActorsPage> {
                   Container(
                     width: _pageWidth / 1,
                     decoration: BoxDecoration(
-                      border: Border.all(color: WHITE, width: 1),
+                      // border: Border.all(color: WHITE, width: 1),
                       color: GREY.withOpacity(0.1),
                     ),
                     padding: const EdgeInsets.only(
@@ -276,11 +276,11 @@ class _ActorsPageState extends State<ActorsPage> {
                       actorsInfoProvider.biography,
                       softWrap: true,
                       overflow: TextOverflow.ellipsis,
-                      maxLines: 4,
+                      maxLines: 120,
                       textAlign: TextAlign.start,
                       style: const TextStyle(
                           fontSize: 14,
-                          color: BLACK,
+                          color: WHITE,
                           fontWeight: FontWeight.bold),
                     ),
                   ),

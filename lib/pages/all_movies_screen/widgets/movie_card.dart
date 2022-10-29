@@ -23,7 +23,7 @@ class MovieCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<MoviesProvider>(builder: (context, movieProvider, child) {
       return Card(
-        color: onyx,
+        color: DARK_JUNGLE_GREEN_1,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,

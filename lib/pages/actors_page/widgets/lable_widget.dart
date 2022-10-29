@@ -21,8 +21,8 @@ class LabelWidget extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
         maxLines: 4,
         textAlign: TextAlign.start,
-        style:
-            TextStyle(fontSize: 18, color: BLACK, fontWeight: FontWeight.w500),
+        style: const TextStyle(
+            fontSize: 18, color: WHITE, fontWeight: FontWeight.w500),
       ),
     );
   }
