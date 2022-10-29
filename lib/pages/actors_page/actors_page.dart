@@ -51,16 +51,59 @@ class _ActorsPageState extends State<ActorsPage> {
           controller: scrollController,
           child: Center(
             child: Container(
-              color: WHITE,
               alignment: Alignment.bottomCenter,
               width: _pageWidth,
-              margin: const EdgeInsets.only(
-                top: kIsWeb ? 50 : 0,
+              margin: EdgeInsets.only(
+                top: _screenWidth >= 600 ? 50 : 0,
+              ),
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(20),
+                  topLeft: Radius.circular(20),
+                ),
+                color: WHITE,
+                shape: BoxShape.rectangle,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
                 children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(2),
+                          margin: const EdgeInsets.all(10),
+                          child: const Icon(
+                            Icons.arrow_back,
+                            color: BLACK,
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(color: BLACK, width: 2),
+                              shape: BoxShape.circle,
+                              color: BLACK),
+                          padding: const EdgeInsets.all(2),
+                          margin: const EdgeInsets.all(10),
+                          child: const Icon(
+                            Icons.clear,
+                            color: WHITE,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.start,

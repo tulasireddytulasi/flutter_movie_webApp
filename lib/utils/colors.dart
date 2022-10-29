@@ -53,3 +53,5 @@ const pickledBlueWood = Color(0xFF2F444F);
 const tealishBlue = Color(0xFF1B2230);
 const tuna = Color(0xFF323944);
 const azul = Color(0xFF1F58FF);
+const woodsSmoke = Color(0xFF0D0D0D);
+const onyx = Color(0xFF141414);

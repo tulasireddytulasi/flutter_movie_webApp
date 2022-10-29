@@ -25,7 +25,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: DARK_JUNGLE_GREEN_1,
+        backgroundColor: woodsSmoke,
         centerTitle: true,
         title: MovieAppBar(
           defaultSelectedIndex: 0,
