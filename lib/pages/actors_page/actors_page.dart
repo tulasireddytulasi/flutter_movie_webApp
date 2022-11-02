@@ -40,9 +40,47 @@ class _ActorsPageState extends State<ActorsPage> {
   @override
   Widget build(BuildContext context) {
     final double _screenWidth = MediaQuery.of(context).size.width;
-    print("actor 564: ${ApiConstants.movieImageBaseUrlw500 + _actors[0]}");
+    final bool _webView = _screenWidth >= 600;
     return Scaffold(
       backgroundColor: Colors.transparent,
+      appBar: _webView
+          ? null
+          : AppBar(
+              backgroundColor: tealishBlue,
+              elevation: 1,
+              leading: InkWell(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  margin: const EdgeInsets.all(10),
+                  child: const Icon(
+                    Icons.arrow_back,
+                    color: WHITE,
+                  ),
+                ),
+              ),
+              actions: [
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(color: BLACK, width: 2),
+                        shape: BoxShape.circle,
+                        color: BLACK),
+                    padding: const EdgeInsets.all(2),
+                    margin: const EdgeInsets.all(10),
+                    child: const Icon(
+                      Icons.clear,
+                      color: WHITE,
+                    ),
+                  ),
+                ),
+              ],
+            ),
       body: Consumer<ActorsInfoProvider>(
           builder: (context, actorsInfoProvider, child) {
         final double _pageWidth =
@@ -56,10 +94,10 @@ class _ActorsPageState extends State<ActorsPage> {
               margin: EdgeInsets.only(
                 top: _screenWidth >= 600 ? 50 : 0,
               ),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(20),
-                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(_webView ? 20 : 0),
+                  topLeft: Radius.circular(_webView ? 20 : 0),
                 ),
                 color: tealishBlue,
                 shape: BoxShape.rectangle,
@@ -69,40 +107,43 @@ class _ActorsPageState extends State<ActorsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(2),
-                          margin: const EdgeInsets.all(10),
-                          child: const Icon(
-                            Icons.arrow_back,
-                            color: WHITE,
+                  Visibility(
+                    visible: _webView ? true : false,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            margin: const EdgeInsets.all(10),
+                            child: const Icon(
+                              Icons.arrow_back,
+                              color: WHITE,
+                            ),
                           ),
                         ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(color: BLACK, width: 2),
-                              shape: BoxShape.circle,
-                              color: BLACK),
-                          padding: const EdgeInsets.all(2),
-                          margin: const EdgeInsets.all(10),
-                          child: const Icon(
-                            Icons.clear,
-                            color: WHITE,
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(color: BLACK, width: 2),
+                                shape: BoxShape.circle,
+                                color: BLACK),
+                            padding: const EdgeInsets.all(2),
+                            margin: const EdgeInsets.all(10),
+                            child: const Icon(
+                              Icons.clear,
+                              color: WHITE,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   Row(
                     mainAxisSize: MainAxisSize.max,
@@ -236,7 +277,7 @@ class _ActorsPageState extends State<ActorsPage> {
                           // decoration: BoxDecoration(
                           //   border: Border.all(color: WHITE, width: 1),
                           // ),
-                          width: _pageWidth / 1.2,
+                          width: _pageWidth / 1.3,
                           child: RichText(
                             softWrap: true,
                             overflow: TextOverflow.ellipsis,
