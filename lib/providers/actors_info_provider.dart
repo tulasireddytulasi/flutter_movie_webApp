@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:moviewebapp/models/actor_images_model.dart';
 import 'package:moviewebapp/models/actors_info_model.dart';
+import 'package:moviewebapp/models/popular_actors_model.dart';
 import 'package:moviewebapp/responses/movie_apis.dart';
 
 class ActorsInfoProvider extends ChangeNotifier {
@@ -15,9 +16,14 @@ class ActorsInfoProvider extends ChangeNotifier {
 
   ActorInfoModel get actorInfoModel => _actorInfoModel;
 
-  final List<String> _actorsImages = [];
+  PopularActorsModel _popularActorsModel = PopularActorsModel();
+  PopularActorsModel get popularActorsModel => _popularActorsModel;
 
+  final List<String> _actorsImages = [];
   List<String> get actorsImages => _actorsImages;
+
+  final List<String> _allActorsImages = [];
+  List<String> get allActorsImages => _allActorsImages;
 
   String _biography = "";
 
@@ -54,6 +60,12 @@ class ActorsInfoProvider extends ChangeNotifier {
   String _homePage = "";
 
   String get homePage => _homePage;
+
+  final List<String> _actorNameList = [];
+  List<String> get actorNameList => _actorNameList;
+
+  final List<String> _actorIdList = [];
+  List<String> get actorIdList => _actorIdList;
 
   getActorsImagesAPI({required String actorId}) async {
     _actorsImages.clear();
@@ -95,6 +107,28 @@ class ActorsInfoProvider extends ChangeNotifier {
       log("_actorsImages: ${_actorInfoModel.name}");
     } catch (error) {
       log("_actorsInfo error: $error");
+    }
+    notifyListeners();
+  }
+
+  getPopularActorsInfoAPI(
+      {required String languageCode, required int pageNo}) async {
+    // _popularActorsModel.results?.clear();
+    try {
+      _popularActorsModel = await getPopularActorsInfo(
+          languageCode: languageCode, pageNo: pageNo);
+
+      _popularActorsModel.results?.forEach((element) {
+        if (element.profilePath != null && element.profilePath!.isNotEmpty) {
+          //  print("_allActorsImages: ${element.profilePath.toString()}");
+          _allActorsImages.add(element.profilePath!);
+          _actorNameList.add(element.name!);
+          _actorIdList.add(element.id.toString());
+        }
+      });
+      // log("_allActorsImages: ${_allActorsImages.toString()}");
+    } catch (error) {
+      log("_actorsImages error: ${error}");
     }
     notifyListeners();
   }

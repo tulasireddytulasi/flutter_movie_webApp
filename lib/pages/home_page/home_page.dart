@@ -4,6 +4,7 @@ import 'package:moviewebapp/pages/home_page/widgets/main_text.dart';
 import 'package:moviewebapp/pages/home_page/widgets/movie_cards.dart';
 import 'package:moviewebapp/pages/home_page/widgets/popular_movie_cards.dart';
 import 'package:moviewebapp/utils/colors.dart';
+import 'package:moviewebapp/utils/commom_functions.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -14,6 +15,18 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final Color borderColor = Colors.white;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // WidgetsBinding.instance!.addPostFrameCallback((_) {
+    //   final actorsInfoProvider =
+    //       Provider.of<ActorsInfoProvider>(context, listen: false);
+    //   actorsInfoProvider.getPopularActorsInfoAPI(
+    //       languageCode: "en-US", pageNo: 1);
+    // });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,12 +86,48 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Container(
                   height: 330,
-                  padding: const EdgeInsets.only(top: 30, bottom: 30),
+                  padding: const EdgeInsets.only(top: 30, bottom: 0),
                   margin: const EdgeInsets.only(top: 20),
                   color: LIGHTWHITE2,
                   child: PopularMovies(),
                 ),
                 const SizedBox(height: 20),
+                Container(
+                  margin: const EdgeInsets.only(left: 10, right: 10, top: 40),
+                  child: const Text(
+                    "Most Popular People",
+                    textAlign: TextAlign.center,
+                    softWrap: true,
+                    textScaleFactor: 1.5,
+                    style: TextStyle(
+                        fontSize: 26,
+                        color: BLACK,
+                        fontWeight: FontWeight.w700),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(
+                      left: margin / 2, right: margin / 2, top: 10),
+                  child: const Text(
+                    "Discover the top, most popular movies available now! Across theaters, streaming, and on-demand",
+                    textAlign: TextAlign.center,
+                    softWrap: true,
+                    textScaleFactor: 1.5,
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: BLACK1,
+                        fontWeight: FontWeight.w100),
+                  ),
+                ),
+                Container(
+                  height: getActorSectionHeight(screenSize: screenWidth),
+                  margin: const EdgeInsets.only(top: 20),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: DARK_JUNGLE_GREEN_1, width: 1),
+                  ),
+                  // child: const CircularWidget(),
+                ),
+                const SizedBox(height: 100),
               ],
             ),
           ),

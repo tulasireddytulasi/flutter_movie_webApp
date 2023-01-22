@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/pages/movie_info_screen/widgets/cast.dart';
 import 'package:moviewebapp/pages/movie_info_screen/widgets/movie_banner_widget.dart';
@@ -57,8 +56,8 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                 ),
                 shape: BoxShape.rectangle,
               ),
-              margin: const EdgeInsets.only(
-                top: kIsWeb ? 50 : 0,
+              margin: EdgeInsets.only(
+                top: _screenWidth >= 525 ? 50 : 0,
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.max,

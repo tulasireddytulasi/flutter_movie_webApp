@@ -1,4 +1,5 @@
-Map<String, dynamic> getMovieCardWidth({required double screenWidth}) {
+Map<String, dynamic> getActorCircularWidgetWidth(
+    {required double screenWidth}) {
   double cardHeight = 0;
   double columns = 5;
   double childAspectRatio = 9 / 16;
@@ -12,10 +13,10 @@ Map<String, dynamic> getMovieCardWidth({required double screenWidth}) {
     cardHeight = 2.8;
     columns = 8;
     isMovieTitleVisible = true;
-    childAspectRatio = 9 / 16.0;
+    childAspectRatio = 4 / 4.9;
     leftPadding = 70;
     rightPadding = 70;
-    crossAxisSpacing = 40;
+    crossAxisSpacing = 30;
     isMovieTitleVisible = true;
     maxBottomSheetWidth = 800;
   } else if (screenWidth <= 1700 && screenWidth >= 1400) {
@@ -82,7 +83,7 @@ Map<String, dynamic> getMovieCardWidth({required double screenWidth}) {
   } else if (screenWidth <= 400 && screenWidth >= 380) {
     cardHeight = 2.6;
     columns = 3;
-    childAspectRatio = 9 / 13.3;
+    childAspectRatio = 9 / 13.7;
     isMovieTitleVisible = false;
   } else if (screenWidth <= 380 && screenWidth >= 300) {
     cardHeight = 7.0;
@@ -111,125 +112,4 @@ Map<String, dynamic> getMovieCardWidth({required double screenWidth}) {
   layoutData["maxBottomSheetWidth"] = maxBottomSheetWidth;
 
   return layoutData;
-}
-
-double getBottomSheetWidth({required double screenWidth}) {
-  double cardWidth = 800;
-  if (screenWidth >= 1700) {
-    cardWidth = screenWidth / 2;
-  } else if (screenWidth >= 1700 && screenWidth <= 1600) {
-    cardWidth = 800;
-  } else if (screenWidth >= 1400 && screenWidth <= 1600) {
-    cardWidth = 800;
-  } else if (screenWidth >= 700 && screenWidth <= 1400) {
-    cardWidth = 800;
-  } else if (screenWidth <= 700) {
-    cardWidth = screenWidth;
-  }
-  return cardWidth;
-}
-
-double getFontSize({required double fontSize}) {
-  if (fontSize >= 1300) {
-    return 56;
-  } else {
-    return (fontSize * 0.04) + 4;
-  }
-}
-
-double getCardWidth({required double cardSize}) {
-  if (cardSize <= 350) {
-    return 300;
-  } else if (cardSize <= 450) {
-    return cardSize / 1.1;
-  } else if (cardSize <= 650) {
-    return cardSize / 1.3;
-  } else if (cardSize >= 1100) {
-    return 550;
-  } else {
-    return cardSize / 2;
-  }
-}
-
-double getCardHeight({required double cardSize}) {
-  if (cardSize <= 350) {
-    return 350;
-  } else if (cardSize <= 450) {
-    return cardSize / 1.2;
-  } else if (cardSize <= 650) {
-    return cardSize / 1.5;
-  } else if (cardSize >= 1100) {
-    return 550;
-  } else {
-    return cardSize / 2;
-  }
-}
-
-double getMainTextSize({required double cardSize}) {
-  double cardSize1 = cardSize;
-  if (cardSize1 >= 650) {
-    return cardSize1 / 3;
-  } else {
-    return cardSize1 / 1.5;
-  }
-}
-
-double getActorImageSize({required double screenSize}) {
-  print("screenSize: $screenSize");
-  if (screenSize >= 1360) {
-    return 160;
-  } else if (screenSize >= 900) {
-    return 200;
-  } else {
-    return 100;
-  }
-}
-
-double getActorImageRadius({required double screenSize}) {
-  if (screenSize >= 900) {
-    return 100;
-  }
-  return 50;
-}
-
-double getActorSectionHeight({required double screenSize}) {
-  print("getActorSectionHeight: $screenSize");
-  if (screenSize >= 1360) {
-    print("getActorSectionHeight: 240");
-    return 200;
-  } else if (screenSize >= 900) {
-    print("getActorSectionHeight: 150");
-    return 150;
-  } else {
-    print("getActorSectionHeight: 150");
-    return 150;
-  }
-}
-
-double getSimilarMoviesSectionHeight({required double screenSize}) {
-  if (screenSize >= 900) {
-    return 250;
-  }
-  return 180;
-}
-
-double getSimilarMoviesImageWidth({required double screenSize}) {
-  if (screenSize >= 900) {
-    return 150;
-  }
-  return 100;
-}
-
-double getSimilarMoviesImageHeight({required double screenSize}) {
-  if (screenSize >= 900) {
-    return 200;
-  }
-  return 130;
-}
-
-double getProfileImageSize({required double screenSize}) {
-  if (screenSize >= 900) {
-    return 160;
-  }
-  return 120;
 }

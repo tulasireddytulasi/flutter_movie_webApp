@@ -12,8 +12,10 @@ class BottomSheetWidget extends StatefulWidget {
 class _BottomSheetWidgetState extends State<BottomSheetWidget> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<NavigationProvider>(builder: (context, provider, child) {
-      return provider.screensList[provider.currentScreenIndex];
-    });
+    return SafeArea(
+      child: Consumer<NavigationProvider>(builder: (context, provider, child) {
+        return provider.screensList[provider.currentScreenIndex];
+      }),
+    );
   }
 }

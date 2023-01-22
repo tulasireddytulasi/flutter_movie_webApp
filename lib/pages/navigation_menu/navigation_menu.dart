@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/pages/actors_page/actors_page.dart';
+import 'package:moviewebapp/pages/all_actors_page/all_actors_page.dart';
 import 'package:moviewebapp/pages/all_movies_screen/all_movies_screen.dart';
 import 'package:moviewebapp/pages/home_page/home_page.dart';
 import 'package:moviewebapp/utils/colors.dart';
@@ -15,6 +16,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
   final _screens = [
     const HomePage(),
     const MovieHomePage(),
+    const AllActorsPage(),
     const ActorsPage(
       actorId: "",
     )
@@ -36,8 +38,8 @@ class _NavigationMenuState extends State<NavigationMenu> {
           },
           titles: const [
             "Home",
-            "TV Shows",
             "Movies",
+            "People",
             // "New & Popular",
             // "My List"
           ],

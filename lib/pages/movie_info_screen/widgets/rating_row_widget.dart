@@ -53,12 +53,7 @@ class _RatingWidgetState extends State<RatingWidget> {
                     color: LIGHTWHITE,
                   ),
                 ),
-                onTap: () {
-                  final movieInfoProvider =
-                      Provider.of<MovieInfoProvider>(context, listen: false);
-                  movieInfoProvider.clearBackdropPath();
-                  Navigator.pop(context);
-                },
+                onTap: () {},
               ),
             ),
             Container(

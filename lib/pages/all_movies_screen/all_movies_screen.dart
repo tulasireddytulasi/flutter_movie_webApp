@@ -56,7 +56,7 @@ class _MovieHomePageState extends State<MovieHomePage> {
     return Consumer<MoviesProvider>(builder: (context, movieProvider, child) {
       final double screenWidth = MediaQuery.of(context).size.width;
       return Scaffold(
-        backgroundColor: DARK_JUNGLE_GREEN_1,
+        backgroundColor: tealishBlue,
         body: Container(
           // decoration: BoxDecoration(border: Border.all(color: RED, width: 1)),
           padding: EdgeInsets.only(left: leftPadding, right: rightPadding),

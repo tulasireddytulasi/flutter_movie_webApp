@@ -32,10 +32,9 @@ class MoviesProvider extends ChangeNotifier {
   getPopularMoviesAPI({required String pageNo}) async {
     _getPopularMoviesModel = await getPopularMoviesList(
         movieType: "popular", pageNo: pageNo, withOriginalLanguage: "en");
-
     _getPopularMoviesModel.results?.forEach((element) {
       _title.add(element.title!);
-      _date.add(element.releaseDate!.toIso8601String());
+      _date.add(element.releaseDate?.toIso8601String() ?? "0000-00-00");
       _img.add(element.posterPath!);
       _movieId.add(element.id.toString());
     });

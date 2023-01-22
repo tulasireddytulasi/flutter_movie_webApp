@@ -23,7 +23,7 @@ class MovieCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<MoviesProvider>(builder: (context, movieProvider, child) {
       return Card(
-        color: DARK_JUNGLE_GREEN_1,
+        color: tealishBlue,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,7 +46,7 @@ class MovieCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                       color: WHITE,
-                      fontSize: 14,
+                      fontSize: 12,
                       fontFamily: MONTSERRAT_MEDIUM),
                 ),
               ),
