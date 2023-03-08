@@ -38,6 +38,7 @@ Future<MoviesModel> getPopularMoviesList({
         withOriginalLanguage: withOriginalLanguage,
         withGenres: withGenres);
     getMoviesModel = getMoviesFromJson(response.body);
+    await Future.delayed(const Duration(seconds: 1));
     return getMoviesModel;
   } catch (error, stackTrace) {
     rethrow;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviewebapp/animations/ripple_animation.dart';
 import 'package:moviewebapp/models/get_movies_model.dart';
 import 'package:moviewebapp/pages/all_movies_screen/widgets/movie_card.dart';
 import 'package:moviewebapp/providers/movies_provider.dart';
@@ -104,7 +105,7 @@ class _MovieHomePageState extends State<MovieHomePage> {
             builder:
                 (BuildContext context, AsyncSnapshot<MoviesModel> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+                return const RipplesAnimation();
               } else if (snapshot.connectionState == ConnectionState.done) {
                 if (snapshot.hasError) {
                   return messageText(text: "Error");
