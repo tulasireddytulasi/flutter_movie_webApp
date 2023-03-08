@@ -15,7 +15,11 @@ class NavigationMenu extends StatefulWidget {
 class _NavigationMenuState extends State<NavigationMenu> {
   final _screens = [
     const Dashboard(),
-    const MovieHomePage(),
+    const MovieHomePage(
+      withOriginalLanguage: "",
+      movieType: "",
+      withGenres: "",
+    ),
     const AllActorsPage(),
     const ActorsPage(
       actorId: "",

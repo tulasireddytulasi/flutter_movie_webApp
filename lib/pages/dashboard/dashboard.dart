@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviewebapp/pages/all_movies_screen/all_movies_screen.dart';
 import 'package:moviewebapp/pages/dashboard/widgets/main_banner.dart';
 import 'package:moviewebapp/pages/dashboard/widgets/movie_label.dart';
 import 'package:moviewebapp/pages/dashboard/widgets/movies_list.dart';
@@ -83,6 +84,19 @@ class _DashboardState extends State<Dashboard> {
                   children: [
                     MovieLabel(
                       movieLabel: moviesDataMap["$index"]["movieLabel"],
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MovieHomePage(
+                              movieType: moviesDataMap["$index"]["movieType"],
+                              withOriginalLanguage: moviesDataMap["$index"]
+                                  ["withOriginalLanguage"],
+                              withGenres: moviesDataMap["$index"]["withGenres"],
+                            ),
+                          ),
+                        );
+                      },
                     ),
                     Container(
                       height: getSimilarMoviesSectionHeight(

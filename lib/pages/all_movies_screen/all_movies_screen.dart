@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:moviewebapp/models/get_movies_model.dart';
 import 'package:moviewebapp/pages/all_movies_screen/widgets/movie_card.dart';
 import 'package:moviewebapp/providers/movies_provider.dart';
-import 'package:moviewebapp/providers/navigation_provider.dart';
+import 'package:moviewebapp/responses/movie_apis.dart';
 import 'package:moviewebapp/utils/colors.dart';
 import 'package:moviewebapp/utils/commom_functions.dart';
 import 'package:moviewebapp/utils/navigation/navigation.dart';
 import 'package:provider/provider.dart';
 
 class MovieHomePage extends StatefulWidget {
-  const MovieHomePage({Key? key}) : super(key: key);
+  const MovieHomePage({
+    Key? key,
+    required this.withOriginalLanguage,
+    required this.movieType,
+    this.withGenres,
+  }) : super(key: key);
+  final String withOriginalLanguage;
+  final String movieType;
+  final String? withGenres;
 
   @override
   _MovieHomePageState createState() => _MovieHomePageState();
@@ -26,17 +35,52 @@ class _MovieHomePageState extends State<MovieHomePage> {
   Map<String, dynamic> layoutData = {};
   bool isMovieTitleVisible = true;
 
+  MoviesModel _moviesModel = MoviesModel();
+  late Future<MoviesModel> _moviesData;
+
+  final List<String> _title = [];
+  final List<String> _movieId = [];
+  final List<String> _img = [];
+  final List<String> _date = [];
+
+  clearData() {
+    _title.clear();
+    _movieId.clear();
+    _img.clear();
+    _date.clear();
+  }
+
+  processData({required MoviesModel moviesModel}) {
+    _moviesModel = moviesModel;
+    _moviesModel.results?.forEach((element) {
+      _title.add(element.title ?? "");
+      _img.add(element.posterPath ?? "");
+      _movieId.add(element.id.toString());
+      _date.add(element.releaseDate?.toIso8601String() ?? "0000-00-00");
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    final movieProvider = Provider.of<MoviesProvider>(context, listen: false);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (movieProvider.getPopularMoviesModel.results == null) {
-        movieProvider.getPopularMoviesAPI(pageNo: "1");
-        movieProvider.getPopularMoviesAPI(pageNo: "2");
-        movieProvider.getPopularMoviesAPI(pageNo: "3");
-      }
-    });
+    _moviesData = getPopularMoviesList(
+      movieType: widget.movieType,
+      pageNo: "1",
+      withOriginalLanguage: widget.withOriginalLanguage,
+      withGenres: widget.withGenres,
+    );
+  }
+
+  Widget messageText({required String text}) {
+    return Center(
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 14,
+          color: BLACK,
+        ),
+      ),
+    );
   }
 
   @override
@@ -55,40 +99,57 @@ class _MovieHomePageState extends State<MovieHomePage> {
     return Consumer<MoviesProvider>(builder: (context, movieProvider, child) {
       return Scaffold(
         backgroundColor: tealishBlue,
-        body: Container(
-          // decoration: BoxDecoration(border: Border.all(color: RED, width: 1)),
-          padding: EdgeInsets.only(left: leftPadding, right: rightPadding),
-          child: GridView.builder(
-              scrollDirection: Axis.vertical,
-              physics: const ScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                childAspectRatio: _childAspectRatio,
-                crossAxisCount: columns,
-                // mainAxisSpacing: 20,
-                crossAxisSpacing: crossAxisSpacing,
-              ),
-              itemBuilder: (BuildContext context, int index) {
-                return Consumer<NavigationProvider>(
-                    builder: (context, navigationProvider, child) {
-                  return InkWell(
-                    onTap: () {
-                      Navigation().navigateToMoviesInfoPage(
-                        context: context,
-                        movieId: movieProvider.movieId[index],
-                        screenWidth: screenWidth,
-                      );
-                    },
-                    child: MovieCard(
-                      movieName: movieProvider.title[index],
-                      imageURL: movieProvider.img[index],
-                      movieReleaseDate: movieProvider.date[index],
-                      isMovieTitleVisible: isMovieTitleVisible,
-                    ),
+        body: FutureBuilder(
+            future: _moviesData,
+            builder:
+                (BuildContext context, AsyncSnapshot<MoviesModel> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasError) {
+                  return messageText(text: "Error");
+                } else if (snapshot.hasData) {
+                  clearData();
+                  processData(moviesModel: snapshot.data!);
+                  return Container(
+                    // decoration: BoxDecoration(border: Border.all(color: RED, width: 1)),
+                    padding:
+                        EdgeInsets.only(left: leftPadding, right: rightPadding),
+                    child: GridView.builder(
+                        scrollDirection: Axis.vertical,
+                        physics: const ScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          childAspectRatio: _childAspectRatio,
+                          crossAxisCount: columns,
+                          // mainAxisSpacing: 20,
+                          crossAxisSpacing: crossAxisSpacing,
+                        ),
+                        itemBuilder: (BuildContext context, int index) {
+                          return InkWell(
+                            onTap: () {
+                              Navigation().navigateToMoviesInfoPage(
+                                context: context,
+                                movieId: _movieId[index],
+                                screenWidth: screenWidth,
+                              );
+                            },
+                            child: MovieCard(
+                              movieName: _title[index],
+                              imageURL: _img[index],
+                              movieReleaseDate: _date[index],
+                              isMovieTitleVisible: isMovieTitleVisible,
+                            ),
+                          );
+                        },
+                        itemCount: _title.length),
                   );
-                });
-              },
-              itemCount: movieProvider.title.length),
-        ),
+                } else {
+                  return messageText(text: "No Movies");
+                }
+              } else {
+                return messageText(text: 'State: ${snapshot.connectionState}');
+              }
+            }),
       );
     });
   }

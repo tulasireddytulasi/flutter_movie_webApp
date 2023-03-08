@@ -11,6 +11,7 @@ const String imgURL =
 class Constants {
   static const String myList = "My List";
   static const String info = "Info";
+  static const String viewMore = "View More";
 
   static const String popular = "popular";
   static const String topRated = "top_rated";
