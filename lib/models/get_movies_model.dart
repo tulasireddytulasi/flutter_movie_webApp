@@ -4,12 +4,13 @@
 
 import 'dart:convert';
 
-GetMovies getMoviesFromJson(String str) => GetMovies.fromJson(json.decode(str));
+MoviesModel getMoviesFromJson(String str) =>
+    MoviesModel.fromJson(json.decode(str));
 
-String getMoviesToJson(GetMovies data) => json.encode(data.toJson());
+String getMoviesToJson(MoviesModel data) => json.encode(data.toJson());
 
-class GetMovies {
-  GetMovies({
+class MoviesModel {
+  MoviesModel({
     this.page,
     this.results,
     this.totalPages,
@@ -21,7 +22,7 @@ class GetMovies {
   int? totalPages;
   int? totalResults;
 
-  factory GetMovies.fromJson(Map<String, dynamic> json) => GetMovies(
+  factory MoviesModel.fromJson(Map<String, dynamic> json) => MoviesModel(
         page: json["page"] == null ? null : json["page"],
         results: json["results"] == null
             ? null

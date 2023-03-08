@@ -27,7 +27,7 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
     final movieInfoProvider =
         Provider.of<MovieInfoProvider>(context, listen: false);
     final movieProvider = Provider.of<MoviesProvider>(context, listen: false);
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       movieInfoProvider.getMoviesInfoAPI(
           movieId: widget.movieId, appendToResponse: "credits");
       movieProvider.getSimilarMoviesAPI(movieId: widget.movieId);

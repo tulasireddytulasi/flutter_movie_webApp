@@ -41,6 +41,7 @@ flutter:
   assets:
     - assets/images/
     - assets/images/logos/
+    - assets/icons/
 
   fonts:
     - family: MontserratRegular

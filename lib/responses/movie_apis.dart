@@ -11,10 +11,11 @@ Future<Response> getMoviesList({
   required String movieType,
   required String pageNo,
   required String withOriginalLanguage,
+  String? withGenres,
 }) async {
   final String getPopularMoviesURL =
-      "movie/popular?api_key=${ApiConstants.apiKey}&with_original_language="
-      "$withOriginalLanguage&page=$pageNo";
+      "movie/$movieType?api_key=${ApiConstants.apiKey}&with_original_language="
+      "$withOriginalLanguage&page=$pageNo&with_genres=$withGenres";
   try {
     Response response = await getMethod(getPopularMoviesURL);
     return response;
@@ -23,17 +24,19 @@ Future<Response> getMoviesList({
   }
 }
 
-Future<GetMovies> getPopularMoviesList({
+Future<MoviesModel> getPopularMoviesList({
   required String movieType,
   required String pageNo,
   required String withOriginalLanguage,
+  String? withGenres,
 }) async {
-  GetMovies getMoviesModel;
+  MoviesModel getMoviesModel;
   try {
     Response response = await getMoviesList(
         movieType: movieType,
         pageNo: pageNo,
-        withOriginalLanguage: withOriginalLanguage);
+        withOriginalLanguage: withOriginalLanguage,
+        withGenres: withGenres);
     getMoviesModel = getMoviesFromJson(response.body);
     return getMoviesModel;
   } catch (error, stackTrace) {
@@ -89,12 +92,12 @@ Future<Response> getSimilarMoviesList({
   }
 }
 
-Future<GetMovies> getSimilarMoviesListData({
+Future<MoviesModel> getSimilarMoviesListData({
   required String movieId,
   required String pageNo,
   required String withOriginalLanguage,
 }) async {
-  GetMovies getSimilarMoviesModel;
+  MoviesModel getSimilarMoviesModel;
   try {
     Response response = await getSimilarMoviesList(
         movieId: movieId,

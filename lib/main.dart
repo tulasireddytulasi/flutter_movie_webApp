@@ -1,7 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/pages/navigation_menu/navigation_menu.dart';
+import 'package:moviewebapp/pages/dashboard/dashboard.dart';
 import 'package:moviewebapp/providers/actors_info_provider.dart';
+import 'package:moviewebapp/providers/dashboard_provider.dart';
 import 'package:moviewebapp/providers/movie_info_provider.dart';
 import 'package:moviewebapp/providers/movies_provider.dart';
 import 'package:moviewebapp/providers/navigation_provider.dart';
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => DashBoardProvider()),
         ChangeNotifierProvider(create: (_) => MoviesProvider()),
         ChangeNotifierProvider(create: (_) => MovieInfoProvider()),
         ChangeNotifierProvider(create: (_) => ActorsInfoProvider()),
@@ -32,7 +34,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const NavigationMenu(),
+        home: const Dashboard(),
       ),
     );
   }

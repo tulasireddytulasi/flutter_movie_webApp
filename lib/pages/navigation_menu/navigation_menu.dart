@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moviewebapp/pages/actors_page/actors_page.dart';
 import 'package:moviewebapp/pages/all_actors_page/all_actors_page.dart';
 import 'package:moviewebapp/pages/all_movies_screen/all_movies_screen.dart';
-import 'package:moviewebapp/pages/home_page/home_page.dart';
+import 'package:moviewebapp/pages/dashboard/dashboard.dart';
 import 'package:moviewebapp/utils/colors.dart';
 
 class NavigationMenu extends StatefulWidget {
@@ -14,7 +14,7 @@ class NavigationMenu extends StatefulWidget {
 
 class _NavigationMenuState extends State<NavigationMenu> {
   final _screens = [
-    const HomePage(),
+    const Dashboard(),
     const MovieHomePage(),
     const AllActorsPage(),
     const ActorsPage(
@@ -50,6 +50,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
           onPressed: () {},
         ),
       ),
+      extendBodyBehindAppBar: true,
       body: _screens[_currentScreen],
     );
   }
@@ -101,7 +102,6 @@ class _MovieAppBarState extends State<MovieAppBar> {
   }
 
   Widget appBarLableItem({required int index, required String title}) {
-    final screenWidth = MediaQuery.of(context).size.width;
     return InkWell(
       onTap: () {
         widget.onChange(index);

@@ -5,8 +5,8 @@ import 'package:moviewebapp/models/get_movies_model.dart';
 import 'package:moviewebapp/responses/movie_apis.dart';
 
 class MoviesProvider extends ChangeNotifier {
-  GetMovies _getPopularMoviesModel = GetMovies();
-  GetMovies get getPopularMoviesModel => _getPopularMoviesModel;
+  MoviesModel _getPopularMoviesModel = MoviesModel();
+  MoviesModel get getPopularMoviesModel => _getPopularMoviesModel;
 
   final List<String> _title = [];
   List<String> get title => _title;
@@ -51,9 +51,9 @@ class MoviesProvider extends ChangeNotifier {
 
       _getPopularMoviesModel.results?.forEach((element) {
         if (element.posterPath != null && element.posterPath!.isNotEmpty) {
-          _similarMovieTitle.add(element.title!);
+          _similarMovieTitle.add(element.title ?? "");
           // _date.add(element.releaseDate!.toIso8601String());
-          _similarMoviePosters.add(element.posterPath!);
+          _similarMoviePosters.add(element.posterPath ?? "");
           _similarMovieId.add(element.id.toString());
         }
       });

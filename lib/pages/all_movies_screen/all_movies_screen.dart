@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/pages/all_movies_screen/widgets/movie_card.dart';
-import 'package:moviewebapp/pages/bottom_sheet/bottom_sheet_widget.dart';
-import 'package:moviewebapp/pages/movie_info_screen/movie_info.dart';
 import 'package:moviewebapp/providers/movies_provider.dart';
 import 'package:moviewebapp/providers/navigation_provider.dart';
 import 'package:moviewebapp/utils/colors.dart';
 import 'package:moviewebapp/utils/commom_functions.dart';
+import 'package:moviewebapp/utils/navigation/navigation.dart';
 import 'package:provider/provider.dart';
 
 class MovieHomePage extends StatefulWidget {
@@ -31,7 +30,7 @@ class _MovieHomePageState extends State<MovieHomePage> {
   void initState() {
     super.initState();
     final movieProvider = Provider.of<MoviesProvider>(context, listen: false);
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       if (movieProvider.getPopularMoviesModel.results == null) {
         movieProvider.getPopularMoviesAPI(pageNo: "1");
         movieProvider.getPopularMoviesAPI(pageNo: "2");
@@ -42,7 +41,7 @@ class _MovieHomePageState extends State<MovieHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final double screenWidth = MediaQuery.of(context).size.width;
     layoutData = getMovieCardWidth(screenWidth: screenWidth);
     cardHeight = layoutData["cardHeight"];
     columns = layoutData["columns"].toInt();
@@ -54,7 +53,6 @@ class _MovieHomePageState extends State<MovieHomePage> {
     maxBottomSheetWidth = layoutData["maxBottomSheetWidth"];
 
     return Consumer<MoviesProvider>(builder: (context, movieProvider, child) {
-      final double screenWidth = MediaQuery.of(context).size.width;
       return Scaffold(
         backgroundColor: tealishBlue,
         body: Container(
@@ -74,39 +72,11 @@ class _MovieHomePageState extends State<MovieHomePage> {
                     builder: (context, navigationProvider, child) {
                   return InkWell(
                     onTap: () {
-                      if (screenWidth >= 600) {
-                        navigationProvider.setMovieInfoScreen(
-                            movieId: movieProvider.movieId[index]);
-                        navigationProvider.setCurrentScreenIndex(
-                            currentScreenIndex: 0);
-                        showModalBottomSheet(
-                            context: context,
-                            backgroundColor: Colors.transparent,
-                            isScrollControlled: true,
-                            isDismissible: true,
-                            enableDrag: false,
-                            elevation: 0,
-                            //  barrierColor: Colors.black.withAlpha(1),
-                            shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(50))),
-                            builder: (context) {
-                              return Container(
-                                constraints: const BoxConstraints(
-                                  maxWidth: 600,
-                                  minHeight: 300,
-                                ),
-                                child: const BottomSheetWidget(),
-                              );
-                            });
-                      } else {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MovieInfoScreen(
-                                  movieId: movieProvider.movieId[index])),
-                        );
-                      }
+                      Navigation().navigateToMoviesInfoPage(
+                        context: context,
+                        movieId: movieProvider.movieId[index],
+                        screenWidth: screenWidth,
+                      );
                     },
                     child: MovieCard(
                       movieName: movieProvider.title[index],
