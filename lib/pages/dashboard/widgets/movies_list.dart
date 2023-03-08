@@ -27,6 +27,12 @@ class _MoviesListState extends State<MoviesList> {
   final List<String> _movieId = [];
   final List<String> _img = [];
 
+  clearData() {
+    _title.clear();
+    _movieId.clear();
+    _img.clear();
+  }
+
   processData({required MoviesModel moviesModel}) {
     _moviesModel = moviesModel;
     _moviesModel.results?.forEach((element) {
@@ -73,6 +79,7 @@ class _MoviesListState extends State<MoviesList> {
           if (snapshot.hasError) {
             return messageText(text: "Error");
           } else if (snapshot.hasData) {
+            clearData();
             processData(moviesModel: snapshot.data!);
             return ListView.builder(
                 itemCount: _title.length,
