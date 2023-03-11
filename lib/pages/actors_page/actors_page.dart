@@ -43,46 +43,48 @@ class _ActorsPageState extends State<ActorsPage> {
     final bool _webView = _screenWidth >= 600;
     return Scaffold(
       backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        backgroundColor: tealishBlue,
-        elevation: 1,
-        leading: InkWell(
-          onTap: () {
-            Navigator.of(context).pop();
-          },
-          child: Container(
-            padding: const EdgeInsets.all(2),
-            margin: const EdgeInsets.all(10),
-            child: const Icon(
-              Icons.arrow_back,
-              color: WHITE,
+      appBar: _webView
+          ? null
+          : AppBar(
+              backgroundColor: tealishBlue,
+              elevation: 1,
+              leading: InkWell(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  margin: const EdgeInsets.all(10),
+                  child: const Icon(
+                    Icons.arrow_back,
+                    color: WHITE,
+                  ),
+                ),
+              ),
+              // actions: [
+              //   InkWell(
+              //     onTap: () {
+              //       Navigator.of(context).pop();
+              //     },
+              //     child: Container(
+              //       decoration: BoxDecoration(
+              //           border: Border.all(color: BLACK, width: 2),
+              //           shape: BoxShape.circle,
+              //           color: BLACK),
+              //       padding: const EdgeInsets.all(2),
+              //       margin: const EdgeInsets.all(10),
+              //       child: const Icon(
+              //         Icons.clear,
+              //         color: WHITE,
+              //       ),
+              //     ),
+              //   ),
+              // ],
+              title: const Text(
+                "Actors Screen",
+                style: TextStyle(fontSize: 18, color: WHITE),
+              ),
             ),
-          ),
-        ),
-        // actions: [
-        //   InkWell(
-        //     onTap: () {
-        //       Navigator.of(context).pop();
-        //     },
-        //     child: Container(
-        //       decoration: BoxDecoration(
-        //           border: Border.all(color: BLACK, width: 2),
-        //           shape: BoxShape.circle,
-        //           color: BLACK),
-        //       padding: const EdgeInsets.all(2),
-        //       margin: const EdgeInsets.all(10),
-        //       child: const Icon(
-        //         Icons.clear,
-        //         color: WHITE,
-        //       ),
-        //     ),
-        //   ),
-        // ],
-        title: const Text(
-          "Actors Screen",
-          style: TextStyle(fontSize: 18, color: WHITE),
-        ),
-      ),
       body: SafeArea(
         child: Consumer<ActorsInfoProvider>(
             builder: (context, actorsInfoProvider, child) {
@@ -111,7 +113,7 @@ class _ActorsPageState extends State<ActorsPage> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Visibility(
-                      visible: false, //_webView ? true : false,
+                      visible: _webView ? true : false,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
