@@ -23,6 +23,9 @@ class _MoviesCardState extends State<MoviesCard> {
   @override
   Widget build(BuildContext context) {
     final double _screenWidth = MediaQuery.of(context).size.width;
+    String imgUrl = widget.castImage.isNotEmpty
+        ? widget.castImage
+        : "/wQ53sO5n9LCFbssV3oQ4CuajL1L.jpg";
     return Column(
       children: [
         Container(
@@ -30,7 +33,7 @@ class _MoviesCardState extends State<MoviesCard> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(5.0),
             child: Image.network(
-              ApiConstants.movieImageBaseUrlw185 + widget.castImage,
+              ApiConstants.movieImageBaseUrlw185 + imgUrl,
               width: getSimilarMoviesImageWidth(screenSize: _screenWidth),
               height: getSimilarMoviesImageHeight(screenSize: _screenWidth),
               fit: BoxFit.cover,

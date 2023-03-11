@@ -102,8 +102,7 @@ class ActorsInfoProvider extends ChangeNotifier {
       _dob = DateFormat('yyyy-MM-dd').format(movieReleaseDate);
       _birthPlace = _actorInfoModel.placeOfBirth!;
       _role = _actorInfoModel.knownForDepartment!;
-      _homePage = _actorInfoModel.homepage;
-
+      _homePage = _actorInfoModel.homepage ?? "";
       log("_actorsImages: ${_actorInfoModel.name}");
     } catch (error) {
       log("_actorsInfo error: $error");

@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:http/http.dart';
 import 'package:moviewebapp/models/actor_images_model.dart';
+import 'package:moviewebapp/models/actor_movie_model.dart';
 import 'package:moviewebapp/models/actors_info_model.dart';
 import 'package:moviewebapp/models/get_movie_info_model.dart';
 import 'package:moviewebapp/models/get_movies_model.dart';
@@ -145,9 +148,22 @@ Future<PopularActorsModel> getPopularActorsInfo(
       "person/popular/?&language=$languageCode&page=$pageNo&api_key=${ApiConstants.apiKey}";
   try {
     Response response = await getMethod(_actorsInfo);
-    // log("info: ${response.body}");
     getPopularActorsInfo = popularActorsModelFromJson(response.body);
     return getPopularActorsInfo;
+  } catch (error, stackTrace) {
+    rethrow;
+  }
+}
+
+Future<ActorMovieModel> getActorsActedMoviesInfo(
+    {required String actorId}) async {
+  ActorMovieModel actorsMovieModel;
+  final String _actorsInfo =
+      "person/$actorId/movie_credits?&api_key=${ApiConstants.apiKey}";
+  try {
+    Response response = await getMethod(_actorsInfo);
+    actorsMovieModel = ActorMovieModel.fromJson(json.decode(response.body));
+    return actorsMovieModel;
   } catch (error, stackTrace) {
     rethrow;
   }

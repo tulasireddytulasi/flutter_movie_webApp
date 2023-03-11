@@ -1,28 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/models/get_movies_model.dart';
+import 'package:moviewebapp/models/actor_movie_model.dart';
 import 'package:moviewebapp/pages/widgets/custom_message.dart';
 import 'package:moviewebapp/pages/widgets/movies_card.dart';
 import 'package:moviewebapp/responses/movie_apis.dart';
 import 'package:moviewebapp/utils/navigation/navigation.dart';
 
-class MoviesList extends StatefulWidget {
-  const MoviesList({
-    Key? key,
-    required this.withOriginalLanguage,
-    required this.movieType,
-    this.withGenres,
-  }) : super(key: key);
-  final String withOriginalLanguage;
-  final String movieType;
-  final String? withGenres;
+class ActorMoviesWidget extends StatefulWidget {
+  const ActorMoviesWidget({Key? key, required this.actorId}) : super(key: key);
+
+  final String actorId;
 
   @override
-  _MoviesListState createState() => _MoviesListState();
+  State<ActorMoviesWidget> createState() => _ActorMoviesWidgetState();
 }
 
-class _MoviesListState extends State<MoviesList> {
-  MoviesModel _moviesModel = MoviesModel();
+class _ActorMoviesWidgetState extends State<ActorMoviesWidget> {
+  ActorMovieModel _moviesModel = ActorMovieModel();
 
+  late Future<ActorMovieModel> _moviesData;
   final List<String> _title = [];
   final List<String> _movieId = [];
   final List<String> _img = [];
@@ -33,25 +28,20 @@ class _MoviesListState extends State<MoviesList> {
     _img.clear();
   }
 
-  processData({required MoviesModel moviesModel}) {
+  processData({required ActorMovieModel moviesModel}) {
     _moviesModel = moviesModel;
-    _moviesModel.results?.forEach((element) {
+    _moviesModel.cast?.forEach((element) {
       _title.add(element.title ?? "");
       _img.add(element.posterPath ?? "");
       _movieId.add(element.id.toString());
     });
   }
 
-  late Future<MoviesModel> _moviesData;
-
   @override
   void initState() {
     super.initState();
-    _moviesData = getPopularMoviesList(
-      movieType: widget.movieType,
-      pageNo: "1",
-      withOriginalLanguage: widget.withOriginalLanguage,
-      withGenres: widget.withGenres,
+    _moviesData = getActorsActedMoviesInfo(
+      actorId: widget.actorId,
     );
   }
 
@@ -60,7 +50,7 @@ class _MoviesListState extends State<MoviesList> {
     final double _screenWidth = MediaQuery.of(context).size.width;
     return FutureBuilder(
       future: _moviesData,
-      builder: (BuildContext context, AsyncSnapshot<MoviesModel> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<ActorMovieModel> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.connectionState == ConnectionState.done) {
@@ -68,7 +58,6 @@ class _MoviesListState extends State<MoviesList> {
             return const CustomMessage(text: "Error");
           } else if (snapshot.hasData) {
             clearData();
-            processData(moviesModel: snapshot.data!);
             return ListView.builder(
                 itemCount: _title.length,
                 scrollDirection: Axis.horizontal,
@@ -90,7 +79,7 @@ class _MoviesListState extends State<MoviesList> {
                   );
                 });
           } else {
-            return const CustomMessage(text: "No Movies");
+            return CustomMessage(text: "No Movies");
           }
         } else {
           return CustomMessage(text: "State: ${snapshot.connectionState}");

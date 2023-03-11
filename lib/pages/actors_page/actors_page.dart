@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:moviewebapp/pages/actors_page/widgets/ActorMoviesWidget.dart';
 import 'package:moviewebapp/pages/actors_page/widgets/actors_Images_widget.dart';
 import 'package:moviewebapp/pages/actors_page/widgets/lable_widget.dart';
-import 'package:moviewebapp/pages/movie_info_screen/widgets/similar_movies.dart';
 import 'package:moviewebapp/providers/actors_info_provider.dart';
 import 'package:moviewebapp/responses/api_constants.dart';
 import 'package:moviewebapp/utils/colors.dart';
@@ -342,9 +342,7 @@ class _ActorsPageState extends State<ActorsPage> {
                       height: getSimilarMoviesSectionHeight(
                           screenSize: _screenWidth),
                       margin: const EdgeInsets.only(top: 0, left: 10),
-                      child: SimilarMovies(
-                          canNavigateToNewPage:
-                              _screenWidth >= 600 ? false : true),
+                      child: ActorMoviesWidget(actorId: widget.actorId),
                     ),
                   ],
                 ),

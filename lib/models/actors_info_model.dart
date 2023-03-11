@@ -27,9 +27,9 @@ class ActorInfoModel {
   List<String>? alsoKnownAs;
   String? biography;
   DateTime? birthday;
-  dynamic? deathday;
+  dynamic deathday;
   int? gender;
-  dynamic? homepage;
+  String? homepage;
   int? id;
   String? imdbId;
   String? knownForDepartment;
