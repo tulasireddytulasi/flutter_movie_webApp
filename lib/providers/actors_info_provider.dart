@@ -112,20 +112,17 @@ class ActorsInfoProvider extends ChangeNotifier {
 
   getPopularActorsInfoAPI(
       {required String languageCode, required int pageNo}) async {
-    // _popularActorsModel.results?.clear();
     try {
       _popularActorsModel = await getPopularActorsInfo(
           languageCode: languageCode, pageNo: pageNo);
 
       _popularActorsModel.results?.forEach((element) {
         if (element.profilePath != null && element.profilePath!.isNotEmpty) {
-          //  print("_allActorsImages: ${element.profilePath.toString()}");
           _allActorsImages.add(element.profilePath!);
           _actorNameList.add(element.name!);
           _actorIdList.add(element.id.toString());
         }
       });
-      // log("_allActorsImages: ${_allActorsImages.toString()}");
     } catch (error) {
       log("_actorsImages error: ${error}");
     }

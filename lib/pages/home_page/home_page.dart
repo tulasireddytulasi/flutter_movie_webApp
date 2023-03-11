@@ -32,8 +32,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double margin = screenWidth / 2;
-    final double cardWidth = screenWidth / 2;
-    print("cardWidth: $cardWidth");
     return Scaffold(
       backgroundColor: WHITE,
       body: SafeArea(

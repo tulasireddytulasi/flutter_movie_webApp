@@ -145,12 +145,10 @@ class ImageViewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(url);
     return FadeInImage(
       placeholder: const AssetImage(moviePlaceHolder),
       image: NetworkImage(url),
       imageErrorBuilder: (context, error, stackTrace) {
-        print("error: $error, $stackTrace");
         return Image.asset(
           movieBackDrop,
           width: getBottomSheetWidth(screenWidth: width) + 30,

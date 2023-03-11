@@ -47,7 +47,6 @@ class _AllActorsPageState extends State<AllActorsPage> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    // print("screenWidth aa: $screenWidth");
     layoutData = getActorCircularWidgetWidth(screenWidth: screenWidth);
     cardHeight = layoutData["cardHeight"];
     columns = layoutData["columns"].toInt();

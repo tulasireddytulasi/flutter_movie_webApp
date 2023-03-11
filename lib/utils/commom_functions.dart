@@ -175,11 +175,10 @@ double getMainTextSize({required double cardSize}) {
 }
 
 double getActorImageSize({required double screenSize}) {
-  print("screenSize: $screenSize");
   if (screenSize >= 1360) {
     return 160;
   } else if (screenSize >= 900) {
-    return 200;
+    return 160;
   } else {
     return 100;
   }
@@ -193,15 +192,11 @@ double getActorImageRadius({required double screenSize}) {
 }
 
 double getActorSectionHeight({required double screenSize}) {
-  print("getActorSectionHeight: $screenSize");
   if (screenSize >= 1360) {
-    print("getActorSectionHeight: 240");
     return 200;
   } else if (screenSize >= 900) {
-    print("getActorSectionHeight: 150");
-    return 150;
+    return 200;
   } else {
-    print("getActorSectionHeight: 150");
     return 150;
   }
 }
