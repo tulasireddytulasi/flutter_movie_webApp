@@ -64,18 +64,9 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(20),
-                        topLeft: Radius.circular(20),
-                      ),
-                      shape: BoxShape.rectangle,
-                    ),
-                    child: MovieBannerWidget(
-                      movieBannerImage: movieInfoProvider.backdropPath,
-                      showBanner: true,
-                    ),
+                  MovieBannerWidget(
+                    movieBannerImage: movieInfoProvider.backdropPath,
+                    showBanner: true,
                   ),
                   Padding(
                     padding: EdgeInsets.only(
