@@ -89,6 +89,8 @@ class _DashboardState extends State<Dashboard> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => MovieHomePage(
+                              screenTitle: moviesDataMap["$index"]
+                                  ["movieLabel"],
                               movieType: moviesDataMap["$index"]["movieType"],
                               withOriginalLanguage: moviesDataMap["$index"]
                                   ["withOriginalLanguage"],

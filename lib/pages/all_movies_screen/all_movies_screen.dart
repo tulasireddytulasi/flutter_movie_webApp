@@ -15,10 +15,12 @@ class MovieHomePage extends StatefulWidget {
     required this.withOriginalLanguage,
     required this.movieType,
     this.withGenres,
+    required this.screenTitle,
   }) : super(key: key);
   final String withOriginalLanguage;
   final String movieType;
   final String? withGenres;
+  final String screenTitle;
 
   @override
   _MovieHomePageState createState() => _MovieHomePageState();
@@ -100,6 +102,20 @@ class _MovieHomePageState extends State<MovieHomePage> {
     return Consumer<MoviesProvider>(builder: (context, movieProvider, child) {
       return Scaffold(
         backgroundColor: tealishBlue,
+        appBar: AppBar(
+          backgroundColor: tealishBlue,
+          leading: IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(
+              Icons.arrow_back,
+              color: WHITE,
+            ),
+          ),
+          title: Text(
+            widget.screenTitle,
+            style: TextStyle(fontSize: 14, color: WHITE),
+          ),
+        ),
         body: FutureBuilder(
             future: _moviesData,
             builder:
