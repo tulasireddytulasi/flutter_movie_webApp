@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/pages/bottom_sheet/bottom_sheet_widget.dart';
 import 'package:moviewebapp/pages/movie_info_screen/movie_info.dart';
+import 'package:moviewebapp/providers/movie_info_provider.dart';
+import 'package:moviewebapp/providers/movies_provider.dart';
 import 'package:moviewebapp/providers/navigation_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -39,6 +41,39 @@ class Navigation {
         MaterialPageRoute(
           builder: (context) => MovieInfoScreen(movieId: movieId),
         ),
+      );
+    }
+  }
+
+  navigateToMoviesInfoPage2({
+    required BuildContext context,
+    required String movieId,
+    required double screenWidth,
+  }) {
+    if (screenWidth >= 600) {
+      final movieInfoProvider =
+          Provider.of<MovieInfoProvider>(context, listen: false);
+      final movieProvider = Provider.of<MoviesProvider>(context, listen: false);
+      final navigationProvider =
+          Provider.of<NavigationProvider>(context, listen: false);
+
+      if (navigationProvider.currentScreenIndex == 1) {
+        navigationProvider.setMovieInfoScreen(movieId: movieId);
+        navigationProvider.setCurrentScreenIndex(currentScreenIndex: 0);
+      }
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        movieInfoProvider.addPreviousMoviesIds(
+            movieId: movieInfoProvider.currentMovieId);
+        movieInfoProvider.getMoviesInfoAPI(
+            movieId: movieId, appendToResponse: "credits");
+        movieProvider.getSimilarMoviesAPI(movieId: movieId);
+      });
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => MovieInfoScreen(movieId: movieId)),
       );
     }
   }

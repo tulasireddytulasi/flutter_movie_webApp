@@ -58,6 +58,7 @@ class _ActorMoviesWidgetState extends State<ActorMoviesWidget> {
             return const CustomMessage(text: "Error");
           } else if (snapshot.hasData) {
             clearData();
+            processData(moviesModel: snapshot.data!);
             return ListView.builder(
                 itemCount: _title.length,
                 scrollDirection: Axis.horizontal,
@@ -65,7 +66,7 @@ class _ActorMoviesWidgetState extends State<ActorMoviesWidget> {
                 itemBuilder: (BuildContext context, int index) {
                   return InkWell(
                     onTap: () {
-                      Navigation().navigateToMoviesInfoPage(
+                      Navigation().navigateToMoviesInfoPage2(
                         context: context,
                         movieId: _movieId[index],
                         screenWidth: _screenWidth,
