@@ -19,7 +19,7 @@ class _CircularWidgetState extends State<CircularWidget> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final actorsInfoProvider =
           Provider.of<ActorsInfoProvider>(context, listen: false);
       actorsInfoProvider.getPopularActorsInfoAPI(
@@ -128,7 +128,7 @@ class _ActorCardState extends State<ActorCard> {
                       : Colors.transparent,
                   width: 5,
                 ),
-                borderRadius: BorderRadius.all(Radius.circular(100)),
+                borderRadius: const BorderRadius.all(Radius.circular(100)),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(

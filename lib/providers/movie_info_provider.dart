@@ -88,17 +88,13 @@ class MovieInfoProvider extends ChangeNotifier {
 
   final List _screensList = [
     const MovieInfoScreen(movieId: ""),
-    const ActorsPage(
-      actorId: '',
-    ),
+    const ActorsPage(actorId: ''),
   ];
   List get screensList => _screensList;
 
   /// Updating [_screensList] variable
   setMovieInfoScreen({required String movieId}) {
-    _screensList[0] = MovieInfoScreen(
-      movieId: movieId,
-    );
+    _screensList[0] = MovieInfoScreen(movieId: movieId);
   }
 
   /// Updating [_screensList] variable
@@ -158,7 +154,6 @@ class MovieInfoProvider extends ChangeNotifier {
       }
     }
     _genre = _genresList.join(", ");
-
     _actorId.clear();
     _actorImageUrl.clear();
     _actorName.clear();

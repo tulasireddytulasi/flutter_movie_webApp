@@ -80,7 +80,7 @@ class _ActorMoviesWidgetState extends State<ActorMoviesWidget> {
                   );
                 });
           } else {
-            return CustomMessage(text: "No Movies");
+            return const CustomMessage(text: "No Movies");
           }
         } else {
           return CustomMessage(text: "State: ${snapshot.connectionState}");

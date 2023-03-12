@@ -113,7 +113,7 @@ class _MovieHomePageState extends State<MovieHomePage> {
           ),
           title: Text(
             widget.screenTitle,
-            style: TextStyle(fontSize: 14, color: WHITE),
+            style: TextStyle(fontSize: 18, color: WHITE),
           ),
         ),
         body: FutureBuilder(

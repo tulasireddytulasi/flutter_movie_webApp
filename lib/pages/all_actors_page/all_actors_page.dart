@@ -28,7 +28,7 @@ class _AllActorsPageState extends State<AllActorsPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final actorsInfoProvider =
           Provider.of<ActorsInfoProvider>(context, listen: false);
       actorsInfoProvider.getPopularActorsInfoAPI(

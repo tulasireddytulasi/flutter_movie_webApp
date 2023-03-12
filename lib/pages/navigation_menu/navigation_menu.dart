@@ -19,6 +19,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
       withOriginalLanguage: "",
       movieType: "",
       withGenres: "",
+      screenTitle: "",
     ),
     const AllActorsPage(),
     const ActorsPage(

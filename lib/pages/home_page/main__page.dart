@@ -24,8 +24,8 @@ class _MainPageState extends State<MainPage> {
           title: Text(widget.title),
         ),
         body: ListView(
-          physics: BouncingScrollPhysics(),
-          padding: EdgeInsets.all(16),
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.all(16),
           children: [
             buildBlurredImage(),
             const SizedBox(height: 32),
@@ -86,9 +86,9 @@ class _MainPageState extends State<MainPage> {
                 child: buildBlur(
                   borderRadius: BorderRadius.circular(20),
                   child: Container(
-                    padding: EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(24),
                     color: Colors.white.withOpacity(blurBox),
-                    child: Text(
+                    child: const Text(
                       'This is text is blurred',
                       style: TextStyle(
                         fontSize: 28,

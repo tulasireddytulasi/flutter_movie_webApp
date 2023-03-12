@@ -32,14 +32,14 @@ class _RatingWidgetState extends State<RatingWidget> {
               margin: const EdgeInsets.only(left: 0),
               child: Text(
                 movieInfoProvider.rating,
-                style: TextStyle(fontSize: 18, color: WHITE),
+                style: const TextStyle(fontSize: 18, color: WHITE),
               ),
             ),
             Container(
               margin: const EdgeInsets.only(left: 0),
               child: Text(
                 " | ${movieInfoProvider.voteCount}",
-                style: TextStyle(fontSize: 14, color: ICON_GREY),
+                style: const TextStyle(fontSize: 14, color: ICON_GREY),
               ),
             ),
             const Spacer(),

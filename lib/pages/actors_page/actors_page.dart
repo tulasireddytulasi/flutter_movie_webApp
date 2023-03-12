@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/pages/actors_page/widgets/ActorMoviesWidget.dart';
 import 'package:moviewebapp/pages/actors_page/widgets/actors_Images_widget.dart';
@@ -19,12 +18,6 @@ class ActorsPage extends StatefulWidget {
 
 class _ActorsPageState extends State<ActorsPage> {
   final ScrollController scrollController = ScrollController();
-  final List<String> _actors = [
-    "/oasuXFD9P9e4agQqppsqsiXSCoi.jpg",
-    "/728rlT3uW8qzXSxa0sWGhkOvE7X.jpg",
-    "/svYrIUXH59Dd9wp9HBpS1ASvRAu.jpg",
-    "/l1QSwcXC25xOaTHoSFGsLMayaoe.jpg"
-  ];
 
   @override
   void initState() {
@@ -279,10 +272,7 @@ class _ActorsPageState extends State<ActorsPage> {
                               color: GREY,
                             ),
                           ),
-                          Container(
-                            // decoration: BoxDecoration(
-                            //   border: Border.all(color: WHITE, width: 1),
-                            // ),
+                          SizedBox(
                             width: _pageWidth / 1.3,
                             child: RichText(
                               softWrap: true,
