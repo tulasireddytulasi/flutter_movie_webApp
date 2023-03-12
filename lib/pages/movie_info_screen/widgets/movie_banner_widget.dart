@@ -42,36 +42,30 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
                 );
               },
               blendMode: BlendMode.dstIn,
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 1200),
-                child: widget.movieBannerImage.isNotEmpty
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(isVisible ? 20 : 0),
-                          topLeft: Radius.circular(isVisible ? 20 : 0),
-                        ),
-                        child: Image.network(
+              child: ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(isVisible ? 20 : 0),
+                  topLeft: Radius.circular(isVisible ? 20 : 0),
+                ),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 1200),
+                  child: widget.movieBannerImage.isNotEmpty
+                      ? Image.network(
                           ApiConstants.movieImageBaseUrlw1280 +
                               widget.movieBannerImage,
                           width: getBottomSheetWidth(screenWidth: screenWidth) +
                               30,
                           fit: BoxFit.cover,
                           key: UniqueKey(),
-                        ),
-                      )
-                    : ClipRRect(
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(isVisible ? 20 : 0),
-                          topLeft: Radius.circular(isVisible ? 20 : 0),
-                        ),
-                        child: Image.asset(
+                        )
+                      : Image.asset(
                           movieBackDrop2,
                           width: getBottomSheetWidth(screenWidth: screenWidth) +
                               30,
                           fit: BoxFit.cover,
                           key: UniqueKey(),
                         ),
-                      ),
+                ),
               ),
             ),
           ),
