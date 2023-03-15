@@ -44,4 +44,7 @@ class Constants {
 
   // Genre Ids
   static const String horror = "28";
+
+  static const String reviewText =
+      "First of all, I think I need to make a note: I can't say that I'm an ABBA fan, but the truth is that I have a great affection for the band and their songs, because they were songs that I remember hearing on TV when I was a kid. It is a childhood memory, which has a sentimental charge, and which cannot be evaluated in a completely neutral way (childhood memories never leave us neutral).";
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moviewebapp/pages/movie_info_screen/widgets/cast.dart';
 import 'package:moviewebapp/pages/movie_info_screen/widgets/movie_banner_widget.dart';
 import 'package:moviewebapp/pages/movie_info_screen/widgets/rating_row_widget.dart';
+import 'package:moviewebapp/pages/movie_info_screen/widgets/reviews_list_widget.dart';
 import 'package:moviewebapp/pages/movie_info_screen/widgets/similar_movies.dart';
 import 'package:moviewebapp/pages/movie_info_screen/widgets/trailer_button.dart';
 import 'package:moviewebapp/providers/movie_info_provider.dart';
@@ -159,6 +160,19 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                             ),
                             const TrailerButtons(),
                           ],
+                        ),
+                        const SizedBox(height: 10),
+                        Container(
+                          alignment: Alignment.topLeft,
+                          margin: const EdgeInsets.only(left: 15, top: 20),
+                          child: const Text(
+                            "Movie reviews",
+                            style: TextStyle(fontSize: 22, color: GREY),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 220,
+                          child: ReviewsList(),
                         ),
                       ],
                     ),
