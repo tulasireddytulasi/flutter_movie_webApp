@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/providers/movie_info_provider.dart';
+import 'package:moviewebapp/providers/movies_provider.dart';
 import 'package:moviewebapp/responses/api_constants.dart';
 import 'package:moviewebapp/utils/assets_path.dart';
 import 'package:moviewebapp/utils/colors.dart';
@@ -100,11 +101,16 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
               onTap: () {
                 final movieInfoProvider =
                     Provider.of<MovieInfoProvider>(context, listen: false);
+                final movieProvider =
+                    Provider.of<MoviesProvider>(context, listen: false);
                 if (movieInfoProvider.previousMoviesIds.isNotEmpty) {
                   String movieId =
                       movieInfoProvider.previousMoviesIds.elementAt(0);
                   movieInfoProvider.getMoviesInfoAPI(
                       movieId: movieId, appendToResponse: "credits");
+                  movieProvider.getSimilarMoviesAPI(movieId: movieId);
+                  movieInfoProvider.getMovieReviewsInfoAPI(
+                      movieId: movieId, pageNo: "1");
                   movieInfoProvider.removePreviousMoviesIds();
                 } else {
                   final movieInfoProvider =
