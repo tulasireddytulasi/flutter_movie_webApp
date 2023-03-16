@@ -66,7 +66,7 @@ class _ActorMoviesWidgetState extends State<ActorMoviesWidget> {
                 itemBuilder: (BuildContext context, int index) {
                   return InkWell(
                     onTap: () {
-                      Navigation().navigateToMoviesInfoPage2(
+                      Navigation().navigateFromActorInfoScreenToMoviesInfoPage(
                         context: context,
                         movieId: _movieId[index],
                         screenWidth: _screenWidth,

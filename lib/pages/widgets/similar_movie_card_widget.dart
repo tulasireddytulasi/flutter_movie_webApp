@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/pages/movie_info_screen/movie_info.dart';
-import 'package:moviewebapp/providers/movie_info_provider.dart';
-import 'package:moviewebapp/providers/movies_provider.dart';
-import 'package:moviewebapp/providers/navigation_provider.dart';
 import 'package:moviewebapp/responses/api_constants.dart';
 import 'package:moviewebapp/utils/colors.dart';
 import 'package:moviewebapp/utils/commom_functions.dart';
-import 'package:provider/provider.dart';
+import 'package:moviewebapp/utils/navigation/navigation.dart';
 
 class SimilarMovieCard extends StatelessWidget {
   const SimilarMovieCard({
@@ -31,40 +27,12 @@ class SimilarMovieCard extends StatelessWidget {
       children: [
         InkWell(
           onTap: () {
-            if (canNavigateToNewPage) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => MovieInfoScreen(movieId: movieId)),
-              );
-            } else {
-              final movieInfoProvider =
-                  Provider.of<MovieInfoProvider>(context, listen: false);
-              final movieProvider =
-                  Provider.of<MoviesProvider>(context, listen: false);
-              final navigationProvider =
-                  Provider.of<NavigationProvider>(context, listen: false);
-
-              if (navigationProvider.currentScreenIndex == 1) {
-                navigationProvider.setMovieInfoScreen(movieId: movieId);
-                navigationProvider.setCurrentScreenIndex(currentScreenIndex: 0);
-              }
-
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                movieInfoProvider.addPreviousMoviesIds(
-                    movieId: movieInfoProvider.currentMovieId);
-                movieInfoProvider.getMoviesInfoAPI(
-                    movieId: movieId, appendToResponse: "credits");
-                movieProvider.getSimilarMoviesAPI(movieId: movieId);
-                movieInfoProvider.getMovieReviewsInfoAPI(
-                    movieId: movieId, pageNo: "1");
-              });
-              if (scrollController != null) {
-                scrollController!.animateTo(0,
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.ease);
-              }
-            }
+            Navigation().updateMovieInfoScreen(
+              context: context,
+              movieId: movieId,
+              canNavigateToNewPage: canNavigateToNewPage,
+              scrollController: scrollController,
+            );
           },
           child: Container(
             padding: const EdgeInsets.only(left: 10),
