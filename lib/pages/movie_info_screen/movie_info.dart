@@ -171,7 +171,7 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                           ),
                         ),
                         SizedBox(
-                          height: 226,
+                          height: 228,
                           child: ReviewsList(movieId: widget.movieId),
                         ),
                       ],

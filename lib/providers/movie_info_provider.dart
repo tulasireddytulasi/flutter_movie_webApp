@@ -200,6 +200,7 @@ class MovieInfoProvider extends ChangeNotifier {
     } catch (error) {
       log("Movie Review API Error: $error");
     }
+    notifyListeners();
   }
 
   clearData() {
