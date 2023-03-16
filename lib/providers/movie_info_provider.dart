@@ -3,8 +3,10 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:moviewebapp/models/get_movie_info_model.dart';
+import 'package:moviewebapp/models/review_model.dart';
 import 'package:moviewebapp/pages/actors_page/actors_page.dart';
 import 'package:moviewebapp/pages/movie_info_screen/movie_info.dart';
+import 'package:moviewebapp/responses/api_constants.dart';
 import 'package:moviewebapp/responses/movie_apis.dart';
 
 class MovieInfoProvider extends ChangeNotifier {
@@ -80,6 +82,21 @@ class MovieInfoProvider extends ChangeNotifier {
 
   int _currentScreenIndex = 0;
   int get currentScreenIndex => _currentScreenIndex;
+
+  final List<String> _avatarImg = [];
+  List<String> get avatarImg => _avatarImg;
+
+  final List<String> _authorName = [];
+  List<String> get authorName => _authorName;
+
+  final List<String> _reviewDate = [];
+  List<String> get reviewDate => _reviewDate;
+
+  final List<String> _reviewerRating = [];
+  List<String> get reviewerRating => _reviewerRating;
+
+  final List<String> _reviewContent = [];
+  List<String> get reviewContent => _reviewContent;
 
   setCurrentScreenIndex({required int currentScreenIndex}) {
     _currentScreenIndex = currentScreenIndex;
@@ -169,5 +186,55 @@ class MovieInfoProvider extends ChangeNotifier {
     });
 
     notifyListeners();
+  }
+
+  void notify() => notifyListeners();
+
+  Future<void> getMovieReviewsInfoAPI(
+      {required String movieId, required String pageNo}) async {
+    try {
+      ReviewModel _reviewModel =
+          await getMovieReviews(movieId: movieId, pageNo: pageNo);
+      clearData();
+      processReviewData(reviewModel: _reviewModel);
+    } catch (error) {
+      log("Movie Review API Error: $error");
+    }
+  }
+
+  clearData() {
+    _avatarImg.clear();
+    _authorName.clear();
+    _reviewDate.clear();
+    _reviewerRating.clear();
+    _reviewContent.clear();
+  }
+
+  processReviewData({required ReviewModel reviewModel}) {
+    reviewModel.results?.forEach((element) {
+      String avatarPath = element.authorDetails?.avatarPath ?? "";
+      if (avatarPath.isNotEmpty && avatarPath.contains("https")) {
+        if (avatarPath[0] == "/") {
+          avatarPath = avatarPath.substring(1);
+          _avatarImg.add(avatarPath);
+        } else {
+          _avatarImg.add(avatarPath);
+        }
+      } else {
+        _avatarImg.add(avatarPath.isNotEmpty
+            ? ApiConstants.movieImageBaseUrlw185 + avatarPath
+            : avatarPath);
+      }
+      _authorName.add(element.author ?? "");
+      _reviewDate.add(element.updatedAt?.toIso8601String() ?? "");
+
+      final double? rating = element.authorDetails?.rating;
+      if (rating != null) {
+        _reviewerRating.add(rating.toString());
+      } else {
+        _reviewerRating.add("NA");
+      }
+      _reviewContent.add(element.content ?? "No Reviews");
+    });
   }
 }

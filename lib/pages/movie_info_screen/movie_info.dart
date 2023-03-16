@@ -170,9 +170,9 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                             style: TextStyle(fontSize: 22, color: GREY),
                           ),
                         ),
-                        const SizedBox(
-                          height: 220,
-                          child: ReviewsList(),
+                        SizedBox(
+                          height: 226,
+                          child: ReviewsList(movieId: widget.movieId),
                         ),
                       ],
                     ),

@@ -7,6 +7,7 @@ import 'package:moviewebapp/models/actors_info_model.dart';
 import 'package:moviewebapp/models/get_movie_info_model.dart';
 import 'package:moviewebapp/models/get_movies_model.dart';
 import 'package:moviewebapp/models/popular_actors_model.dart';
+import 'package:moviewebapp/models/review_model.dart';
 import 'package:moviewebapp/responses/api_constants.dart';
 import 'package:moviewebapp/responses/api_services.dart';
 
@@ -164,6 +165,22 @@ Future<ActorMovieModel> getActorsActedMoviesInfo(
     Response response = await getMethod(_actorsInfo);
     actorsMovieModel = ActorMovieModel.fromJson(json.decode(response.body));
     return actorsMovieModel;
+  } catch (error, stackTrace) {
+    rethrow;
+  }
+}
+
+Future<ReviewModel> getMovieReviews({
+  required String movieId,
+  required String pageNo,
+}) async {
+  ReviewModel _reviewModel;
+  final String _reviewsAPI =
+      "movie/$movieId/reviews?api_key=${ApiConstants.apiKey}&page=$pageNo";
+  try {
+    Response response = await getMethod(_reviewsAPI);
+    _reviewModel = reviewModelFromJson(response.body);
+    return _reviewModel;
   } catch (error, stackTrace) {
     rethrow;
   }

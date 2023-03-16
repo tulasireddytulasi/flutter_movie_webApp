@@ -1,10 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/responses/api_constants.dart';
 import 'package:moviewebapp/utils/colors.dart';
-import 'package:moviewebapp/utils/constants.dart';
 
 class ReviewCard extends StatelessWidget {
-  const ReviewCard({Key? key}) : super(key: key);
+  const ReviewCard({
+    Key? key,
+    required this.avatarImg,
+    required this.authorName,
+    required this.reviewDate,
+    required this.reviewerRating,
+    required this.reviewContent,
+  }) : super(key: key);
+
+  final String avatarImg;
+  final String authorName;
+  final String reviewDate;
+  final String reviewerRating;
+  final String reviewContent;
 
   @override
   Widget build(BuildContext context) {
@@ -16,35 +27,47 @@ class ReviewCard extends StatelessWidget {
       margin: const EdgeInsets.all(10),
       padding: const EdgeInsets.all(20),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(50),
-                child: Image.network(
-                  ApiConstants.movieImageBaseUrlw185 +
-                      "/MhBiZbryibwuoEtPL9Ns8pYHC1.jpg",
-                  height: 40,
-                  width: 40,
-                  fit: BoxFit.cover,
+              if (avatarImg.isNotEmpty)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(50),
+                  child: Image.network(
+                    avatarImg,
+                    height: 40,
+                    width: 40,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
+              if (avatarImg.isEmpty)
+                CircleAvatar(
+                  radius: 20,
+                  backgroundColor: WHITE,
+                  child: Text(
+                    authorName.isNotEmpty ? authorName[0] : "U",
+                    style: const TextStyle(
+                        fontSize: 18,
+                        color: BLACK,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
               const SizedBox(width: 10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
-                    "Winston Duke",
-                    style: TextStyle(
+                  Text(
+                    authorName,
+                    style: const TextStyle(
                       fontSize: 14,
                       color: WHITE,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "on May 21, 2017",
-                    // "13 days ago",
+                    reviewDate,
                     style: TextStyle(
                       fontSize: 12,
                       color: WHITE.withOpacity(0.5),
@@ -55,9 +78,9 @@ class ReviewCard extends StatelessWidget {
               const SizedBox(width: 60),
               ChoiceChip(
                 selected: false,
-                label: const Text(
-                  "8.0",
-                  style: TextStyle(
+                label: Text(
+                  reviewerRating,
+                  style: const TextStyle(
                     fontSize: 14,
                     color: BLACK,
                   ),
@@ -69,13 +92,13 @@ class ReviewCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          const SizedBox(
+          SizedBox(
             width: 280,
             child: Text(
-              Constants.reviewText,
+              reviewContent,
               maxLines: 6,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14,
                 color: WHITE,
               ),

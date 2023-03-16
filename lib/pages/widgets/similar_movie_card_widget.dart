@@ -56,6 +56,8 @@ class SimilarMovieCard extends StatelessWidget {
                 movieInfoProvider.getMoviesInfoAPI(
                     movieId: movieId, appendToResponse: "credits");
                 movieProvider.getSimilarMoviesAPI(movieId: movieId);
+                movieInfoProvider.getMovieReviewsInfoAPI(
+                    movieId: movieId, pageNo: "1");
               });
               if (scrollController != null) {
                 scrollController!.animateTo(0,
