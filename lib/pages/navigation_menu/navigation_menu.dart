@@ -3,6 +3,9 @@ import 'package:moviewebapp/pages/actors_page/actors_page.dart';
 import 'package:moviewebapp/pages/all_actors_page/all_actors_page.dart';
 import 'package:moviewebapp/pages/all_movies_screen/all_movies_screen.dart';
 import 'package:moviewebapp/pages/dashboard/dashboard.dart';
+import 'package:moviewebapp/pages/navigation_menu/custom_bottom_navbar.dart';
+import 'package:moviewebapp/pages/navigation_menu/movie_app_bar.dart';
+import 'package:moviewebapp/utils/assets_path.dart';
 import 'package:moviewebapp/utils/colors.dart';
 
 class NavigationMenu extends StatefulWidget {
@@ -16,10 +19,10 @@ class _NavigationMenuState extends State<NavigationMenu> {
   final _screens = [
     const Dashboard(),
     const MovieHomePage(
-      withOriginalLanguage: "",
-      movieType: "",
+      withOriginalLanguage: "en",
+      movieType: "popular",
       withGenres: "",
-      screenTitle: "",
+      screenTitle: "Popular Movies",
     ),
     const AllActorsPage(),
     const ActorsPage(
@@ -27,102 +30,76 @@ class _NavigationMenuState extends State<NavigationMenu> {
     )
   ];
   int _currentScreen = 0;
+  final List<String> appBarTitles = ["Home", "Movies", "People"];
+  final List<String> bottomBarTitles = [
+    "Dashboard",
+    "Explore Items",
+    "Cart",
+    "Account"
+  ];
+  final List<String> iconAssetPaths = [
+    homeIcon,
+    shoppingBagIcon,
+    cartIcon,
+    userIcon
+  ];
+  final List<String> lottieIconAssetPaths = [
+    homeLottieIcon,
+    dashBoardLottieIcon,
+    movieLottieIcon,
+    homeLottieIcon,
+  ];
 
   @override
   Widget build(BuildContext context) {
+    final double _screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: woodsSmoke,
-        centerTitle: true,
-        title: MovieAppBar(
-          defaultSelectedIndex: 0,
-          onChange: (val) {
-            setState(() {
-              _currentScreen = val;
-            });
-          },
-          titles: const [
-            "Home",
-            "Movies",
-            "People",
-            // "New & Popular",
-            // "My List"
-          ],
-        ),
-        leading: IconButton(
-          icon: Image.asset("assets/images/movie_icon.png"),
-          iconSize: 22,
-          onPressed: () {},
-        ),
-      ),
+      appBar: _screenWidth >= 750
+          ? AppBar(
+              backgroundColor: woodsSmoke,
+              centerTitle: true,
+              title: MovieAppBar(
+                defaultSelectedIndex: 0,
+                onChange: (val) {
+                  setState(() {
+                    _currentScreen = val;
+                  });
+                },
+                titles: appBarTitles,
+              ),
+              leading: IconButton(
+                icon: Image.asset("assets/images/movie_icon.png"),
+                iconSize: 22,
+                onPressed: () {},
+              ),
+            )
+          : null,
       extendBodyBehindAppBar: true,
-      body: _screens[_currentScreen],
-    );
-  }
-}
-
-class MovieAppBar extends StatefulWidget {
-  final int defaultSelectedIndex;
-  final Function(int) onChange;
-  final List<String> titles;
-
-  const MovieAppBar({
-    this.defaultSelectedIndex = 0,
-    required this.onChange,
-    required this.titles,
-  });
-
-  @override
-  _MovieAppBarState createState() => _MovieAppBarState();
-}
-
-class _MovieAppBarState extends State<MovieAppBar> {
-  int _selectedIndex = 0;
-  List<String> _titles = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedIndex = widget.defaultSelectedIndex;
-    _titles = widget.titles;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> _navBarItemList = [];
-
-    for (var i = 0; i < _titles.length; i++) {
-      _navBarItemList.add(appBarLableItem(
-        index: i,
-        title: _titles[i],
-      ));
-    }
-
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: _navBarItemList,
-      ),
-    );
-  }
-
-  Widget appBarLableItem({required int index, required String title}) {
-    return InkWell(
-      onTap: () {
-        widget.onChange(index);
-        setState(() {
-          _selectedIndex = index;
-        });
-      },
-      child: Container(
-        margin: const EdgeInsets.only(right: 10),
-        child: Text(
-          title,
-          style: TextStyle(
-              fontSize: 18,
-              fontFamily: "d",
-              color: index == _selectedIndex ? WHITE : GREY),
-        ),
+      body: Stack(
+        children: [
+          _screens[_currentScreen],
+          if (_screenWidth <= 750)
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                alignment: Alignment.bottomCenter,
+                child: CustomBottomNavigationBar(
+                  defaultSelectedIndex: 0,
+                  onChange: (val) {
+                    setState(() {
+                      _currentScreen = val;
+                    });
+                  },
+                  titles: bottomBarTitles,
+                  imgurls: iconAssetPaths,
+                  lottieIcons: lottieIconAssetPaths,
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

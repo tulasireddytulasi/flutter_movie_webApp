@@ -116,6 +116,7 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ),
             ),
+            const SizedBox(height: 100),
           ],
         ),
       ),

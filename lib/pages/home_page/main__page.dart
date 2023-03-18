@@ -45,6 +45,7 @@ class _MainPageState extends State<MainPage> {
                 print("blurBox:  $blurBox");
               },
             ),
+            const SizedBox(height: 200),
           ],
         ),
       );
@@ -109,12 +110,13 @@ class _MainPageState extends State<MainPage> {
     BorderRadius? borderRadius,
     double sigmaX = 10,
     double sigmaY = 10,
-  }) =>
-      ClipRRect(
-        borderRadius: borderRadius ?? BorderRadius.zero,
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: sigmaX, sigmaY: sigmaY),
-          child: child,
-        ),
-      );
+  }) {
+    return ClipRRect(
+      borderRadius: borderRadius ?? BorderRadius.zero,
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: sigmaX, sigmaY: sigmaY),
+        child: child,
+      ),
+    );
+  }
 }

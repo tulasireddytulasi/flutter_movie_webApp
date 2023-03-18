@@ -55,3 +55,6 @@ const tuna = Color(0xFF323944);
 const azul = Color(0xFF1F58FF);
 const woodsSmoke = Color(0xFF0D0D0D);
 const onyx = Color(0xFF141414);
+const Color backgroundColor2 = Color(0xFF17203A);
+const Color backgroundColor3 = Color(0xFFB5D2CE);
+const Color backgroundColor4 = Color(0xFFE8EBE0); // #E8EBE0 B5D2CE
