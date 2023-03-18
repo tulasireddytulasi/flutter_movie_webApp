@@ -8,6 +8,7 @@ import 'package:moviewebapp/pages/actors_page/actors_page.dart';
 import 'package:moviewebapp/pages/movie_info_screen/movie_info.dart';
 import 'package:moviewebapp/responses/api_constants.dart';
 import 'package:moviewebapp/responses/movie_apis.dart';
+import 'package:moviewebapp/utils/constants.dart';
 
 class MovieInfoProvider extends ChangeNotifier {
   GetMovieInfo _getMovieInfo = GetMovieInfo();
@@ -227,8 +228,15 @@ class MovieInfoProvider extends ChangeNotifier {
             : avatarPath);
       }
       _authorName.add(element.author ?? "");
-      _reviewDate.add(element.updatedAt?.toIso8601String() ?? "");
-
+      final String reviewDate =
+          element.updatedAt?.toIso8601String() ?? Constants.time00;
+      if (reviewDate.isNotEmpty && reviewDate != Constants.time00) {
+        String reviewDateValue =
+            DateFormat("yyyy-MM-dd").format(element.updatedAt!).toString();
+        _reviewDate.add(reviewDateValue);
+      } else {
+        _reviewDate.add(Constants.time00);
+      }
       final double? rating = element.authorDetails?.rating;
       if (rating != null) {
         _reviewerRating.add(rating.toString());

@@ -9,6 +9,7 @@ const String imgURL =
     "https://img.yts.mx/assets/images/movies/without_saying_goodbye_2022/medium-cover.jpg";
 
 class Constants {
+  static const String time00 = "0000-00-00";
   static const String myList = "My List";
   static const String info = "Info";
   static const String viewMore = "View More";

@@ -56,10 +56,10 @@ class MovieCard extends StatelessWidget {
               child: Container(
                 alignment: Alignment.topLeft,
                 margin: const EdgeInsets.only(top: 0, left: 0),
-                child: const Text(
-                  "2022-12-22",
+                child: Text(
+                  movieReleaseDate,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
+                  style: const TextStyle(
                       color: WHITE,
                       fontSize: 12,
                       fontFamily: MONTSERRAT_MEDIUM),

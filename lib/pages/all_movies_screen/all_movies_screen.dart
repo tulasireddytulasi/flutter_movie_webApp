@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:moviewebapp/animations/ripple_animation.dart';
 import 'package:moviewebapp/models/get_movies_model.dart';
 import 'package:moviewebapp/pages/all_movies_screen/widgets/movie_card.dart';
@@ -6,6 +7,7 @@ import 'package:moviewebapp/providers/movies_provider.dart';
 import 'package:moviewebapp/responses/movie_apis.dart';
 import 'package:moviewebapp/utils/colors.dart';
 import 'package:moviewebapp/utils/commom_functions.dart';
+import 'package:moviewebapp/utils/constants.dart';
 import 'package:moviewebapp/utils/navigation/navigation.dart';
 import 'package:provider/provider.dart';
 
@@ -59,7 +61,15 @@ class _MovieHomePageState extends State<MovieHomePage> {
       _title.add(element.title ?? "");
       _img.add(element.posterPath ?? "");
       _movieId.add(element.id.toString());
-      _date.add(element.releaseDate?.toIso8601String() ?? "0000-00-00");
+      final String movieReleaseDate =
+          element.releaseDate?.toIso8601String() ?? Constants.time00;
+      if (movieReleaseDate.isNotEmpty && movieReleaseDate != Constants.time00) {
+        String movieReleaseDateValue =
+            DateFormat("yyyy-MM-dd").format(element.releaseDate!).toString();
+        _date.add(movieReleaseDateValue);
+      } else {
+        _date.add(Constants.time00);
+      }
     });
   }
 
