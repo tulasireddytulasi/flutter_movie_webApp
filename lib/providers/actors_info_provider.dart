@@ -67,6 +67,14 @@ class ActorsInfoProvider extends ChangeNotifier {
   final List<String> _actorIdList = [];
   List<String> get actorIdList => _actorIdList;
 
+  int _totalMoviesActed = 0;
+  int get totalMoviesActed => _totalMoviesActed;
+
+  setTotalMoviesActed({required int totalMoviesActed}) {
+    _totalMoviesActed = totalMoviesActed;
+    notifyListeners();
+  }
+
   getActorsImagesAPI({required String actorId}) async {
     _actorsImages.clear();
     try {

@@ -208,15 +208,17 @@ class _ActorsPageState extends State<ActorsPage> {
                                     softWrap: true,
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 4,
-                                    text: const TextSpan(children: [
+                                    text: TextSpan(children: [
                                       TextSpan(
-                                        text: "20",
-                                        style: TextStyle(
+                                        text: actorsInfoProvider
+                                            .totalMoviesActed
+                                            .toString(),
+                                        style: const TextStyle(
                                             fontSize: 18,
                                             color: WHITE,
                                             fontWeight: FontWeight.bold),
                                       ),
-                                      TextSpan(
+                                      const TextSpan(
                                         text: " movies",
                                         style: TextStyle(
                                             fontSize: 18,

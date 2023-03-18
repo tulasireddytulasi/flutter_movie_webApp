@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:moviewebapp/models/actor_movie_model.dart';
 import 'package:moviewebapp/pages/widgets/custom_message.dart';
 import 'package:moviewebapp/pages/widgets/movies_card.dart';
+import 'package:moviewebapp/providers/actors_info_provider.dart';
 import 'package:moviewebapp/responses/movie_apis.dart';
 import 'package:moviewebapp/utils/navigation/navigation.dart';
+import 'package:provider/provider.dart';
 
 class ActorMoviesWidget extends StatefulWidget {
   const ActorMoviesWidget({Key? key, required this.actorId}) : super(key: key);
@@ -21,6 +23,7 @@ class _ActorMoviesWidgetState extends State<ActorMoviesWidget> {
   final List<String> _title = [];
   final List<String> _movieId = [];
   final List<String> _img = [];
+  static int totalMovies = 0;
 
   clearData() {
     _title.clear();
@@ -29,11 +32,17 @@ class _ActorMoviesWidgetState extends State<ActorMoviesWidget> {
   }
 
   processData({required ActorMovieModel moviesModel}) {
-    _moviesModel = moviesModel;
     _moviesModel.cast?.forEach((element) {
       _title.add(element.title ?? "");
       _img.add(element.posterPath ?? "");
       _movieId.add(element.id.toString());
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final actorsInfoProvider =
+          Provider.of<ActorsInfoProvider>(context, listen: false);
+      _moviesModel = moviesModel;
+      totalMovies = moviesModel.cast?.length ?? 0;
+      actorsInfoProvider.setTotalMoviesActed(totalMoviesActed: totalMovies);
     });
   }
 
