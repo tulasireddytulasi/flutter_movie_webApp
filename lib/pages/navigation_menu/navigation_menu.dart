@@ -61,7 +61,9 @@ class _NavigationMenuState extends State<NavigationMenu> {
                 defaultSelectedIndex: 0,
                 onChange: (val) {
                   setState(() {
-                    _currentScreen = val;
+                    if (val != 4) {
+                      _currentScreen = val;
+                    }
                   });
                 },
                 titles: appBarTitles,
@@ -88,7 +90,9 @@ class _NavigationMenuState extends State<NavigationMenu> {
                   defaultSelectedIndex: 0,
                   onChange: (val) {
                     setState(() {
-                      _currentScreen = val;
+                      if (val != 4) {
+                        _currentScreen = val;
+                      }
                     });
                   },
                   titles: bottomBarTitles,

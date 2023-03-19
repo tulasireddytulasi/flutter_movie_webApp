@@ -37,3 +37,7 @@ const scottlangBlogPoster = "assets/blogs/scottlang.jpg";
 const wakandaForeveBlogPoster = "assets/blogs/wakanda_foreve.jpg";
 const doctorStrange1BlogPoster = "assets/blogs/doctorStrange.jpg";
 const doctorStrange2BlogPoster = "assets/blogs/doctorStrange2.jpg";
+const doctorStrange3BlogPoster = "assets/blogs/doctorStrange3.jpg";
+const doctorStrange4BlogPoster = "assets/blogs/doctorStrange4.jpg";
+const doctorStrange5BlogPoster = "assets/blogs/doctorStrange5.jpg";
+const doctorStrange6BlogPoster = "assets/blogs/doctorStrange6.jpg";

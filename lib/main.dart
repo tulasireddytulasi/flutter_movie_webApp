@@ -15,6 +15,20 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
+  final MaterialColor mainAppColor =
+      const MaterialColor(0xFF89cfbe, <int, Color>{
+    50: Color(0xFF1B2230),
+    100: Color(0xE61B2230),
+    200: Color(0xCC1B2230),
+    300: Color(0xB31B2230),
+    400: Color(0x991B2230),
+    500: Color(0x801B2230),
+    600: Color(0x661B2230),
+    700: Color(0x4D1B2230),
+    800: Color(0x331B2230),
+    900: Color(0x001B2230),
+  });
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -30,7 +44,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         scrollBehavior: MyCustomScrollBehavior(),
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: mainAppColor,
         ),
         home: const NavigationMenu(),
       ),
