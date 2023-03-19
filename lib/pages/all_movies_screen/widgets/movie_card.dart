@@ -45,9 +45,7 @@ class MovieCard extends StatelessWidget {
                   movieName,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                      color: WHITE,
-                      fontSize: 12,
-                      fontFamily: MONTSERRAT_MEDIUM),
+                      color: WHITE, fontSize: 12, fontFamily: montserratMedium),
                 ),
               ),
             ),
@@ -60,9 +58,7 @@ class MovieCard extends StatelessWidget {
                   movieReleaseDate,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                      color: WHITE,
-                      fontSize: 12,
-                      fontFamily: MONTSERRAT_MEDIUM),
+                      color: WHITE, fontSize: 12, fontFamily: montserratMedium),
                 ),
               ),
             ),

@@ -31,7 +31,7 @@ class ProceedButton extends StatelessWidget {
         child: Text(
           text,
           style: const TextStyle(
-              fontSize: 14, fontFamily: MONTSERRAT_REGULAR, color: WHITE),
+              fontSize: 14, fontFamily: montserratRegular, color: WHITE),
         ),
       ),
       style: ElevatedButton.styleFrom(

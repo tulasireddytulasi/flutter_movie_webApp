@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moviewebapp/pages/actors_page/actors_page.dart';
 import 'package:moviewebapp/pages/all_actors_page/all_actors_page.dart';
 import 'package:moviewebapp/pages/all_movies_screen/all_movies_screen.dart';
+import 'package:moviewebapp/pages/blogs_screen/blogs_screen.dart';
 import 'package:moviewebapp/pages/dashboard/dashboard.dart';
 import 'package:moviewebapp/pages/navigation_menu/custom_bottom_navbar.dart';
 import 'package:moviewebapp/pages/navigation_menu/movie_app_bar.dart';
@@ -25,9 +26,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
       screenTitle: "Popular Movies",
     ),
     const AllActorsPage(),
-    const ActorsPage(
-      actorId: "",
-    ),
+    const BlogsScreen(),
     const ActorsPage(
       actorId: "",
     )

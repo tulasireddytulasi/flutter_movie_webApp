@@ -28,3 +28,12 @@ const tvIcon = "assets/icons/web_series.png";
 const dashBoardLottieIcon = "assets/lottie/account_lottie_icon.json";
 const homeLottieIcon = "assets/lottie/home_lottie_icon.json";
 const movieLottieIcon = "assets/lottie/movie_lottie_icon.json";
+
+// Blogs
+const amtwqmBlogPoster = "assets/blogs/amtwqm.jpg";
+const blackPanterBlogPoster = "assets/blogs/bpwk_naacp.jpg";
+const legends2BlogPoster = "assets/blogs/legends_2.jpg";
+const scottlangBlogPoster = "assets/blogs/scottlang.jpg";
+const wakandaForeveBlogPoster = "assets/blogs/wakanda_foreve.jpg";
+const doctorStrange1BlogPoster = "assets/blogs/doctorStrange.jpg";
+const doctorStrange2BlogPoster = "assets/blogs/doctorStrange2.jpg";

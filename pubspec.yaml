@@ -44,6 +44,7 @@ flutter:
     - assets/images/logos/
     - assets/icons/
     - assets/lottie/
+    - assets/blogs/
 
   fonts:
     - family: MontserratRegular
