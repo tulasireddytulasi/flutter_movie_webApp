@@ -8,14 +8,12 @@ class CustomBottomNavigationBar extends StatefulWidget {
   final Function(int) onChange;
   final List<String> titles;
   final List<String> imgurls;
-  final List<String> lottieIcons;
 
   CustomBottomNavigationBar({
     this.defaultSelectedIndex = 0,
     required this.onChange,
     required this.titles,
     required this.imgurls,
-    required this.lottieIcons,
   });
 
   @override
@@ -27,7 +25,6 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   int _selectedIndex = 0;
   List<String> _titles = [];
   List<String> _imgurls = [];
-  List<String> _lottieIcons = [];
 
   @override
   void initState() {
@@ -35,7 +32,6 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     _selectedIndex = widget.defaultSelectedIndex;
     _titles = widget.titles;
     _imgurls = widget.imgurls;
-    _lottieIcons = widget.lottieIcons;
   }
 
   @override
@@ -48,7 +44,6 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         i,
         _titles[i],
         _imgurls[i],
-        _lottieIcons[i],
       ));
     }
 
@@ -84,8 +79,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     );
   }
 
-  Widget buildNavBarItem(
-      int index, String title, String imgurl, String lottieIcon) {
+  Widget buildNavBarItem(int index, String title, String imgUrl) {
     return GestureDetector(
       onTap: () {
         widget.onChange(index);
@@ -106,7 +100,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                 backgroundColor:
                     index == _selectedIndex ? RANGOON_GREEN : LIGHTWHITE,
                 child: Image.asset(
-                  imgurl,
+                  imgUrl,
                   width: 22,
                   height: 22,
                   color: index == _selectedIndex ? WHITE : BLACK,

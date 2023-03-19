@@ -27,27 +27,26 @@ class _NavigationMenuState extends State<NavigationMenu> {
     const AllActorsPage(),
     const ActorsPage(
       actorId: "",
+    ),
+    const ActorsPage(
+      actorId: "",
     )
   ];
   int _currentScreen = 0;
   final List<String> appBarTitles = ["Home", "Movies", "People"];
   final List<String> bottomBarTitles = [
     "Dashboard",
-    "Explore Items",
-    "Cart",
+    "Movies",
+    "Web Series",
+    "Blogs",
     "Account"
   ];
   final List<String> iconAssetPaths = [
     homeIcon,
-    shoppingBagIcon,
-    cartIcon,
+    videoIcon,
+    tvIcon,
+    blogIcon,
     userIcon
-  ];
-  final List<String> lottieIconAssetPaths = [
-    homeLottieIcon,
-    dashBoardLottieIcon,
-    movieLottieIcon,
-    homeLottieIcon,
   ];
 
   @override
@@ -95,7 +94,6 @@ class _NavigationMenuState extends State<NavigationMenu> {
                   },
                   titles: bottomBarTitles,
                   imgurls: iconAssetPaths,
-                  lottieIcons: lottieIconAssetPaths,
                 ),
               ),
             ),

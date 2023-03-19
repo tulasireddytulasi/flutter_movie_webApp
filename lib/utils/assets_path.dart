@@ -18,10 +18,11 @@ const primeVideosLogo = "assets/images/logos/prime_videos.png";
 const pauseIcon = "assets/icons/pause_icon.png";
 
 // Navigation
-const homeIcon = "assets/icons/home_icon.png";
-const cartIcon = "assets/icons/cart.png";
-const userIcon = "assets/icons/user.png";
-const shoppingBagIcon = "assets/icons/shopping_bag.png";
+const homeIcon = "assets/icons/home.png";
+const blogIcon = "assets/icons/blogs.png";
+const userIcon = "assets/icons/user_profile.png";
+const videoIcon = "assets/icons/video.png";
+const tvIcon = "assets/icons/web_series.png";
 
 // Lottie Animation Icons
 const dashBoardLottieIcon = "assets/lottie/account_lottie_icon.json";
