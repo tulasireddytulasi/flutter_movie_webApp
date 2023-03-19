@@ -54,25 +54,19 @@ class _ActorsPageState extends State<ActorsPage> {
                   ),
                 ),
               ),
-              // actions: [
-              //   InkWell(
-              //     onTap: () {
-              //       Navigator.of(context).pop();
-              //     },
-              //     child: Container(
-              //       decoration: BoxDecoration(
-              //           border: Border.all(color: BLACK, width: 2),
-              //           shape: BoxShape.circle,
-              //           color: BLACK),
-              //       padding: const EdgeInsets.all(2),
-              //       margin: const EdgeInsets.all(10),
-              //       child: const Icon(
-              //         Icons.clear,
-              //         color: WHITE,
-              //       ),
-              //     ),
-              //   ),
-              // ],
+              actions: [
+                InkWell(
+                  onTap: () {},
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    margin: const EdgeInsets.all(10),
+                    child: const Icon(
+                      Icons.share,
+                      color: WHITE,
+                    ),
+                  ),
+                ),
+              ],
               title: const Text(
                 "Actors Screen",
                 style: TextStyle(fontSize: 18, color: WHITE),

@@ -59,6 +59,20 @@ class _AllActorsPageState extends State<AllActorsPage> {
 
     return Scaffold(
       backgroundColor: tealishBlue,
+      appBar: AppBar(
+        backgroundColor: tealishBlue,
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: WHITE,
+          ),
+        ),
+        title: const Text(
+          "Popular Actors",
+          style: TextStyle(fontSize: 18, color: WHITE),
+        ),
+      ),
       body: SafeArea(
         child: Consumer<ActorsInfoProvider>(
             builder: (context, actorsInfoProvider, child) {
