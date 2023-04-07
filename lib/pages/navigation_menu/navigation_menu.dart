@@ -74,7 +74,10 @@ class _NavigationMenuState extends State<NavigationMenu> {
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
-          _screens[_currentScreen],
+          IndexedStack(
+            index: _currentScreen,
+            children: _screens,
+          ),
           if (_screenWidth <= 750)
             Positioned(
               bottom: 0,
