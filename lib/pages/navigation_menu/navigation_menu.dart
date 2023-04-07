@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/pages/actors_page/actors_page.dart';
 import 'package:moviewebapp/pages/all_actors_page/all_actors_page.dart';
 import 'package:moviewebapp/pages/all_movies_screen/all_movies_screen.dart';
 import 'package:moviewebapp/pages/blogs_screen/blogs_screen.dart';
 import 'package:moviewebapp/pages/dashboard/dashboard.dart';
 import 'package:moviewebapp/pages/navigation_menu/custom_bottom_navbar.dart';
 import 'package:moviewebapp/pages/navigation_menu/movie_app_bar.dart';
+import 'package:moviewebapp/pages/profile_screen/profile_screen.dart';
 import 'package:moviewebapp/utils/assets_path.dart';
 import 'package:moviewebapp/utils/colors.dart';
 
@@ -27,12 +27,10 @@ class _NavigationMenuState extends State<NavigationMenu> {
     ),
     const AllActorsPage(),
     const BlogsScreen(),
-    const ActorsPage(
-      actorId: "",
-    )
+    const ProfileScreen(),
   ];
   int _currentScreen = 0;
-  final List<String> appBarTitles = ["Home", "Movies", "People"];
+  final List<String> appBarTitles = ["Home", "Movies", "People", "Blogs"];
   final List<String> bottomBarTitles = [
     "Dashboard",
     "Movies",
@@ -61,9 +59,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
                 defaultSelectedIndex: 0,
                 onChange: (val) {
                   setState(() {
-                    if (val != 4) {
-                      _currentScreen = val;
-                    }
+                    _currentScreen = val;
                   });
                 },
                 titles: appBarTitles,
@@ -90,9 +86,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
                   defaultSelectedIndex: 0,
                   onChange: (val) {
                     setState(() {
-                      if (val != 4) {
-                        _currentScreen = val;
-                      }
+                      _currentScreen = val;
                     });
                   },
                   titles: bottomBarTitles,

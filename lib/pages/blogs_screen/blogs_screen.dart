@@ -15,6 +15,7 @@ class BlogsScreen extends StatefulWidget {
 class _BlogsScreenState extends State<BlogsScreen> {
   @override
   Widget build(BuildContext context) {
+    final double _screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: tealishBlue,
       appBar: AppBar(
@@ -30,43 +31,55 @@ class _BlogsScreenState extends State<BlogsScreen> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                children: DummyData.blogsData.map((blogInfo) {
-                  return InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => BlogViewScreen(
-                            createdDate: blogInfo["blogCreateDate"],
-                            blogReadTime: blogInfo["blogReadTime"],
-                            authorName: "MARVEL",
-                            poster1: "",
-                            poster2: "",
-                            heading1: "",
-                            blogSubHeading1: "",
-                            heading2: "",
-                            blogSubHeading2: "",
-                            heading3: "",
-                            blogSubHeading3: "",
-                            mainContent: "",
-                          ),
-                        ),
+          child: Container(
+            width: double.infinity,
+            alignment: Alignment.center,
+            child: Container(
+              margin: const EdgeInsets.all(10),
+              alignment: Alignment.center,
+              width: _screenWidth >= 750 ? 800 : double.infinity,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Column(
+                    children: DummyData.blogsData.map((blogInfo) {
+                      return InkWell(
+                        onTap: () {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BlogViewScreen(
+                                  createdDate: blogInfo["blogCreateDate"],
+                                  blogReadTime: blogInfo["blogReadTime"],
+                                  authorName: "MARVEL",
+                                  poster1: "",
+                                  poster2: "",
+                                  heading1: "",
+                                  blogSubHeading1: "",
+                                  heading2: "",
+                                  blogSubHeading2: "",
+                                  heading3: "",
+                                  blogSubHeading3: "",
+                                  mainContent: "",
+                                ),
+                              ),
+                            );
+                          });
+                        },
+                        child: BlogCard(
+                            blogTitle: blogInfo["blogTitle"],
+                            blogPoster: blogInfo["blogPoster"],
+                            blogCreateDate: blogInfo["blogCreateDate"],
+                            blogReadTime: blogInfo["blogReadTime"]),
                       );
-                    },
-                    child: BlogCard(
-                        blogTitle: blogInfo["blogTitle"],
-                        blogPoster: blogInfo["blogPoster"],
-                        blogCreateDate: blogInfo["blogCreateDate"],
-                        blogReadTime: blogInfo["blogReadTime"]),
-                  );
-                }).toList(),
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 100),
+                ],
               ),
-              const SizedBox(height: 100),
-            ],
+            ),
           ),
         ),
       ),

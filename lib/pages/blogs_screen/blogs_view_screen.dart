@@ -36,6 +36,7 @@ class BlogViewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double _screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: tealishBlue,
       appBar: AppBar(
@@ -92,111 +93,122 @@ class BlogViewScreen extends StatelessWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
-            margin: const EdgeInsets.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      const TextSpan(
-                        text: "Nov 21, 2023",
-                      ),
-                      TextSpan(
-                        text: "  .  ",
-                        style: TextStyle(
-                            fontSize: 33,
-                            color: GREY.withOpacity(0.5),
-                            fontFamily: montserratSemiBold),
-                      ),
-                      const TextSpan(
-                        text: "10 Mins read",
-                      ),
-                    ],
+            width: double.infinity,
+            alignment: Alignment.center,
+            child: Container(
+              margin: const EdgeInsets.all(10),
+              alignment: Alignment.center,
+              width: _screenWidth >= 750 ? 800 : double.infinity,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        const TextSpan(
+                          text: "Nov 21, 2023",
+                        ),
+                        TextSpan(
+                          text: "  .  ",
+                          style: TextStyle(
+                              fontSize: 33,
+                              color: GREY.withOpacity(0.5),
+                              fontFamily: montserratSemiBold),
+                        ),
+                        const TextSpan(
+                          text: "10 Mins read",
+                        ),
+                      ],
+                      style: TextStyle(
+                          fontSize: 13,
+                          color: GREY.withOpacity(0.5),
+                          fontFamily: montserratSemiBold),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    BlogConstants.doctorStrange,
                     style: TextStyle(
-                        fontSize: 13,
-                        color: GREY.withOpacity(0.5),
-                        fontFamily: montserratSemiBold),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  BlogConstants.doctorStrange,
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: WHITE.withOpacity(0.8),
-                      fontFamily: montserratMedium),
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  BlogConstants.doctorStrangeSubTitle,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: GREY,
-                    fontFamily: montserratMedium,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  "BY MARVEL",
-                  style: TextStyle(
-                      fontSize: 14, color: WHITE, fontFamily: montserratMedium),
-                ),
-                const SizedBox(height: 20),
-                Container(
-                  padding: const EdgeInsets.all(0),
-                  child: Image.asset(doctorStrange3BlogPoster),
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  BlogConstants.doctorStrangeMainContent,
-                  style: TextStyle(
-                      fontSize: 14, color: GREY, fontFamily: montserratMedium),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  BlogConstants.doctorStrangeTitle2,
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: WHITE.withOpacity(0.8),
-                      fontFamily: montserratMedium),
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  BlogConstants.doctorStrangePara1,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: GREY,
-                    fontFamily: montserratMedium,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Container(
-                  padding: const EdgeInsets.all(0),
-                  child: Image.asset(doctorStrange4BlogPoster),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(top: 20),
-                  child: Text(
-                    BlogConstants.doctorStrangeSubTitle2,
-                    style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 20,
                         color: WHITE.withOpacity(0.8),
                         fontFamily: montserratMedium),
                   ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(top: 20),
-                  child: const Text(
-                    BlogConstants.doctorStrangePara2,
+                  const SizedBox(height: 20),
+                  const Text(
+                    BlogConstants.doctorStrangeSubTitle,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: GREY,
+                      fontFamily: montserratMedium,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    "BY MARVEL",
+                    style: TextStyle(
+                        fontSize: 14,
+                        color: WHITE,
+                        fontFamily: montserratMedium),
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.all(0),
+                    child: Image.asset(doctorStrange3BlogPoster),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    BlogConstants.doctorStrangeMainContent,
                     style: TextStyle(
                         fontSize: 14,
                         color: GREY,
                         fontFamily: montserratMedium),
                   ),
-                ),
-                const SizedBox(height: 100),
-              ],
+                  const SizedBox(height: 20),
+                  Text(
+                    BlogConstants.doctorStrangeTitle2,
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: WHITE.withOpacity(0.8),
+                        fontFamily: montserratMedium),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    BlogConstants.doctorStrangePara1,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: GREY,
+                      fontFamily: montserratMedium,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.all(0),
+                    child: Image.asset(doctorStrange4BlogPoster),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 20),
+                    child: Text(
+                      BlogConstants.doctorStrangeSubTitle2,
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: WHITE.withOpacity(0.8),
+                          fontFamily: montserratMedium),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 20),
+                    child: const Text(
+                      BlogConstants.doctorStrangePara2,
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: GREY,
+                          fontFamily: montserratMedium),
+                    ),
+                  ),
+                  const SizedBox(height: 100),
+                ],
+              ),
             ),
           ),
         ),
@@ -204,4 +216,3 @@ class BlogViewScreen extends StatelessWidget {
     );
   }
 }
-//

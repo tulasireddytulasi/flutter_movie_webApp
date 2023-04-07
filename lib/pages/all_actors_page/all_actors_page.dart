@@ -62,7 +62,7 @@ class _AllActorsPageState extends State<AllActorsPage> {
       appBar: AppBar(
         backgroundColor: tealishBlue,
         leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {},
           icon: const Icon(
             Icons.arrow_back,
             color: WHITE,

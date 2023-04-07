@@ -58,3 +58,9 @@ const onyx = Color(0xFF141414);
 const Color backgroundColor2 = Color(0xFF17203A);
 const Color backgroundColor3 = Color(0xFFB5D2CE);
 const Color backgroundColor4 = Color(0xFFE8EBE0); // #E8EBE0 B5D2CE
+
+const tealishBlue1 = Color(0xFF414858);
+const tealishBlue2 = Color(0xFF6B7283);
+const tealishBlue3 = Color(0xFF19202E);
+const tealishBlue4 = Color(0xFFA4ABBD);
+const tealishBlue5 = Color(0xFF364765);
