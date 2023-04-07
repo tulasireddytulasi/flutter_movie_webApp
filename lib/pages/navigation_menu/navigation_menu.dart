@@ -17,6 +17,7 @@ class NavigationMenu extends StatefulWidget {
 }
 
 class _NavigationMenuState extends State<NavigationMenu> {
+  late ValueNotifier<int> _currentScreenNo;
   final _screens = [
     const Dashboard(),
     const MovieHomePage(
@@ -29,7 +30,6 @@ class _NavigationMenuState extends State<NavigationMenu> {
     const BlogsScreen(),
     const ProfileScreen(),
   ];
-  int _currentScreen = 0;
   final List<String> appBarTitles = ["Home", "Movies", "People", "Blogs"];
   final List<String> bottomBarTitles = [
     "Dashboard",
@@ -47,6 +47,12 @@ class _NavigationMenuState extends State<NavigationMenu> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _currentScreenNo = ValueNotifier<int>(0);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final double _screenWidth = MediaQuery.of(context).size.width;
 
@@ -57,11 +63,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
               centerTitle: true,
               title: MovieAppBar(
                 defaultSelectedIndex: 0,
-                onChange: (val) {
-                  setState(() {
-                    _currentScreen = val;
-                  });
-                },
+                onChange: (value) => _currentScreenNo.value = value,
                 titles: appBarTitles,
               ),
               leading: IconButton(
@@ -74,10 +76,14 @@ class _NavigationMenuState extends State<NavigationMenu> {
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
-          IndexedStack(
-            index: _currentScreen,
-            children: _screens,
-          ),
+          ValueListenableBuilder<int>(
+              valueListenable: _currentScreenNo,
+              builder: (context, hasConsent, child) {
+                return IndexedStack(
+                  index: _currentScreenNo.value,
+                  children: _screens,
+                );
+              }),
           if (_screenWidth <= 750)
             Positioned(
               bottom: 0,
@@ -87,11 +93,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
                 alignment: Alignment.bottomCenter,
                 child: CustomBottomNavigationBar(
                   defaultSelectedIndex: 0,
-                  onChange: (val) {
-                    setState(() {
-                      _currentScreen = val;
-                    });
-                  },
+                  onChange: (value) => _currentScreenNo.value = value,
                   titles: bottomBarTitles,
                   imgurls: iconAssetPaths,
                 ),
