@@ -1,10 +1,10 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
-
-import 'package:moviewebapp/models/movie_model.dart';
+import 'package:moviewebapp/models/get_movies_model.dart';
 import 'package:moviewebapp/pages/all_movies_screen/widgets/movie_card.dart';
 import 'package:moviewebapp/providers/movies_provider.dart';
 
@@ -33,7 +33,7 @@ class MovieListScreen extends StatefulWidget {
 }
 
 class _MovieListScreenState extends State<MovieListScreen> {
-  final PagingController<int, Movie> _pagingController =
+  final PagingController<int, Movies> _pagingController =
       PagingController(firstPageKey: 1);
 
   int columns = 5;
@@ -44,29 +44,23 @@ class _MovieListScreenState extends State<MovieListScreen> {
   void initState() {
     super.initState();
     _pagingController.addPageRequestListener((pageKey) {
-      _fetchPage(pageKey).then((movies) {
-        _pagingController.appendPage(movies, pageKey + 1);
-      }).catchError((error) {
-        _pagingController.error = error;
-      });
+      _fetchMovies(pageKey: pageKey);
     });
   }
 
-  Future<List<Movie>> _fetchPage(int pageKey) async {
-    final response = await getMoviesList(
-      movieType: widget.movieType,
-      pageNo: pageKey,
-      withOriginalLanguage: widget.withOriginalLanguage,
-      withGenres: widget.withGenres,
-    );
-    if (response.statusCode == 200) {
-      final jsonData = json.decode(response.body);
-      final List<dynamic> results = jsonData['results'];
-      final List<Movie> movies =
-          results.map((movieData) => Movie.fromJson(movieData)).toList();
-      return movies;
-    } else {
-      throw Exception('Failed to load page');
+  _fetchMovies({required int pageKey}) async {
+    try {
+      final List<Movies> movies = await fetchMovies(
+        movieType: widget.movieType,
+        pageKey: pageKey,
+        withOriginalLanguage: widget.withOriginalLanguage,
+        withGenres: widget.withGenres,
+      );
+      _pagingController.appendPage(movies, pageKey + 1);
+    } catch (error, stackTrace) {
+      log("error: $error");
+      log("stackTrace: $stackTrace");
+      _pagingController.error = error;
     }
   }
 
@@ -74,18 +68,6 @@ class _MovieListScreenState extends State<MovieListScreen> {
   void dispose() {
     _pagingController.dispose();
     super.dispose();
-  }
-
-  Widget messageText({required String text}) {
-    return Center(
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontSize: 14,
-          color: BLACK,
-        ),
-      ),
-    );
   }
 
   String getReleaseDate({required DateTime? releaseDate}) {
@@ -123,7 +105,7 @@ class _MovieListScreenState extends State<MovieListScreen> {
             style: const TextStyle(fontSize: 18, color: WHITE),
           ),
         ),
-        body: PagedGridView<int, Movie>(
+        body: PagedGridView<int, Movies>(
           showNewPageProgressIndicatorAsGridChild: false,
           showNewPageErrorIndicatorAsGridChild: false,
           showNoMoreItemsIndicatorAsGridChild: false,
@@ -134,7 +116,7 @@ class _MovieListScreenState extends State<MovieListScreen> {
             mainAxisSpacing: 10,
             crossAxisCount: columns,
           ),
-          builderDelegate: PagedChildBuilderDelegate<Movie>(
+          builderDelegate: PagedChildBuilderDelegate<Movies>(
             itemBuilder: (context, item, index) => InkWell(
               onTap: () {
                 Navigation().navigateToMoviesInfoPage(

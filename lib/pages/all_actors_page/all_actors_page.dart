@@ -93,11 +93,6 @@ class _AllActorsPageState extends State<AllActorsPage> {
                 return Consumer<NavigationProvider>(
                     builder: (context, navigationProvider, child) {
                   return Container(
-                    // decoration: BoxDecoration(
-                    //   border: Border.all(color: borderColor, width: 1),
-                    // ),
-                    // child: ActorsImages(
-                    //     imageUrl: actorsInfoProvider.allActorsImages[index]),
                     child: ActorCard(
                       textColor: WHITE,
                       textSize: 11,

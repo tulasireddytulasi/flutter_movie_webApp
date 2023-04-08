@@ -49,6 +49,30 @@ Future<MoviesModel> getPopularMoviesList({
   }
 }
 
+Future<List<Movies>> fetchMovies(
+    {required int pageKey,
+    required String movieType,
+    required String withOriginalLanguage,
+    String? withGenres}) async {
+  try {
+    final response = await getMoviesList(
+      movieType: movieType,
+      pageNo: pageKey,
+      withOriginalLanguage: withOriginalLanguage,
+      withGenres: withGenres,
+    );
+    if (response.statusCode == 200) {
+      MoviesModel getMoviesModel = getMoviesFromJson(response.body);
+      final List<Movies> movies = getMoviesModel.results!;
+      return movies;
+    } else {
+      throw Exception('Failed to load page');
+    }
+  } catch (error) {
+    rethrow;
+  }
+}
+
 Future<Response> getMoviesInfo({
   required String movieId,
   required String appendToResponse,
