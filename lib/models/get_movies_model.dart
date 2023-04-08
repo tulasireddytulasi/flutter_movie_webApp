@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final getMovies = getMoviesFromJson(jsonString);
-
 import 'dart:convert';
 
 MoviesModel getMoviesFromJson(String str) =>
@@ -18,7 +14,7 @@ class MoviesModel {
   });
 
   int? page;
-  List<Result>? results;
+  List<Movies>? results;
   int? totalPages;
   int? totalResults;
 
@@ -26,7 +22,7 @@ class MoviesModel {
         page: json["page"] == null ? null : json["page"],
         results: json["results"] == null
             ? null
-            : List<Result>.from(json["results"].map((x) => Result.fromJson(x))),
+            : List<Movies>.from(json["results"].map((x) => Movies.fromJson(x))),
         totalPages: json["total_pages"] == null ? null : json["total_pages"],
         totalResults:
             json["total_results"] == null ? null : json["total_results"],
@@ -42,8 +38,8 @@ class MoviesModel {
       };
 }
 
-class Result {
-  Result({
+class Movies {
+  Movies({
     this.adult,
     this.backdropPath,
     this.genreIds,
@@ -75,7 +71,7 @@ class Result {
   double? voteAverage;
   int? voteCount;
 
-  factory Result.fromJson(Map<String, dynamic> json) => Result(
+  factory Movies.fromJson(Map<String, dynamic> json) => Movies(
         adult: json["adult"] == null ? null : json["adult"],
         backdropPath:
             json["backdrop_path"] == null ? null : json["backdrop_path"],

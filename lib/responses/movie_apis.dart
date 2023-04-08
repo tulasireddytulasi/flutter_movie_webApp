@@ -13,7 +13,7 @@ import 'package:moviewebapp/responses/api_services.dart';
 
 Future<Response> getMoviesList({
   required String movieType,
-  required String pageNo,
+  required int pageNo,
   required String withOriginalLanguage,
   String? withGenres,
 }) async {
@@ -30,7 +30,7 @@ Future<Response> getMoviesList({
 
 Future<MoviesModel> getPopularMoviesList({
   required String movieType,
-  required String pageNo,
+  required int pageNo,
   required String withOriginalLanguage,
   String? withGenres,
 }) async {

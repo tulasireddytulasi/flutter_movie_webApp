@@ -95,10 +95,10 @@ class ActorsInfoProvider extends ChangeNotifier {
   getActorsInfoAPI({required String actorId}) async {
     try {
       _actorInfoModel = await getActorsInfo(actorId: actorId);
-      _actorName = _actorInfoModel.name!;
+      _actorName = _actorInfoModel.name ?? "";
       _actorId = _actorInfoModel.id.toString();
-      _profilePic = _actorInfoModel.profilePath!;
-      _biography = _actorInfoModel.biography!;
+      _profilePic = _actorInfoModel.profilePath ?? "";
+      _biography = _actorInfoModel.biography ?? "";
       if (_actorInfoModel.gender == 1) {
         _gender = "Female";
       } else if (_actorInfoModel.gender == 2) {
@@ -112,8 +112,9 @@ class ActorsInfoProvider extends ChangeNotifier {
       _role = _actorInfoModel.knownForDepartment!;
       _homePage = _actorInfoModel.homepage ?? "";
       log("_actorsImages: ${_actorInfoModel.name}");
-    } catch (error) {
+    } catch (error, stackTrace) {
       log("_actorsInfo error: $error");
+      log("_actorsInfo error: $stackTrace");
     }
     notifyListeners();
   }

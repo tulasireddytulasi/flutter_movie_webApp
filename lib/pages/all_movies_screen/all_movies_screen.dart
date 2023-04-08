@@ -78,7 +78,7 @@ class _MovieHomePageState extends State<MovieHomePage> {
     super.initState();
     _moviesData = getPopularMoviesList(
       movieType: widget.movieType,
-      pageNo: "1",
+      pageNo: 1,
       withOriginalLanguage: widget.withOriginalLanguage,
       withGenres: widget.withGenres,
     );

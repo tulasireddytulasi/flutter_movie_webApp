@@ -15,18 +15,12 @@ class DashBoardProvider extends ChangeNotifier {
   MoviesModel _topRatedMoviesModel = MoviesModel();
   MoviesModel get topRatedMoviesModel => _topRatedMoviesModel;
 
-  getPopularMoviesAPI({required String pageNo}) async {
+  getPopularMoviesAPI({required int pageNo}) async {
     _popularMoviesModel = await getPopularMoviesList(
       movieType: "popular",
       pageNo: pageNo,
       withOriginalLanguage: "en",
     );
-    // _getPopularMoviesModel.results?.forEach((element) {
-    //   _title.add(element.title!);
-    //   _date.add(element.releaseDate?.toIso8601String() ?? "0000-00-00");
-    //   _img.add(element.posterPath!);
-    //   _movieId.add(element.id.toString());
-    // });
     notifyListeners();
   }
 }

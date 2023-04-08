@@ -49,7 +49,7 @@ class _MoviesListState extends State<MoviesList> {
     super.initState();
     _moviesData = getPopularMoviesList(
       movieType: widget.movieType,
-      pageNo: "1",
+      pageNo: 1,
       withOriginalLanguage: widget.withOriginalLanguage,
       withGenres: widget.withGenres,
     );

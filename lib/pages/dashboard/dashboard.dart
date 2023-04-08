@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/pages/all_movies_screen/all_movies_screen.dart';
+import 'package:moviewebapp/pages/all_movies_screen/movies_list.dart';
 import 'package:moviewebapp/pages/dashboard/widgets/main_banner.dart';
 import 'package:moviewebapp/pages/dashboard/widgets/movie_label.dart';
 import 'package:moviewebapp/pages/dashboard/widgets/movies_list.dart';
@@ -88,7 +88,7 @@ class _DashboardState extends State<Dashboard> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => MovieHomePage(
+                            builder: (context) => MovieListScreen(
                               screenTitle: moviesDataMap["$index"]
                                   ["movieLabel"],
                               movieType: moviesDataMap["$index"]["movieType"],

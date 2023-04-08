@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/pages/all_actors_page/all_actors_page.dart';
-import 'package:moviewebapp/pages/all_movies_screen/all_movies_screen.dart';
+import 'package:moviewebapp/pages/all_movies_screen/movies_list.dart';
 import 'package:moviewebapp/pages/blogs_screen/blogs_screen.dart';
 import 'package:moviewebapp/pages/dashboard/dashboard.dart';
 import 'package:moviewebapp/pages/navigation_menu/custom_bottom_navbar.dart';
@@ -20,7 +20,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
   late ValueNotifier<int> _currentScreenNo;
   final _screens = [
     const Dashboard(),
-    const MovieHomePage(
+    const MovieListScreen(
       withOriginalLanguage: "en",
       movieType: "popular",
       withGenres: "",
