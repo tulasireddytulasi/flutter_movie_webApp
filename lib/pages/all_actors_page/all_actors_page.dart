@@ -1,10 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:moviewebapp/models/popular_actors_model.dart';
 import 'package:moviewebapp/pages/home_page/widgets/circular_image_widgets.dart';
-import 'package:moviewebapp/providers/actors_info_provider.dart';
-import 'package:moviewebapp/providers/navigation_provider.dart';
+
+import 'package:moviewebapp/responses/movie_apis.dart';
 import 'package:moviewebapp/utils/colors.dart';
 import 'package:moviewebapp/utils/screen_sizes.dart';
-import 'package:provider/provider.dart';
 
 class AllActorsPage extends StatefulWidget {
   const AllActorsPage({Key? key}) : super(key: key);
@@ -14,48 +17,46 @@ class AllActorsPage extends StatefulWidget {
 }
 
 class _AllActorsPageState extends State<AllActorsPage> {
-  double cardHeight = 0;
-  double _childAspectRatio = 9 / 16;
-  double leftPadding = 0;
-  double rightPadding = 0;
-  double crossAxisSpacing = 10;
-  double maxBottomSheetWidth = 0;
-  int columns = 5;
-  List<double> screenValues = [];
+  final PagingController<int, Actors> _pagingController =
+      PagingController(firstPageKey: 1);
+  int columns = 6;
   Map<String, dynamic> layoutData = {};
-  bool isMovieTitleVisible = true;
+  double ratio = 60;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final actorsInfoProvider =
-          Provider.of<ActorsInfoProvider>(context, listen: false);
-      actorsInfoProvider.getPopularActorsInfoAPI(
-          languageCode: "en-US", pageNo: 1);
-      actorsInfoProvider.getPopularActorsInfoAPI(
-          languageCode: "en-US", pageNo: 2);
-      actorsInfoProvider.getPopularActorsInfoAPI(
-          languageCode: "en-US", pageNo: 3);
-      actorsInfoProvider.getPopularActorsInfoAPI(
-          languageCode: "en-US", pageNo: 4);
-      actorsInfoProvider.getPopularActorsInfoAPI(
-          languageCode: "en-US", pageNo: 5);
+    _pagingController.addPageRequestListener((pageKey) {
+      _fetchPopularActors(pageKey: pageKey);
     });
+  }
+
+  _fetchPopularActors({required int pageKey}) async {
+    try {
+      final List<Actors> actorsList = await fetchPopularActors(
+        pageNo: pageKey,
+        languageCode: "en-US",
+      );
+      _pagingController.appendPage(actorsList, pageKey + 1);
+    } catch (error, stackTrace) {
+      log("error: $error");
+      log("stackTrace: $stackTrace");
+      _pagingController.error = error;
+    }
+  }
+
+  @override
+  void dispose() {
+    _pagingController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     layoutData = getActorCircularWidgetWidth(screenWidth: screenWidth);
-    cardHeight = layoutData["cardHeight"];
     columns = layoutData["columns"].toInt();
-    _childAspectRatio = layoutData["childAspectRatio"];
-    isMovieTitleVisible = layoutData["isMovieTitleVisible"];
-    leftPadding = layoutData["leftPadding"];
-    rightPadding = layoutData["rightPadding"];
-    // crossAxisSpacing = layoutData["crossAxisSpacing"];
-    maxBottomSheetWidth = layoutData["maxBottomSheetWidth"];
+    ratio = layoutData["ratio"];
 
     return Scaffold(
       backgroundColor: tealishBlue,
@@ -74,39 +75,35 @@ class _AllActorsPageState extends State<AllActorsPage> {
         ),
       ),
       body: SafeArea(
-        child: Consumer<ActorsInfoProvider>(
-            builder: (context, actorsInfoProvider, child) {
-          return Container(
-            // decoration: BoxDecoration(border: Border.all(color: RED, width: 1)),
-            margin: const EdgeInsets.only(top: 0),
-            padding: EdgeInsets.only(left: leftPadding, right: rightPadding),
-            child: GridView.builder(
-              scrollDirection: Axis.vertical,
-              physics: const ScrollPhysics(),
+        child: Center(
+          child: Container(
+            padding: const EdgeInsets.all(10.0),
+            width: 1200,
+            alignment: Alignment.topCenter,
+            child: PagedGridView<int, Actors>(
+              showNewPageProgressIndicatorAsGridChild: false,
+              showNewPageErrorIndicatorAsGridChild: false,
+              showNoMoreItemsIndicatorAsGridChild: false,
+              pagingController: _pagingController,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                childAspectRatio: _childAspectRatio,
-                crossAxisCount: columns,
+                childAspectRatio: 100 / 110,
+                crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
-                crossAxisSpacing: crossAxisSpacing,
+                crossAxisCount: columns,
               ),
-              itemBuilder: (BuildContext context, int index) {
-                return Consumer<NavigationProvider>(
-                    builder: (context, navigationProvider, child) {
-                  return Container(
-                    child: ActorCard(
-                      textColor: WHITE,
-                      textSize: 11,
-                      actorName: actorsInfoProvider.actorNameList[index],
-                      actorId: actorsInfoProvider.actorIdList[index],
-                      castImage: actorsInfoProvider.allActorsImages[index],
-                    ),
-                  );
-                });
-              },
-              itemCount: actorsInfoProvider.allActorsImages.length,
+              builderDelegate: PagedChildBuilderDelegate<Actors>(
+                itemBuilder: (context, actorsInfo, index) => ActorCard(
+                  textColor: WHITE,
+                  textSize: 11,
+                  ratio: ratio,
+                  actorName: actorsInfo.name ?? "",
+                  actorId: actorsInfo.id.toString(),
+                  castImage: actorsInfo.profilePath ?? "",
+                ),
+              ),
             ),
-          );
-        }),
+          ),
+        ),
       ),
     );
   }

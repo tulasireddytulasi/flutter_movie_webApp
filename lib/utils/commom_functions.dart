@@ -1,6 +1,6 @@
 Map<String, dynamic> getMovieCardWidth({required double screenWidth}) {
   double cardHeight = 0;
-  double columns = 5;
+  int columns = 5;
   double childAspectRatio = 9 / 16;
   bool isMovieTitleVisible = false;
   double leftPadding = 5;

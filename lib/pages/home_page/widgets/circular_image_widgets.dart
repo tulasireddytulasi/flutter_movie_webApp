@@ -1,54 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/pages/actors_page/actors_page.dart';
 import 'package:moviewebapp/pages/bottom_sheet/bottom_sheet_widget.dart';
-import 'package:moviewebapp/providers/actors_info_provider.dart';
 import 'package:moviewebapp/providers/navigation_provider.dart';
 import 'package:moviewebapp/responses/api_constants.dart';
 import 'package:moviewebapp/utils/colors.dart';
-import 'package:moviewebapp/utils/commom_functions.dart';
 import 'package:provider/provider.dart';
-
-class CircularWidget extends StatefulWidget {
-  const CircularWidget({Key? key}) : super(key: key);
-
-  @override
-  _CircularWidgetState createState() => _CircularWidgetState();
-}
-
-class _CircularWidgetState extends State<CircularWidget> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final actorsInfoProvider =
-          Provider.of<ActorsInfoProvider>(context, listen: false);
-      actorsInfoProvider.getPopularActorsInfoAPI(
-          languageCode: "en-US", pageNo: 1);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<ActorsInfoProvider>(
-        builder: (context, actorsInfoProvider, child) {
-      return ListView.builder(
-          itemCount: 5, //actorsInfoProvider.actorsImages.length,
-          scrollDirection: Axis.horizontal,
-          shrinkWrap: true,
-          itemBuilder: (BuildContext context, int index) {
-            return actorsInfoProvider.allActorsImages.isNotEmpty
-                ? ActorCard(
-                    actorName:
-                        actorsInfoProvider.actorNameList[index].toString(),
-                    castImage:
-                        actorsInfoProvider.allActorsImages[index].toString(),
-                    actorId: actorsInfoProvider.actorIdList[index],
-                  )
-                : Container();
-          });
-    });
-  }
-}
 
 class ActorCard extends StatefulWidget {
   const ActorCard({
@@ -58,6 +14,7 @@ class ActorCard extends StatefulWidget {
     required this.actorId,
     this.textColor = GREY,
     this.textSize = 14,
+    required this.ratio,
   }) : super(key: key);
 
   final String actorId;
@@ -65,6 +22,7 @@ class ActorCard extends StatefulWidget {
   final String actorName;
   final Color textColor;
   final double textSize;
+  final double ratio;
 
   @override
   State<ActorCard> createState() => _ActorCardState();
@@ -120,7 +78,6 @@ class _ActorCardState extends State<ActorCard> {
               }
             },
             child: Container(
-              // padding: const EdgeInsets.only(left: 20, right: 20),
               decoration: BoxDecoration(
                 border: Border.all(
                   color: widget.actorId == navigationProvider.actorID
@@ -130,38 +87,30 @@ class _ActorCardState extends State<ActorCard> {
                 ),
                 borderRadius: const BorderRadius.all(Radius.circular(100)),
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(
-                    getActorImageRadius(screenSize: _screenWidth)),
-                child: Image.network(
-                  ApiConstants.movieImageBaseUrlw500 + widget.castImage,
-                  height: getActorImageSize(screenSize: _screenWidth),
-                  width: getActorImageSize(screenSize: _screenWidth),
-                  fit: BoxFit.cover,
-                  color: widget.actorId == navigationProvider.actorID
-                      ? navigationProvider.color
-                      : null,
-                  colorBlendMode: widget.actorId == navigationProvider.actorID
-                      ? navigationProvider.blendMode
-                      : null,
-                ),
+              child: CircleAvatar(
+                radius: widget.ratio,
+                backgroundImage: NetworkImage(
+                    ApiConstants.movieImageBaseUrlw500 + widget.castImage),
               ),
             ),
           );
         }),
-        Container(
-          alignment: Alignment.center,
-          margin: const EdgeInsets.only(left: 0, top: 10),
-          width: 100,
-          // decoration: BoxDecoration(
-          //   border: Border.all(color: BLACK, width: 1),
-          // ),
-          child: Text(
-            widget.actorName,
-            style:
-                TextStyle(fontSize: widget.textSize, color: widget.textColor),
-            maxLines: 2,
-            textAlign: TextAlign.center,
+        Visibility(
+          visible: true,
+          child: Container(
+            alignment: Alignment.center,
+            margin: const EdgeInsets.only(left: 0, top: 10),
+            width: 100,
+            child: Text(
+              widget.actorName,
+              style: TextStyle(
+                fontSize: widget.textSize,
+                color: widget.textColor,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
       ],

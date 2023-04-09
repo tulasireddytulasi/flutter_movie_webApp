@@ -9,39 +9,38 @@ String popularActorsModelToJson(PopularActorsModel data) =>
 class PopularActorsModel {
   PopularActorsModel({
     this.page,
-    this.results,
+    this.actors,
     this.totalPages,
     this.totalResults,
   });
 
   int? page;
-  List<Result>? results;
+  List<Actors>? actors;
   int? totalPages;
   int? totalResults;
 
   factory PopularActorsModel.fromJson(Map<String, dynamic> json) =>
       PopularActorsModel(
-        page: json["page"] == null ? null : json["page"],
-        results: json["results"] == null
+        page: json["page"],
+        actors: json["results"] == null
             ? null
-            : List<Result>.from(json["results"].map((x) => Result.fromJson(x))),
-        totalPages: json["total_pages"] == null ? null : json["total_pages"],
-        totalResults:
-            json["total_results"] == null ? null : json["total_results"],
+            : List<Actors>.from(json["results"].map((x) => Actors.fromJson(x))),
+        totalPages: json["total_pages"],
+        totalResults: json["total_results"],
       );
 
   Map<String, dynamic> toJson() => {
-        "page": page == null ? null : page,
-        "results": results == null
+        "page": page,
+        "results": actors == null
             ? null
-            : List<dynamic>.from(results!.map((x) => x.toJson())),
-        "total_pages": totalPages == null ? null : totalPages,
-        "total_results": totalResults == null ? null : totalResults,
+            : List<dynamic>.from(actors!.map((x) => x.toJson())),
+        "total_pages": totalPages,
+        "total_results": totalResults,
       };
 }
 
-class Result {
-  Result({
+class Actors {
+  Actors({
     this.adult,
     this.gender,
     this.id,
@@ -61,35 +60,31 @@ class Result {
   double? popularity;
   String? profilePath;
 
-  factory Result.fromJson(Map<String, dynamic> json) => Result(
-        adult: json["adult"] == null ? null : json["adult"],
-        gender: json["gender"] == null ? null : json["gender"],
-        id: json["id"] == null ? null : json["id"],
+  factory Actors.fromJson(Map<String, dynamic> json) => Actors(
+        adult: json["adult"],
+        gender: json["gender"],
+        id: json["id"],
         knownFor: json["known_for"] == null
             ? null
             : List<KnownFor>.from(
                 json["known_for"].map((x) => KnownFor.fromJson(x))),
-        knownForDepartment: json["known_for_department"] == null
-            ? null
-            : json["known_for_department"],
-        name: json["name"] == null ? null : json["name"],
-        popularity:
-            json["popularity"] == null ? null : json["popularity"].toDouble(),
-        profilePath: json["profile_path"] == null ? null : json["profile_path"],
+        knownForDepartment: json["known_for_department"],
+        name: json["name"],
+        popularity: json["popularity"].toDouble(),
+        profilePath: json["profile_path"],
       );
 
   Map<String, dynamic> toJson() => {
-        "adult": adult == null ? null : adult,
-        "gender": gender == null ? null : gender,
-        "id": id == null ? null : id,
+        "adult": adult,
+        "gender": gender,
+        "id": id,
         "known_for": knownFor == null
             ? null
             : List<dynamic>.from(knownFor!.map((x) => x.toJson())),
-        "known_for_department":
-            knownForDepartment == null ? null : knownForDepartment,
-        "name": name == null ? null : name,
-        "popularity": popularity == null ? null : popularity,
-        "profile_path": profilePath == null ? null : profilePath,
+        "known_for_department": knownForDepartment,
+        "name": name,
+        "popularity": popularity,
+        "profile_path": profilePath,
       };
 }
 
@@ -135,67 +130,60 @@ class KnownFor {
   String? originalName;
 
   factory KnownFor.fromJson(Map<String, dynamic> json) => KnownFor(
-        adult: json["adult"] == null ? null : json["adult"],
-        backdropPath:
-            json["backdrop_path"] == null ? null : json["backdrop_path"],
+        adult: json["adult"],
+        backdropPath: json["backdrop_path"],
         genreIds: json["genre_ids"] == null
             ? null
             : List<int>.from(json["genre_ids"].map((x) => x)),
-        id: json["id"] == null ? null : json["id"],
-        mediaType: json["media_type"] == null ? null : json["media_type"],
-        originalLanguage: json["original_language"] == null
-            ? null
-            : json["original_language"],
-        originalTitle:
-            json["original_title"] == null ? null : json["original_title"],
-        overview: json["overview"] == null ? null : json["overview"],
-        posterPath: json["poster_path"] == null ? null : json["poster_path"],
+        id: json["id"],
+        mediaType: json["media_type"],
+        originalLanguage: json["original_language"],
+        originalTitle: json["original_title"],
+        overview: json["overview"],
+        posterPath: json["poster_path"],
         releaseDate: json["release_date"] == null
             ? null
             : DateTime.parse(json["release_date"]),
-        title: json["title"] == null ? null : json["title"],
-        video: json["video"] == null ? null : json["video"],
-        voteAverage: json["vote_average"] == null
-            ? null
-            : json["vote_average"].toDouble(),
-        voteCount: json["vote_count"] == null ? null : json["vote_count"],
+        title: json["title"],
+        video: json["video"],
+        voteAverage: json["vote_average"].toDouble(),
+        voteCount: json["vote_count"],
         firstAirDate: json["first_air_date"] == null
             ? null
             : DateTime.parse(json["first_air_date"]),
-        name: json["name"] == null ? null : json["name"],
+        name: json["name"],
         originCountry: json["origin_country"] == null
             ? null
             : List<String>.from(json["origin_country"].map((x) => x)),
-        originalName:
-            json["original_name"] == null ? null : json["original_name"],
+        originalName: json["original_name"],
       );
 
   Map<String, dynamic> toJson() => {
-        "adult": adult == null ? null : adult,
-        "backdrop_path": backdropPath == null ? null : backdropPath,
+        "adult": adult,
+        "backdrop_path": backdropPath,
         "genre_ids": genreIds == null
             ? null
             : List<dynamic>.from(genreIds!.map((x) => x)),
-        "id": id == null ? null : id,
-        "media_type": mediaType == null ? null : mediaType,
-        "original_language": originalLanguage == null ? null : originalLanguage,
-        "original_title": originalTitle == null ? null : originalTitle,
-        "overview": overview == null ? null : overview,
-        "poster_path": posterPath == null ? null : posterPath,
+        "id": id,
+        "media_type": mediaType,
+        "original_language": originalLanguage,
+        "original_title": originalTitle,
+        "overview": overview,
+        "poster_path": posterPath,
         "release_date": releaseDate == null
             ? null
             : "${releaseDate!.year.toString().padLeft(4, '0')}-${releaseDate!.month.toString().padLeft(2, '0')}-${releaseDate!.day.toString().padLeft(2, '0')}",
-        "title": title == null ? null : title,
-        "video": video == null ? null : video,
-        "vote_average": voteAverage == null ? null : voteAverage,
-        "vote_count": voteCount == null ? null : voteCount,
+        "title": title,
+        "video": video,
+        "vote_average": voteAverage,
+        "vote_count": voteCount,
         "first_air_date": firstAirDate == null
             ? null
             : "${firstAirDate!.year.toString().padLeft(4, '0')}-${firstAirDate!.month.toString().padLeft(2, '0')}-${firstAirDate!.day.toString().padLeft(2, '0')}",
-        "name": name == null ? null : name,
+        "name": name,
         "origin_country": originCountry == null
             ? null
             : List<String>.from(originCountry!.map((x) => x)),
-        "original_name": originalName == null ? null : originalName,
+        "original_name": originalName,
       };
 }

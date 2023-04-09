@@ -180,6 +180,20 @@ Future<PopularActorsModel> getPopularActorsInfo(
   }
 }
 
+Future<List<Actors>> fetchPopularActors({
+  required int pageNo,
+  required String languageCode,
+}) async {
+  try {
+    PopularActorsModel _popularActorsModel =
+        await getPopularActorsInfo(languageCode: languageCode, pageNo: pageNo);
+    final List<Actors> actorsList = _popularActorsModel.actors!;
+    return actorsList;
+  } catch (error) {
+    rethrow;
+  }
+}
+
 Future<ActorMovieModel> getActorsActedMoviesInfo(
     {required String actorId}) async {
   ActorMovieModel actorsMovieModel;

@@ -108,8 +108,8 @@ class ActorsInfoProvider extends ChangeNotifier {
       DateTime movieReleaseDate =
           dateFormat.parse(_actorInfoModel.birthday!.toString());
       _dob = DateFormat('yyyy-MM-dd').format(movieReleaseDate);
-      _birthPlace = _actorInfoModel.placeOfBirth!;
-      _role = _actorInfoModel.knownForDepartment!;
+      _birthPlace = _actorInfoModel.placeOfBirth ?? "";
+      _role = _actorInfoModel.knownForDepartment ?? "";
       _homePage = _actorInfoModel.homepage ?? "";
       log("_actorsImages: ${_actorInfoModel.name}");
     } catch (error, stackTrace) {
@@ -125,7 +125,7 @@ class ActorsInfoProvider extends ChangeNotifier {
       _popularActorsModel = await getPopularActorsInfo(
           languageCode: languageCode, pageNo: pageNo);
 
-      _popularActorsModel.results?.forEach((element) {
+      _popularActorsModel.actors?.forEach((element) {
         if (element.profilePath != null && element.profilePath!.isNotEmpty) {
           _allActorsImages.add(element.profilePath!);
           _actorNameList.add(element.name!);
@@ -136,5 +136,19 @@ class ActorsInfoProvider extends ChangeNotifier {
       log("_actorsImages error: ${error}");
     }
     notifyListeners();
+  }
+
+  Future<List<Actors>> fetchPopularActors({
+    required int pageNo,
+    required String languageCode,
+  }) async {
+    try {
+      _popularActorsModel = await getPopularActorsInfo(
+          languageCode: languageCode, pageNo: pageNo);
+      final List<Actors> actorsList = _popularActorsModel.actors!;
+      return actorsList;
+    } catch (error) {
+      rethrow;
+    }
   }
 }
