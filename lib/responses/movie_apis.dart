@@ -158,7 +158,6 @@ Future<ActorInfoModel> getActorsInfo({required String actorId}) async {
   final String _actorsInfo = "person/$actorId?api_key=${ApiConstants.apiKey}";
   try {
     Response response = await getMethod(_actorsInfo);
-    // log("info: ${response.body}");
     getActorsInfo = actorInfoModelFromJson(response.body);
     return getActorsInfo;
   } catch (error, stackTrace) {

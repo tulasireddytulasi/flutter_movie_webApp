@@ -34,7 +34,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
   final List<String> bottomBarTitles = [
     "Dashboard",
     "Movies",
-    "Web Series",
+    "People",
     "Blogs",
     "Account"
   ];

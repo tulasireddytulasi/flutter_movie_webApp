@@ -181,8 +181,6 @@ class MovieInfoProvider extends ChangeNotifier {
         _actorImageUrl.add(castInfo.profilePath ?? "");
         _actorName.add(castInfo.name ?? "");
         _actorId.add(castInfo.id.toString());
-        log("_actorName: ${castInfo.name}");
-        log("_actorImageUrl 666: ${castInfo.profilePath}");
       }
     });
 

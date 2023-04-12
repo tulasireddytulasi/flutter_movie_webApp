@@ -57,12 +57,6 @@ class MoviesProvider extends ChangeNotifier {
           _similarMovieId.add(element.id.toString());
         }
       });
-
-      // _similarMoviePosters.forEach((element) {
-      //   // log("_actorImageUrl: ${ApiConstants.movieImageBaseUrl + element}");
-      // });
-      log("_similarMoviePosters 55: ${_similarMoviePosters.length}");
-      log("_similarMovieTitle: ${_similarMovieTitle.length}");
     } catch (error) {
       log("_similarMoviePosters error: $error");
     }

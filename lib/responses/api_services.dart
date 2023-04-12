@@ -5,8 +5,6 @@ import 'package:http/http.dart';
 import 'package:moviewebapp/responses/api_constants.dart';
 
 Future<Response> getMethod(String url) async {
-  log('${DateTime.now()}: calling get url: ${ApiConstants.baseUrl + url}');
-
   try {
     Response response = await http.get(
       Uri.parse(ApiConstants.baseUrl + url),

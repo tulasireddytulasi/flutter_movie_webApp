@@ -6,6 +6,7 @@ import 'package:moviewebapp/models/actor_images_model.dart';
 import 'package:moviewebapp/models/actors_info_model.dart';
 import 'package:moviewebapp/models/popular_actors_model.dart';
 import 'package:moviewebapp/responses/movie_apis.dart';
+import 'package:moviewebapp/utils/constants.dart';
 
 class ActorsInfoProvider extends ChangeNotifier {
   ActorImagesModel _actorImagesModel = ActorImagesModel();
@@ -85,7 +86,6 @@ class ActorsInfoProvider extends ChangeNotifier {
           _actorsImages.add(element.filePath!);
         }
       });
-      log("_actorsImages: ${_actorsImages.toString()}");
     } catch (error) {
       log("_actorsImages error: ${error}");
     }
@@ -105,13 +105,18 @@ class ActorsInfoProvider extends ChangeNotifier {
         _gender = "Male";
       }
       DateFormat dateFormat = DateFormat("yyyy-MM-dd");
-      DateTime movieReleaseDate =
-          dateFormat.parse(_actorInfoModel.birthday!.toString());
-      _dob = DateFormat('yyyy-MM-dd').format(movieReleaseDate);
+      if (_actorInfoModel.birthday != null &&
+          _actorInfoModel.birthday.toString().isNotEmpty) {
+        DateTime movieReleaseDate =
+            dateFormat.parse(_actorInfoModel.birthday.toString());
+        _dob = DateFormat('yyyy-MM-dd').format(movieReleaseDate);
+      } else {
+        _dob = Constants.time00;
+      }
+
       _birthPlace = _actorInfoModel.placeOfBirth ?? "";
       _role = _actorInfoModel.knownForDepartment ?? "";
       _homePage = _actorInfoModel.homepage ?? "";
-      log("_actorsImages: ${_actorInfoModel.name}");
     } catch (error, stackTrace) {
       log("_actorsInfo error: $error");
       log("_actorsInfo error: $stackTrace");
