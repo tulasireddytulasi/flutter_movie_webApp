@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:moviewebapp/models/get_movies_model.dart';
 import 'package:moviewebapp/pages/widgets/custom_message.dart';
 import 'package:moviewebapp/pages/widgets/movies_card.dart';
+import 'package:moviewebapp/providers/dashboard_provider.dart';
 import 'package:moviewebapp/responses/movie_apis.dart';
 import 'package:moviewebapp/utils/navigation/navigation.dart';
+import 'package:provider/provider.dart';
 
 class MoviesList extends StatefulWidget {
   const MoviesList({
@@ -34,12 +36,24 @@ class _MoviesListState extends State<MoviesList> {
   }
 
   processData({required MoviesModel moviesModel}) {
+    final movieProvider =
+        Provider.of<DashBoardProvider>(context, listen: false);
     _moviesModel = moviesModel;
     _moviesModel.results?.forEach((element) {
       _title.add(element.title ?? "");
       _img.add(element.posterPath ?? "");
       _movieId.add(element.id.toString());
     });
+    if (widget.movieType == "popular") {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        movieProvider.setMovieData(
+          movieTitle: _moviesModel.results?.first.title ?? "",
+          movieID: _moviesModel.results?.first.id.toString() ?? "",
+          moviePoster: _moviesModel.results?.first.posterPath ?? "",
+          backdropPath: _moviesModel.results?.first.backdropPath ?? "",
+        );
+      });
+    }
   }
 
   late Future<MoviesModel> _moviesData;
