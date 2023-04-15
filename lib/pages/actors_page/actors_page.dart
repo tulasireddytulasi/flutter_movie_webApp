@@ -1,3 +1,4 @@
+import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/pages/actors_page/widgets/ActorMoviesWidget.dart';
 import 'package:moviewebapp/pages/actors_page/widgets/actors_Images_widget.dart';
@@ -306,16 +307,18 @@ class _ActorsPageState extends State<ActorsPage> {
                       ),
                       padding: const EdgeInsets.only(
                           left: 20, top: 20, right: 10, bottom: 15),
-                      child: Text(
+                      child: ExpandableText(
                         actorsInfoProvider.biography,
-                        softWrap: true,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 120,
-                        textAlign: TextAlign.start,
+                        expandText: 'show more',
+                        collapseText: 'show less',
+                        maxLines: 8,
+                        linkColor: GREY,
+                        animation: true,
                         style: const TextStyle(
-                            fontSize: 14,
-                            color: WHITE,
-                            fontWeight: FontWeight.bold),
+                          fontSize: 14,
+                          color: WHITE,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     const LabelWidget(label: "Actor Pics"),

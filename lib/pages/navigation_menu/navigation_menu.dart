@@ -19,7 +19,7 @@ class NavigationMenu extends StatefulWidget {
 class _NavigationMenuState extends State<NavigationMenu> {
   late ValueNotifier<int> _currentScreenNo;
   final _screens = [
-    const TestingWidgets(),
+    // const TestingWidgets(),
     const Dashboard(),
     const MovieListScreen(
       withOriginalLanguage: "en",

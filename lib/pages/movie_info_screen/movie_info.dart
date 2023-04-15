@@ -1,3 +1,4 @@
+import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/pages/movie_info_screen/widgets/cast.dart';
 import 'package:moviewebapp/pages/movie_info_screen/widgets/movie_banner_widget.dart';
@@ -99,8 +100,13 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                         Container(
                           alignment: Alignment.topLeft,
                           margin: const EdgeInsets.only(left: 15, top: 20),
-                          child: Text(
+                          child: ExpandableText(
                             movieInfoProvider.overview,
+                            expandText: 'show more',
+                            collapseText: 'show less',
+                            maxLines: 4,
+                            linkColor: WHITE,
+                            animation: true,
                             style:
                                 const TextStyle(fontSize: 14, color: ICON_GREY),
                           ),
