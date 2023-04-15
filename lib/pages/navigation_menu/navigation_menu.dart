@@ -6,6 +6,7 @@ import 'package:moviewebapp/pages/dashboard/dashboard.dart';
 import 'package:moviewebapp/pages/navigation_menu/custom_bottom_navbar.dart';
 import 'package:moviewebapp/pages/navigation_menu/movie_app_bar.dart';
 import 'package:moviewebapp/pages/profile_screen/profile_screen.dart';
+import 'package:moviewebapp/pages/testing_widgets/testing_widgets.dart';
 import 'package:moviewebapp/utils/assets_path.dart';
 
 class NavigationMenu extends StatefulWidget {
@@ -18,6 +19,7 @@ class NavigationMenu extends StatefulWidget {
 class _NavigationMenuState extends State<NavigationMenu> {
   late ValueNotifier<int> _currentScreenNo;
   final _screens = [
+    const TestingWidgets(),
     const Dashboard(),
     const MovieListScreen(
       withOriginalLanguage: "en",
