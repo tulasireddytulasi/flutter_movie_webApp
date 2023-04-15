@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/models/get_movies_model.dart';
 import 'package:moviewebapp/pages/widgets/custom_message.dart';
@@ -46,11 +48,16 @@ class _MoviesListState extends State<MoviesList> {
     });
     if (widget.movieType == "popular") {
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        // Create an instance of the Random class
+        final random = Random();
+
+        // Generate a random number between 0 and 19
+        int randomNumber = random.nextInt(20);
         movieProvider.setMovieData(
-          movieTitle: _moviesModel.results?.first.title ?? "",
-          movieID: _moviesModel.results?.first.id.toString() ?? "",
-          moviePoster: _moviesModel.results?.first.posterPath ?? "",
-          backdropPath: _moviesModel.results?.first.backdropPath ?? "",
+          movieTitle: _moviesModel.results?[randomNumber].title ?? "",
+          movieID: _moviesModel.results?[randomNumber].id.toString() ?? "",
+          moviePoster: _moviesModel.results?[randomNumber].posterPath ?? "",
+          backdropPath: _moviesModel.results?[randomNumber].backdropPath ?? "",
         );
       });
     }

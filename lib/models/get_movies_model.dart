@@ -32,7 +32,7 @@ class MoviesModel {
         "page": page == null ? null : page,
         "results": results == null
             ? null
-            : List<dynamic>.from(results!.map((x) => x.toJson())),
+            : List<Movies>.from(results!.map((x) => x.toJson())),
         "total_pages": totalPages == null ? null : totalPages,
         "total_results": totalResults == null ? null : totalResults,
       };

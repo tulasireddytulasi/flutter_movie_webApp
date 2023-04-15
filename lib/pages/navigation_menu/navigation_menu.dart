@@ -7,7 +7,6 @@ import 'package:moviewebapp/pages/navigation_menu/custom_bottom_navbar.dart';
 import 'package:moviewebapp/pages/navigation_menu/movie_app_bar.dart';
 import 'package:moviewebapp/pages/profile_screen/profile_screen.dart';
 import 'package:moviewebapp/utils/assets_path.dart';
-import 'package:moviewebapp/utils/colors.dart';
 
 class NavigationMenu extends StatefulWidget {
   const NavigationMenu({Key? key}) : super(key: key);
@@ -59,7 +58,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
     return Scaffold(
       appBar: _screenWidth >= 750
           ? AppBar(
-              backgroundColor: woodsSmoke,
+              backgroundColor: Colors.black.withOpacity(0.5),
               centerTitle: true,
               title: MovieAppBar(
                 defaultSelectedIndex: 0,
