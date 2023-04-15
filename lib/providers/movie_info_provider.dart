@@ -26,7 +26,7 @@ class MovieInfoProvider extends ChangeNotifier {
   final String _budget = "";
   String get budget => _budget;
 
-  final String _overview = "";
+  String _overview = "";
   String get overview => _overview;
 
   final String _popularity = "";
@@ -143,6 +143,7 @@ class MovieInfoProvider extends ChangeNotifier {
     _getMovieInfo = await getMoviesInfoData(
         movieId: movieId, appendToResponse: appendToResponse);
     _movieTitle = _getMovieInfo.title ?? "";
+    _overview = _getMovieInfo.overview ?? "NA";
     _currentMovieId = _getMovieInfo.id.toString();
     _backdropPath = _getMovieInfo.backdropPath ?? "";
     if (_getMovieInfo.releaseDate!.toString() != null &&

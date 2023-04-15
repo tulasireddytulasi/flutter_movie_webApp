@@ -99,9 +99,10 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                         Container(
                           alignment: Alignment.topLeft,
                           margin: const EdgeInsets.only(left: 15, top: 20),
-                          child: const Text(
-                            "A noble family becomes embroiled in a war for control over the galaxy's most valuable asset while its heir becomes troubled by visions of a dark future.",
-                            style: TextStyle(fontSize: 14, color: ICON_GREY),
+                          child: Text(
+                            movieInfoProvider.overview,
+                            style:
+                                const TextStyle(fontSize: 14, color: ICON_GREY),
                           ),
                         ),
                         Container(
