@@ -3,9 +3,11 @@ import 'package:moviewebapp/pages/all_movies_screen/movies_list.dart';
 import 'package:moviewebapp/pages/dashboard/widgets/main_banner.dart';
 import 'package:moviewebapp/pages/dashboard/widgets/movie_label.dart';
 import 'package:moviewebapp/pages/dashboard/widgets/movies_list.dart';
+import 'package:moviewebapp/providers/dashboard_provider.dart';
 import 'package:moviewebapp/utils/colors.dart';
 import 'package:moviewebapp/utils/commom_functions.dart';
 import 'package:moviewebapp/utils/constants.dart';
+import 'package:provider/provider.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -15,11 +17,34 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  final ScrollController scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
+  bool _isScrolled = false;
 
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final dashBoardProvider =
+        Provider.of<DashBoardProvider>(context, listen: false);
+    // Update the state based on scroll position
+    _isScrolled = _scrollController.position.pixels >= 100;
+    if (_isScrolled) {
+      dashBoardProvider.setAppBarColorAndElevation(
+          color: tealishBlue, elevation: 1.0);
+    } else {
+      dashBoardProvider.setAppBarColorAndElevation(
+          color: Colors.transparent, elevation: 0.0);
+    }
   }
 
   Map<String, dynamic> moviesDataMap = {
@@ -72,54 +97,60 @@ class _DashboardState extends State<Dashboard> {
     final _screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: tealishBlue,
-      body: SingleChildScrollView(
-        controller: scrollController,
-        child: Column(
-          children: [
-            const MainBanner(),
-            Column(
-              children: List.generate(
-                moviesDataMap.length,
-                (index) => Column(
-                  children: [
-                    MovieLabel(
-                      movieLabel: moviesDataMap["$index"]["movieLabel"],
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => MovieListScreen(
-                              screenTitle: moviesDataMap["$index"]
-                                  ["movieLabel"],
-                              movieType: moviesDataMap["$index"]["movieType"],
-                              withOriginalLanguage: moviesDataMap["$index"]
-                                  ["withOriginalLanguage"],
-                              withGenres: moviesDataMap["$index"]["withGenres"],
-                            ),
+      body: NotificationListener<ScrollNotification>(
+          onNotification: (scrollNotification) {
+            return true;
+          },
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Column(
+              children: [
+                const MainBanner(),
+                Column(
+                  children: List.generate(
+                    moviesDataMap.length,
+                    (index) => Column(
+                      children: [
+                        MovieLabel(
+                          movieLabel: moviesDataMap["$index"]["movieLabel"],
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MovieListScreen(
+                                  screenTitle: moviesDataMap["$index"]
+                                      ["movieLabel"],
+                                  movieType: moviesDataMap["$index"]
+                                      ["movieType"],
+                                  withOriginalLanguage: moviesDataMap["$index"]
+                                      ["withOriginalLanguage"],
+                                  withGenres: moviesDataMap["$index"]
+                                      ["withGenres"],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        Container(
+                          height: getSimilarMoviesSectionHeight(
+                            screenSize: _screenWidth,
                           ),
-                        );
-                      },
+                          margin: const EdgeInsets.only(top: 16),
+                          child: MoviesList(
+                            movieType: moviesDataMap["$index"]["movieType"],
+                            withOriginalLanguage: moviesDataMap["$index"]
+                                ["withOriginalLanguage"],
+                            withGenres: moviesDataMap["$index"]["withGenres"],
+                          ),
+                        ),
+                      ],
                     ),
-                    Container(
-                      height: getSimilarMoviesSectionHeight(
-                        screenSize: _screenWidth,
-                      ),
-                      margin: const EdgeInsets.only(top: 16),
-                      child: MoviesList(
-                        movieType: moviesDataMap["$index"]["movieType"],
-                        withOriginalLanguage: moviesDataMap["$index"]
-                            ["withOriginalLanguage"],
-                        withGenres: moviesDataMap["$index"]["withGenres"],
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+                const SizedBox(height: 100),
+              ],
             ),
-            const SizedBox(height: 100),
-          ],
-        ),
-      ),
+          )),
     );
   }
 }

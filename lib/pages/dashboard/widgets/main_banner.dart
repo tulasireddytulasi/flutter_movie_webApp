@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviewebapp/pages/dashboard/widgets/buttons.dart';
 import 'package:moviewebapp/pages/dashboard/widgets/icon_with_text_widget.dart';
 import 'package:moviewebapp/pages/dashboard/widgets/play_button_widget.dart';
 import 'package:moviewebapp/providers/dashboard_provider.dart';
@@ -82,7 +83,7 @@ class _MainBannerState extends State<MainBanner>
     return Consumer<DashBoardProvider>(
         builder: (context, dashBoardProvider, child) {
       final String poster = _screenWidth600
-          ? dashBoardProvider.backdropPath
+          ? "/bQXAqRx2Fgc46uCVWgoPz5L5Dtr.jpg"
           : dashBoardProvider.moviePoster;
       final String posterSize = _screenWidth600
           ? ApiConstants.movieImageBaseUrlw1280
@@ -122,71 +123,96 @@ class _MainBannerState extends State<MainBanner>
                     ),
                   ),
           ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            left: 0,
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    RichText(
-                      softWrap: true,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 4,
-                      text: TextSpan(
-                        children: List.generate(
-                          genere.length,
-                          (index) => TextSpan(
-                            text: genere.length - 1 != index
-                                ? genere[index] + " . "
-                                : genere[index],
-                            style: const TextStyle(
-                                fontSize: 12,
-                                color: WHITE,
-                                fontWeight: FontWeight.normal),
+          Visibility(
+            visible: !_screenWidth600,
+            child: Positioned(
+              bottom: 0,
+              right: 0,
+              left: 0,
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      RichText(
+                        softWrap: true,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 4,
+                        text: TextSpan(
+                          children: List.generate(
+                            genere.length,
+                            (index) => TextSpan(
+                              text: genere.length - 1 != index
+                                  ? genere[index] + " . "
+                                  : genere[index],
+                              style: const TextStyle(
+                                  fontSize: 12,
+                                  color: WHITE,
+                                  fontWeight: FontWeight.normal),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    IconWithText(
-                      icon: Icons.done,
-                      label: Constants.myList,
-                    ),
-                    SizedBox(width: 30),
-                    PlayButtonWidget(),
-                    SizedBox(width: 30),
-                    IconWithText(
-                      icon: Icons.info_outline_rounded,
-                      label: Constants.info,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-              ],
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      IconWithText(
+                        icon: Icons.done,
+                        label: Constants.myList,
+                      ),
+                      SizedBox(width: 30),
+                      PlayButtonWidget(),
+                      SizedBox(width: 30),
+                      IconWithText(
+                        icon: Icons.info_outline_rounded,
+                        label: Constants.info,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
-          Positioned(
-            bottom: 150,
-            left: result1.toDouble(), // leftValue ? 170 : _controller.value
-            child: ScaleTransition(
-              scale: _scaleAnimation,
-              child: SizedBox(
-                width: 320,
-                child: Text(
-                  dashBoardProvider.movieTitle,
-                  style: const TextStyle(
-                      fontSize: 42,
-                      color: WHITE,
-                      fontFamily: montserratSemiBold),
-                ),
+          Visibility(
+            visible: _screenWidth600,
+            child: Positioned(
+              top: 260,
+              left: 50,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ScaleTransition(
+                    scale: _scaleAnimation,
+                    alignment: Alignment.bottomLeft,
+                    child: Image.network(
+                      "https://image.tmdb.org/t/p/w500/ypkbl2rVZCnXFsh50z9JWsv08yv.png",
+                      width: 200,
+                      fit: BoxFit.fitWidth,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    width: _screenWidth600 ? 500 : _screenWidth - 40,
+                    child: const Text(
+                      Constants.longText,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: WHITE,
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const Buttons(),
+                ],
               ),
             ),
           ),

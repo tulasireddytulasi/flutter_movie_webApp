@@ -48,4 +48,6 @@ class Constants {
 
   static const String reviewText =
       "First of all, I think I need to make a note: I can't say that I'm an ABBA fan, but the truth is that I have a great affection for the band and their songs, because they were songs that I remember hearing on TV when I was a kid. It is a childhood memory, which has a sentimental charge, and which cannot be evaluated in a completely neutral way (childhood memories never leave us neutral).";
+  static const String longText =
+      "In ancient Kahndaq, Teth Adam was bestowed the almighty powers of the gods. After using these powers for vengeance, he was imprisoned, becoming Black Adam. Nearly 5,000 years have passed, and Black Adam has gone from man to myth to legend. Now free, his unique form of justice, born out of rage, is challenged by modern-day heroes who form the Justice Society: Hawkman, Dr. Fate, Atom Smasher and Cyclone.";
 }

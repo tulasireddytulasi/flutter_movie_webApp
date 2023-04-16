@@ -53,7 +53,7 @@ class _MovieAppBarState extends State<MovieAppBar> {
         });
       },
       child: Container(
-        margin: const EdgeInsets.only(right: 10),
+        margin: const EdgeInsets.only(right: 20),
         child: Text(
           title,
           style: TextStyle(
