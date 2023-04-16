@@ -146,11 +146,10 @@ class MovieInfoProvider extends ChangeNotifier {
     _overview = _getMovieInfo.overview ?? "NA";
     _currentMovieId = _getMovieInfo.id.toString();
     _backdropPath = _getMovieInfo.backdropPath ?? "";
-    if (_getMovieInfo.releaseDate!.toString() != null &&
-        _getMovieInfo.releaseDate!.toString().isNotEmpty) {
+    final String releaseDate = _getMovieInfo.releaseDate.toString();
+    if (releaseDate.isNotEmpty) {
       DateFormat dateFormat = DateFormat("yyyy-MM-dd");
-      DateTime movieReleaseDate =
-          dateFormat.parse(_getMovieInfo.releaseDate!.toString());
+      DateTime movieReleaseDate = dateFormat.parse(releaseDate);
       String formattedDate = DateFormat('yyyy-MM-dd').format(movieReleaseDate);
       _releaseDate = formattedDate;
       _releaseYear = movieReleaseDate.year.toString();

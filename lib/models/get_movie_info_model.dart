@@ -41,7 +41,7 @@ class GetMovieInfo {
 
   bool? adult;
   String? backdropPath;
-  dynamic? belongsToCollection;
+  Map<String, dynamic>? belongsToCollection;
   int? budget;
   List<Genre>? genres;
   String? homepage;
@@ -54,7 +54,7 @@ class GetMovieInfo {
   String? posterPath;
   List<ProductionCompany>? productionCompanies;
   List<ProductionCountry>? productionCountries;
-  DateTime? releaseDate;
+  String? releaseDate;
   int? revenue;
   int? runtime;
   List<SpokenLanguage>? spokenLanguages;
@@ -67,26 +67,21 @@ class GetMovieInfo {
   Credits? credits;
 
   factory GetMovieInfo.fromJson(Map<String, dynamic> json) => GetMovieInfo(
-        adult: json["adult"] == null ? null : json["adult"],
-        backdropPath:
-            json["backdrop_path"] == null ? null : json["backdrop_path"],
+        adult: json["adult"],
+        backdropPath: json["backdrop_path"],
         belongsToCollection: json["belongs_to_collection"],
-        budget: json["budget"] == null ? null : json["budget"],
+        budget: json["budget"],
         genres: json["genres"] == null
             ? null
             : List<Genre>.from(json["genres"].map((x) => Genre.fromJson(x))),
-        homepage: json["homepage"] == null ? null : json["homepage"],
-        id: json["id"] == null ? null : json["id"],
-        imdbId: json["imdb_id"] == null ? null : json["imdb_id"],
-        originalLanguage: json["original_language"] == null
-            ? null
-            : json["original_language"],
-        originalTitle:
-            json["original_title"] == null ? null : json["original_title"],
-        overview: json["overview"] == null ? null : json["overview"],
-        popularity:
-            json["popularity"] == null ? null : json["popularity"].toDouble(),
-        posterPath: json["poster_path"] == null ? null : json["poster_path"],
+        homepage: json["homepage"],
+        id: json["id"],
+        imdbId: json["imdb_id"],
+        originalLanguage: json["original_language"],
+        originalTitle: json["original_title"],
+        overview: json["overview"],
+        popularity: json["popularity"],
+        posterPath: json["poster_path"],
         productionCompanies: json["production_companies"] == null
             ? null
             : List<ProductionCompany>.from(json["production_companies"]
@@ -95,63 +90,57 @@ class GetMovieInfo {
             ? null
             : List<ProductionCountry>.from(json["production_countries"]
                 .map((x) => ProductionCountry.fromJson(x))),
-        releaseDate: json["release_date"] == null
-            ? null
-            : DateTime.parse(json["release_date"]),
-        revenue: json["revenue"] == null ? null : json["revenue"],
-        runtime: json["runtime"] == null ? null : json["runtime"],
+        releaseDate: json["release_date"],
+        revenue: json["revenue"],
+        runtime: json["runtime"],
         spokenLanguages: json["spoken_languages"] == null
             ? null
             : List<SpokenLanguage>.from(json["spoken_languages"]
                 .map((x) => SpokenLanguage.fromJson(x))),
-        status: json["status"] == null ? null : json["status"],
-        tagline: json["tagline"] == null ? null : json["tagline"],
-        title: json["title"] == null ? null : json["title"],
-        video: json["video"] == null ? null : json["video"],
-        voteAverage: json["vote_average"] == null
-            ? null
-            : json["vote_average"].toDouble(),
-        voteCount: json["vote_count"] == null ? null : json["vote_count"],
+        status: json["status"],
+        tagline: json["tagline"],
+        title: json["title"],
+        video: json["video"],
+        voteAverage: json["vote_average"],
+        voteCount: json["vote_count"],
         credits:
             json["credits"] == null ? null : Credits.fromJson(json["credits"]),
       );
 
   Map<String, dynamic> toJson() => {
-        "adult": adult == null ? null : adult,
-        "backdrop_path": backdropPath == null ? null : backdropPath,
+        "adult": adult,
+        "backdrop_path": backdropPath,
         "belongs_to_collection": belongsToCollection,
-        "budget": budget == null ? null : budget,
+        "budget": budget,
         "genres": genres == null
             ? null
             : List<dynamic>.from(genres!.map((x) => x.toJson())),
-        "homepage": homepage == null ? null : homepage,
-        "id": id == null ? null : id,
-        "imdb_id": imdbId == null ? null : imdbId,
-        "original_language": originalLanguage == null ? null : originalLanguage,
-        "original_title": originalTitle == null ? null : originalTitle,
-        "overview": overview == null ? null : overview,
-        "popularity": popularity == null ? null : popularity,
-        "poster_path": posterPath == null ? null : posterPath,
+        "homepage": homepage,
+        "id": id,
+        "imdb_id": imdbId,
+        "original_language": originalLanguage,
+        "original_title": originalTitle,
+        "overview": overview,
+        "popularity": popularity,
+        "poster_path": posterPath,
         "production_companies": productionCompanies == null
             ? null
             : List<dynamic>.from(productionCompanies!.map((x) => x.toJson())),
         "production_countries": productionCountries == null
             ? null
             : List<dynamic>.from(productionCountries!.map((x) => x.toJson())),
-        "release_date": releaseDate == null
-            ? null
-            : "${releaseDate!.year.toString().padLeft(4, '0')}-${releaseDate!.month.toString().padLeft(2, '0')}-${releaseDate!.day.toString().padLeft(2, '0')}",
-        "revenue": revenue == null ? null : revenue,
-        "runtime": runtime == null ? null : runtime,
+        "release_date": releaseDate,
+        "revenue": revenue,
+        "runtime": runtime,
         "spoken_languages": spokenLanguages == null
             ? null
             : List<dynamic>.from(spokenLanguages!.map((x) => x.toJson())),
-        "status": status == null ? null : status,
-        "tagline": tagline == null ? null : tagline,
-        "title": title == null ? null : title,
-        "video": video == null ? null : video,
-        "vote_average": voteAverage == null ? null : voteAverage,
-        "vote_count": voteCount == null ? null : voteCount,
+        "status": status,
+        "tagline": tagline,
+        "title": title,
+        "video": video,
+        "vote_average": voteAverage,
+        "vote_count": voteCount,
         "credits": credits == null ? null : credits!.toJson(),
       };
 }
@@ -218,42 +207,37 @@ class Cast {
   String? job;
 
   factory Cast.fromJson(Map<String, dynamic> json) => Cast(
-        adult: json["adult"] == null ? null : json["adult"],
-        gender: json["gender"] == null ? null : json["gender"],
-        id: json["id"] == null ? null : json["id"],
-        knownForDepartment: json["known_for_department"] == null
-            ? null
-            : json["known_for_department"],
-        name: json["name"] == null ? null : json["name"],
-        originalName:
-            json["original_name"] == null ? null : json["original_name"],
-        popularity:
-            json["popularity"] == null ? null : json["popularity"].toDouble(),
-        profilePath: json["profile_path"] == null ? null : json["profile_path"],
-        castId: json["cast_id"] == null ? null : json["cast_id"],
-        character: json["character"] == null ? null : json["character"],
-        creditId: json["credit_id"] == null ? null : json["credit_id"],
-        order: json["order"] == null ? null : json["order"],
-        department: json["department"] == null ? null : json["department"],
-        job: json["job"] == null ? null : json["job"],
+        adult: json["adult"],
+        gender: json["gender"],
+        id: json["id"],
+        knownForDepartment: json["known_for_department"],
+        name: json["name"],
+        originalName: json["original_name"],
+        popularity: json["popularity"] ?? 0.0,
+        profilePath: json["profile_path"],
+        castId: json["cast_id"],
+        character: json["character"],
+        creditId: json["credit_id"],
+        order: json["order"],
+        department: json["department"],
+        job: json["job"],
       );
 
   Map<String, dynamic> toJson() => {
-        "adult": adult == null ? null : adult,
-        "gender": gender == null ? null : gender,
-        "id": id == null ? null : id,
-        "known_for_department":
-            knownForDepartment == null ? null : knownForDepartment,
-        "name": name == null ? null : name,
-        "original_name": originalName == null ? null : originalName,
-        "popularity": popularity == null ? null : popularity,
-        "profile_path": profilePath == null ? null : profilePath,
-        "cast_id": castId == null ? null : castId,
-        "character": character == null ? null : character,
-        "credit_id": creditId == null ? null : creditId,
-        "order": order == null ? null : order,
-        "department": department == null ? null : department,
-        "job": job == null ? null : job,
+        "adult": adult,
+        "gender": gender,
+        "id": id,
+        "known_for_department": knownForDepartment,
+        "name": name,
+        "original_name": originalName,
+        "popularity": popularity,
+        "profile_path": profilePath,
+        "cast_id": castId,
+        "character": character,
+        "credit_id": creditId,
+        "order": order,
+        "department": department,
+        "job": job,
       };
 }
 
@@ -267,13 +251,13 @@ class Genre {
   String? name;
 
   factory Genre.fromJson(Map<String, dynamic> json) => Genre(
-        id: json["id"] == null ? null : json["id"],
-        name: json["name"] == null ? null : json["name"],
+        id: json["id"],
+        name: json["name"],
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id == null ? null : id,
-        "name": name == null ? null : name,
+        "id": id,
+        "name": name,
       };
 }
 
@@ -292,18 +276,17 @@ class ProductionCompany {
 
   factory ProductionCompany.fromJson(Map<String, dynamic> json) =>
       ProductionCompany(
-        id: json["id"] == null ? null : json["id"],
-        logoPath: json["logo_path"] == null ? null : json["logo_path"],
-        name: json["name"] == null ? null : json["name"],
-        originCountry:
-            json["origin_country"] == null ? null : json["origin_country"],
+        id: json["id"],
+        logoPath: json["logo_path"],
+        name: json["name"],
+        originCountry: json["origin_country"],
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id == null ? null : id,
-        "logo_path": logoPath == null ? null : logoPath,
-        "name": name == null ? null : name,
-        "origin_country": originCountry == null ? null : originCountry,
+        "id": id,
+        "logo_path": logoPath,
+        "name": name,
+        "origin_country": originCountry,
       };
 }
 
@@ -318,13 +301,13 @@ class ProductionCountry {
 
   factory ProductionCountry.fromJson(Map<String, dynamic> json) =>
       ProductionCountry(
-        iso31661: json["iso_3166_1"] == null ? null : json["iso_3166_1"],
-        name: json["name"] == null ? null : json["name"],
+        iso31661: json["iso_3166_1"],
+        name: json["name"],
       );
 
   Map<String, dynamic> toJson() => {
-        "iso_3166_1": iso31661 == null ? null : iso31661,
-        "name": name == null ? null : name,
+        "iso_3166_1": iso31661,
+        "name": name,
       };
 }
 
@@ -340,14 +323,14 @@ class SpokenLanguage {
   String? name;
 
   factory SpokenLanguage.fromJson(Map<String, dynamic> json) => SpokenLanguage(
-        englishName: json["english_name"] == null ? null : json["english_name"],
-        iso6391: json["iso_639_1"] == null ? null : json["iso_639_1"],
-        name: json["name"] == null ? null : json["name"],
+        englishName: json["english_name"],
+        iso6391: json["iso_639_1"],
+        name: json["name"],
       );
 
   Map<String, dynamic> toJson() => {
-        "english_name": englishName == null ? null : englishName,
-        "iso_639_1": iso6391 == null ? null : iso6391,
-        "name": name == null ? null : name,
+        "english_name": englishName,
+        "iso_639_1": iso6391,
+        "name": name,
       };
 }
