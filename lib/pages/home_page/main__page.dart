@@ -42,7 +42,6 @@ class _MainPageState extends State<MainPage> {
               max: 0.8,
               onChanged: (value) {
                 setState(() => blurBox = value);
-                print("blurBox:  $blurBox");
               },
             ),
             const SizedBox(height: 200),

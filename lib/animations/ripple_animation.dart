@@ -1,6 +1,3 @@
-// import 'package:animated_cards/animation_2/circle_painter.dart';
-// import 'package:animated_cards/animation_2/curve_wave.dart';
-// import 'package:animated_cards/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/animations/circle_painter.dart';
 import 'package:moviewebapp/animations/curve_wave.dart';
@@ -22,8 +19,7 @@ class RipplesAnimation extends StatefulWidget {
   _RipplesAnimationState createState() => _RipplesAnimationState();
 }
 
-class _RipplesAnimationState extends State<RipplesAnimation>
-    with TickerProviderStateMixin {
+class _RipplesAnimationState extends State<RipplesAnimation> with TickerProviderStateMixin {
   late AnimationController _controller;
   @override
   void initState() {
@@ -49,8 +45,7 @@ class _RipplesAnimationState extends State<RipplesAnimation>
             gradient: RadialGradient(
               colors: <Color>[
                 pickledBlueWood,
-                Color.lerp(pickledBlueWood, Colors.black, .05) ??
-                    pickledBlueWood,
+                Color.lerp(pickledBlueWood, Colors.black, .05) ?? pickledBlueWood,
               ],
             ),
           ),

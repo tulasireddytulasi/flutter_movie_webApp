@@ -33,20 +33,8 @@ class _NavigationMenuState extends State<NavigationMenu> {
     const ProfileScreen(),
   ];
   final List<String> appBarTitles = ["Home", "Movies", "People", "Blogs"];
-  final List<String> bottomBarTitles = [
-    "Dashboard",
-    "Movies",
-    "People",
-    "Blogs",
-    "Account"
-  ];
-  final List<String> iconAssetPaths = [
-    homeIcon,
-    videoIcon,
-    tvIcon,
-    blogIcon,
-    userIcon
-  ];
+  final List<String> bottomBarTitles = ["Dashboard", "Movies", "People", "Blogs", "Account"];
+  final List<String> iconAssetPaths = [homeIcon, videoIcon, tvIcon, blogIcon, userIcon];
 
   @override
   void initState() {
@@ -58,8 +46,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
   Widget build(BuildContext context) {
     final double _screenWidth = MediaQuery.of(context).size.width;
 
-    return Consumer<DashBoardProvider>(
-        builder: (context, dashBoardProvider, child) {
+    return Consumer<DashBoardProvider>(builder: (context, dashBoardProvider, child) {
       return Scaffold(
         appBar: _screenWidth >= 750
             ? AppBar(

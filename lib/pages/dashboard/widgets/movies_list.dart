@@ -38,29 +38,12 @@ class _MoviesListState extends State<MoviesList> {
   }
 
   processData({required MoviesModel moviesModel}) {
-    final movieProvider =
-        Provider.of<DashBoardProvider>(context, listen: false);
     _moviesModel = moviesModel;
     _moviesModel.results?.forEach((element) {
       _title.add(element.title ?? "");
       _img.add(element.posterPath ?? "");
       _movieId.add(element.id.toString());
     });
-    if (widget.movieType == "popular") {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        // Create an instance of the Random class
-        final random = Random();
-
-        // Generate a random number between 0 and 19
-        int randomNumber = random.nextInt(20);
-        movieProvider.setMovieData(
-          movieTitle: _moviesModel.results?[randomNumber].title ?? "",
-          movieID: _moviesModel.results?[randomNumber].id.toString() ?? "",
-          moviePoster: _moviesModel.results?[randomNumber].posterPath ?? "",
-          backdropPath: _moviesModel.results?[randomNumber].backdropPath ?? "",
-        );
-      });
-    }
   }
 
   late Future<MoviesModel> _moviesData;

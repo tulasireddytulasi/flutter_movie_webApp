@@ -7,7 +7,7 @@ class ProceedButton extends StatelessWidget {
   final void Function() callingAPI;
   final double buttonWidth;
   final double topPadding;
-  final double bottomPAdding;
+  final double bottomPadding;
   final Color color;
   final double borderRadius;
   final Widget? childWidget;
@@ -17,7 +17,7 @@ class ProceedButton extends StatelessWidget {
     required this.callingAPI,
     required this.buttonWidth,
     this.topPadding = 14,
-    this.bottomPAdding = 14,
+    this.bottomPadding = 14,
     this.color = Colors.green,
     this.borderRadius = 25,
     this.childWidget,
@@ -31,7 +31,7 @@ class ProceedButton extends StatelessWidget {
         child: Container(
           alignment: Alignment.center,
           width: buttonWidth,
-          padding: EdgeInsets.only(bottom: bottomPAdding, top: topPadding),
+          padding: EdgeInsets.only(bottom: bottomPadding, top: topPadding),
           child: childWidget ??
               Text(
                 text ?? "",
@@ -45,8 +45,7 @@ class ProceedButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           elevation: 0,
           backgroundColor: color,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(borderRadius)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius)),
         ),
       ),
     );

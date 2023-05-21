@@ -6,6 +6,7 @@ import 'package:moviewebapp/models/actor_movie_model.dart';
 import 'package:moviewebapp/models/actors_info_model.dart';
 import 'package:moviewebapp/models/get_movie_info_model.dart';
 import 'package:moviewebapp/models/get_movies_model.dart';
+import 'package:moviewebapp/models/movie_logos_and_posters_model.dart';
 import 'package:moviewebapp/models/popular_actors_model.dart';
 import 'package:moviewebapp/models/review_model.dart';
 import 'package:moviewebapp/responses/api_constants.dart';
@@ -17,8 +18,7 @@ Future<Response> getMoviesList({
   required String withOriginalLanguage,
   String? withGenres,
 }) async {
-  final String getPopularMoviesURL =
-      "movie/$movieType?api_key=${ApiConstants.apiKey}&with_original_language="
+  final String getPopularMoviesURL = "movie/$movieType?api_key=${ApiConstants.apiKey}&with_original_language="
       "$withOriginalLanguage&page=$pageNo&with_genres=$withGenres";
   try {
     Response response = await getMethod(getPopularMoviesURL);
@@ -36,11 +36,7 @@ Future<MoviesModel> getPopularMoviesList({
 }) async {
   MoviesModel getMoviesModel;
   try {
-    Response response = await getMoviesList(
-        movieType: movieType,
-        pageNo: pageNo,
-        withOriginalLanguage: withOriginalLanguage,
-        withGenres: withGenres);
+    Response response = await getMoviesList(movieType: movieType, pageNo: pageNo, withOriginalLanguage: withOriginalLanguage, withGenres: withGenres);
     getMoviesModel = getMoviesFromJson(response.body);
     await Future.delayed(const Duration(seconds: 1));
     return getMoviesModel;
@@ -49,11 +45,7 @@ Future<MoviesModel> getPopularMoviesList({
   }
 }
 
-Future<List<Movies>> fetchMovies(
-    {required int pageKey,
-    required String movieType,
-    required String withOriginalLanguage,
-    String? withGenres}) async {
+Future<List<Movies>> fetchMovies({required int pageKey, required String movieType, required String withOriginalLanguage, String? withGenres}) async {
   try {
     final response = await getMoviesList(
       movieType: movieType,
@@ -77,8 +69,7 @@ Future<Response> getMoviesInfo({
   required String movieId,
   required String appendToResponse,
 }) async {
-  final String getPopularMoviesURL =
-      "movie/$movieId?api_key=${ApiConstants.apiKey}&append_to_response="
+  final String getPopularMoviesURL = "movie/$movieId?api_key=${ApiConstants.apiKey}&append_to_response="
       "$appendToResponse";
   try {
     Response response = await getMethod(getPopularMoviesURL);
@@ -110,8 +101,7 @@ Future<Response> getSimilarMoviesList({
   required String pageNo,
   required String withOriginalLanguage,
 }) async {
-  final String getPopularMoviesURL =
-      "movie/$movieId/recommendations?api_key=${ApiConstants.apiKey}&with_original_language="
+  final String getPopularMoviesURL = "movie/$movieId/recommendations?api_key=${ApiConstants.apiKey}&with_original_language="
       "$withOriginalLanguage&page=$pageNo";
   try {
     Response response = await getMethod(getPopularMoviesURL);
@@ -128,10 +118,7 @@ Future<MoviesModel> getSimilarMoviesListData({
 }) async {
   MoviesModel getSimilarMoviesModel;
   try {
-    Response response = await getSimilarMoviesList(
-        movieId: movieId,
-        pageNo: pageNo,
-        withOriginalLanguage: withOriginalLanguage);
+    Response response = await getSimilarMoviesList(movieId: movieId, pageNo: pageNo, withOriginalLanguage: withOriginalLanguage);
     getSimilarMoviesModel = getMoviesFromJson(response.body);
     return getSimilarMoviesModel;
   } catch (error, stackTrace) {
@@ -139,11 +126,9 @@ Future<MoviesModel> getSimilarMoviesListData({
   }
 }
 
-Future<ActorImagesModel> getPopularActorsImages(
-    {required String actorId}) async {
+Future<ActorImagesModel> getPopularActorsImages({required String actorId}) async {
   ActorImagesModel getMoviesModel;
-  final String _popularActorsImages =
-      "person/$actorId/images?api_key=${ApiConstants.apiKey}";
+  final String _popularActorsImages = "person/$actorId/images?api_key=${ApiConstants.apiKey}";
   try {
     Response response = await getMethod(_popularActorsImages);
     getMoviesModel = actorImagesModelFromJson(response.body);
@@ -165,11 +150,9 @@ Future<ActorInfoModel> getActorsInfo({required String actorId}) async {
   }
 }
 
-Future<PopularActorsModel> getPopularActorsInfo(
-    {required String languageCode, required int pageNo}) async {
+Future<PopularActorsModel> getPopularActorsInfo({required String languageCode, required int pageNo}) async {
   PopularActorsModel getPopularActorsInfo;
-  final String _actorsInfo =
-      "person/popular/?&language=$languageCode&page=$pageNo&api_key=${ApiConstants.apiKey}";
+  final String _actorsInfo = "person/popular/?&language=$languageCode&page=$pageNo&api_key=${ApiConstants.apiKey}";
   try {
     Response response = await getMethod(_actorsInfo);
     getPopularActorsInfo = popularActorsModelFromJson(response.body);
@@ -184,20 +167,17 @@ Future<List<Actors>> fetchPopularActors({
   required String languageCode,
 }) async {
   try {
-    PopularActorsModel _popularActorsModel =
-        await getPopularActorsInfo(languageCode: languageCode, pageNo: pageNo);
-    final List<Actors> actorsList = _popularActorsModel.actors!;
+    PopularActorsModel _popularActorsModel = await getPopularActorsInfo(languageCode: languageCode, pageNo: pageNo);
+    final List<Actors> actorsList = _popularActorsModel.actors ?? [];
     return actorsList;
   } catch (error) {
     rethrow;
   }
 }
 
-Future<ActorMovieModel> getActorsActedMoviesInfo(
-    {required String actorId}) async {
+Future<ActorMovieModel> getActorsActedMoviesInfo({required String actorId}) async {
   ActorMovieModel actorsMovieModel;
-  final String _actorsInfo =
-      "person/$actorId/movie_credits?&api_key=${ApiConstants.apiKey}";
+  final String _actorsInfo = "person/$actorId/movie_credits?&api_key=${ApiConstants.apiKey}";
   try {
     Response response = await getMethod(_actorsInfo);
     actorsMovieModel = ActorMovieModel.fromJson(json.decode(response.body));
@@ -212,13 +192,24 @@ Future<ReviewModel> getMovieReviews({
   required String pageNo,
 }) async {
   ReviewModel _reviewModel;
-  final String _reviewsAPI =
-      "movie/$movieId/reviews?api_key=${ApiConstants.apiKey}&page=$pageNo";
+  final String _reviewsAPI = "movie/$movieId/reviews?api_key=${ApiConstants.apiKey}&page=$pageNo";
   try {
     Response response = await getMethod(_reviewsAPI);
     _reviewModel = reviewModelFromJson(response.body);
     return _reviewModel;
   } catch (error, stackTrace) {
+    rethrow;
+  }
+}
+
+Future<MovieLogosAndPostersModel> getMovieLogosAPI({required String movieId}) async {
+  MovieLogosAndPostersModel movieLogosAndPostersModel;
+  final String _reviewsAPI = "/movie/$movieId/images?api_key=${ApiConstants.apiKey}";
+  try {
+    Response response = await getMethod(_reviewsAPI);
+    movieLogosAndPostersModel = movieLogosAndPostersModelFromJson(response.body);
+    return movieLogosAndPostersModel;
+  } catch (error) {
     rethrow;
   }
 }

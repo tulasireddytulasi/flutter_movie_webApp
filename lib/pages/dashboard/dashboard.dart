@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/pages/all_movies_screen/movies_list.dart';
-import 'package:moviewebapp/pages/dashboard/widgets/main_banner.dart';
+import 'package:moviewebapp/pages/dashboard/main_banner_widget/main_banner.dart';
 import 'package:moviewebapp/pages/dashboard/widgets/movie_label.dart';
 import 'package:moviewebapp/pages/dashboard/widgets/movies_list.dart';
 import 'package:moviewebapp/providers/dashboard_provider.dart';
@@ -34,16 +34,13 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void _onScroll() {
-    final dashBoardProvider =
-        Provider.of<DashBoardProvider>(context, listen: false);
+    final dashBoardProvider = Provider.of<DashBoardProvider>(context, listen: false);
     // Update the state based on scroll position
     _isScrolled = _scrollController.position.pixels >= 100;
     if (_isScrolled) {
-      dashBoardProvider.setAppBarColorAndElevation(
-          color: tealishBlue, elevation: 1.0);
+      dashBoardProvider.setAppBarColorAndElevation(color: tealishBlue, elevation: 1.0);
     } else {
-      dashBoardProvider.setAppBarColorAndElevation(
-          color: Colors.transparent, elevation: 0.0);
+      dashBoardProvider.setAppBarColorAndElevation(color: Colors.transparent, elevation: 0.0);
     }
   }
 
@@ -52,43 +49,43 @@ class _DashboardState extends State<Dashboard> {
       "movieLabel": Constants.popularMovies,
       "movieType": Constants.popular,
       "withOriginalLanguage": Constants.english,
-      "withGenres": ""
+      "withGenres": "",
     },
     "1": {
       "movieLabel": Constants.topRatedMovies,
       "movieType": Constants.topRated,
       "withOriginalLanguage": Constants.english,
-      "withGenres": ""
+      "withGenres": "",
     },
     "2": {
       "movieLabel": Constants.nowPlayingMovies,
       "movieType": Constants.nowPlaying,
       "withOriginalLanguage": Constants.english,
-      "withGenres": ""
+      "withGenres": "",
     },
     "3": {
       "movieLabel": Constants.horrorMovies,
       "movieType": Constants.topRated,
       "withOriginalLanguage": Constants.english,
-      "withGenres": "27"
+      "withGenres": "27",
     },
     "4": {
       "movieLabel": Constants.thrillerMovies,
       "movieType": Constants.topRated,
       "withOriginalLanguage": Constants.english,
-      "withGenres": "53"
+      "withGenres": "53",
     },
     "5": {
       "movieLabel": Constants.romanceMovies,
       "movieType": Constants.topRated,
       "withOriginalLanguage": Constants.english,
-      "withGenres": "10749"
+      "withGenres": "10749",
     },
     "6": {
       "movieLabel": Constants.scificMovies,
       "movieType": Constants.topRated,
       "withOriginalLanguage": Constants.english,
-      "withGenres": "878"
+      "withGenres": "878",
     },
   };
 
@@ -98,59 +95,55 @@ class _DashboardState extends State<Dashboard> {
     return Scaffold(
       backgroundColor: tealishBlue,
       body: NotificationListener<ScrollNotification>(
-          onNotification: (scrollNotification) {
-            return true;
-          },
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            child: Column(
-              children: [
-                const MainBanner(),
-                Column(
-                  children: List.generate(
-                    moviesDataMap.length,
-                    (index) => Column(
-                      children: [
-                        MovieLabel(
-                          movieLabel: moviesDataMap["$index"]["movieLabel"],
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => MovieListScreen(
-                                  screenTitle: moviesDataMap["$index"]
-                                      ["movieLabel"],
-                                  movieType: moviesDataMap["$index"]
-                                      ["movieType"],
-                                  withOriginalLanguage: moviesDataMap["$index"]
-                                      ["withOriginalLanguage"],
-                                  withGenres: moviesDataMap["$index"]
-                                      ["withGenres"],
-                                ),
+        onNotification: (scrollNotification) {
+          return true;
+        },
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          child: Column(
+            children: [
+              const MainBanner(),
+              Column(
+                children: List.generate(
+                  moviesDataMap.length,
+                  (index) => Column(
+                    children: [
+                      MovieLabel(
+                        movieLabel: moviesDataMap["$index"]["movieLabel"],
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MovieListScreen(
+                                screenTitle: moviesDataMap["$index"]["movieLabel"],
+                                movieType: moviesDataMap["$index"]["movieType"],
+                                withOriginalLanguage: moviesDataMap["$index"]["withOriginalLanguage"],
+                                withGenres: moviesDataMap["$index"]["withGenres"],
                               ),
-                            );
-                          },
+                            ),
+                          );
+                        },
+                      ),
+                      Container(
+                        height: getSimilarMoviesSectionHeight(
+                          screenSize: _screenWidth,
                         ),
-                        Container(
-                          height: getSimilarMoviesSectionHeight(
-                            screenSize: _screenWidth,
-                          ),
-                          margin: const EdgeInsets.only(top: 16),
-                          child: MoviesList(
-                            movieType: moviesDataMap["$index"]["movieType"],
-                            withOriginalLanguage: moviesDataMap["$index"]
-                                ["withOriginalLanguage"],
-                            withGenres: moviesDataMap["$index"]["withGenres"],
-                          ),
+                        margin: const EdgeInsets.only(top: 16),
+                        child: MoviesList(
+                          movieType: moviesDataMap["$index"]["movieType"],
+                          withOriginalLanguage: moviesDataMap["$index"]["withOriginalLanguage"],
+                          withGenres: moviesDataMap["$index"]["withGenres"],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 100),
-              ],
-            ),
-          )),
+              ),
+              const SizedBox(height: 100),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

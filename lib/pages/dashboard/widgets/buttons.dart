@@ -18,20 +18,12 @@ class Buttons extends StatelessWidget {
             children: [
               Container(
                 padding: const EdgeInsets.all(0.0),
-                child: Image.asset(
-                  pauseIcon,
-                  fit: BoxFit.cover,
-                  width: 18,
-                ),
+                child: Image.asset(pauseIcon, fit: BoxFit.cover, width: 18),
               ),
               const SizedBox(width: 10),
               const Text(
                 "Play",
-                style: TextStyle(
-                  fontSize: 14,
-                  fontFamily: montserratSemiBold,
-                  color: PURE_BLACK,
-                ),
+                style: TextStyle(fontSize: 14, fontFamily: montserratSemiBold, color: PURE_BLACK),
               ),
             ],
           ),
@@ -39,7 +31,7 @@ class Buttons extends StatelessWidget {
           color: WHITE,
           borderRadius: 4,
           callingAPI: () {},
-          bottomPAdding: 10,
+          bottomPadding: 10,
           topPadding: 10,
         ),
         const SizedBox(width: 10),
@@ -70,7 +62,7 @@ class Buttons extends StatelessWidget {
           color: WHITE.withOpacity(0.1),
           borderRadius: 4,
           callingAPI: () {},
-          bottomPAdding: 10,
+          bottomPadding: 10,
           topPadding: 10,
         ),
       ],

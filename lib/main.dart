@@ -16,8 +16,7 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  final MaterialColor mainAppColor =
-      const MaterialColor(0xFF89cfbe, <int, Color>{
+  final MaterialColor mainAppColor = const MaterialColor(0xFF89cfbe, <int, Color>{
     50: Color(0xFF1B2230),
     100: Color(0xE61B2230),
     200: Color(0xCC1B2230),
