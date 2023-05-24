@@ -10,12 +10,23 @@ class BottomSheetWidget extends StatefulWidget {
 }
 
 class _BottomSheetWidgetState extends State<BottomSheetWidget> {
+  late NavigationProvider _navigationProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    _navigationProvider = Provider.of<NavigationProvider>(context, listen: false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Consumer<NavigationProvider>(builder: (context, provider, child) {
-        return provider.screensList[provider.currentScreenIndex];
-      }),
+      child: Selector<NavigationProvider, int>(
+        selector: (context, provider) => provider.currentScreenIndex,
+        builder: (context, currentScreenIndex, child) {
+          return _navigationProvider.screensList[currentScreenIndex];
+        },
+      ),
     );
   }
 }

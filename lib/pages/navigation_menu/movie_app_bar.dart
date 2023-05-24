@@ -32,10 +32,7 @@ class _MovieAppBarState extends State<MovieAppBar> {
     List<Widget> _navBarItemList = [];
 
     for (var i = 0; i < _titles.length; i++) {
-      _navBarItemList.add(appBarLableItem(
-        index: i,
-        title: _titles[i],
-      ));
+      _navBarItemList.add(appBarLableItem(index: i, title: _titles[i]));
     }
 
     return Row(
@@ -56,10 +53,7 @@ class _MovieAppBarState extends State<MovieAppBar> {
         margin: const EdgeInsets.only(right: 20),
         child: Text(
           title,
-          style: TextStyle(
-              fontSize: 18,
-              fontFamily: "d",
-              color: index == _selectedIndex ? WHITE : GREY),
+          style: TextStyle(fontSize: 18, fontFamily: "d", color: index == _selectedIndex ? WHITE : GREY),
         ),
       ),
     );

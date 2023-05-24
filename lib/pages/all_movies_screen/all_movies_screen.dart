@@ -61,11 +61,9 @@ class _MovieHomePageState extends State<MovieHomePage> {
       _title.add(element.title ?? "");
       _img.add(element.posterPath ?? "");
       _movieId.add(element.id.toString());
-      final String movieReleaseDate =
-          element.releaseDate?.toIso8601String() ?? Constants.time00;
+      final String movieReleaseDate = element.releaseDate?.toIso8601String() ?? Constants.time00;
       if (movieReleaseDate.isNotEmpty && movieReleaseDate != Constants.time00) {
-        String movieReleaseDateValue =
-            DateFormat("yyyy-MM-dd").format(element.releaseDate!).toString();
+        String movieReleaseDateValue = DateFormat("yyyy-MM-dd").format(element.releaseDate!).toString();
         _date.add(movieReleaseDateValue);
       } else {
         _date.add(Constants.time00);
@@ -98,8 +96,9 @@ class _MovieHomePageState extends State<MovieHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    layoutData = getMovieCardWidth(screenWidth: screenWidth);
+    final double _screenWidth = MediaQuery.of(context).size.width;
+    final bool _screenWidth600 = _screenWidth >= 600;
+    layoutData = getMovieCardWidth(screenWidth: _screenWidth);
     cardHeight = layoutData["cardHeight"];
     columns = layoutData["columns"].toInt();
     _childAspectRatio = layoutData["childAspectRatio"];
@@ -112,24 +111,25 @@ class _MovieHomePageState extends State<MovieHomePage> {
     return Consumer<MoviesProvider>(builder: (context, movieProvider, child) {
       return Scaffold(
         backgroundColor: tealishBlue,
-        appBar: AppBar(
-          backgroundColor: tealishBlue,
-          leading: IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(
-              Icons.arrow_back,
-              color: WHITE,
-            ),
-          ),
-          title: Text(
-            widget.screenTitle,
-            style: TextStyle(fontSize: 18, color: WHITE),
-          ),
-        ),
+        appBar: _screenWidth600
+            ? null
+            : AppBar(
+                backgroundColor: tealishBlue,
+                leading: IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: WHITE,
+                  ),
+                ),
+                title: Text(
+                  widget.screenTitle,
+                  style: const TextStyle(fontSize: 18, color: WHITE),
+                ),
+              ),
         body: FutureBuilder(
             future: _moviesData,
-            builder:
-                (BuildContext context, AsyncSnapshot<MoviesModel> snapshot) {
+            builder: (BuildContext context, AsyncSnapshot<MoviesModel> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const RipplesAnimation();
               } else if (snapshot.connectionState == ConnectionState.done) {
@@ -140,8 +140,7 @@ class _MovieHomePageState extends State<MovieHomePage> {
                   processData(moviesModel: snapshot.data!);
                   return Container(
                     // decoration: BoxDecoration(border: Border.all(color: RED, width: 1)),
-                    padding:
-                        EdgeInsets.only(left: leftPadding, right: rightPadding),
+                    padding: EdgeInsets.only(left: leftPadding, right: rightPadding),
                     child: GridView.builder(
                         scrollDirection: Axis.vertical,
                         physics: const ScrollPhysics(),
@@ -157,7 +156,7 @@ class _MovieHomePageState extends State<MovieHomePage> {
                               Navigation().navigateToMoviesInfoPage(
                                 context: context,
                                 movieId: _movieId[index],
-                                screenWidth: screenWidth,
+                                screenWidth: _screenWidth,
                               );
                             },
                             child: MovieCard(

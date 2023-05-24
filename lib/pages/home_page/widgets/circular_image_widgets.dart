@@ -3,6 +3,7 @@ import 'package:moviewebapp/pages/actors_page/actors_page.dart';
 import 'package:moviewebapp/pages/bottom_sheet/bottom_sheet_widget.dart';
 import 'package:moviewebapp/providers/navigation_provider.dart';
 import 'package:moviewebapp/responses/api_constants.dart';
+import 'package:moviewebapp/utils/assets_path.dart';
 import 'package:moviewebapp/utils/colors.dart';
 import 'package:provider/provider.dart';
 
@@ -34,8 +35,7 @@ class _ActorCardState extends State<ActorCard> {
     final double _screenWidth = MediaQuery.of(context).size.width;
     return Column(
       children: [
-        Consumer<NavigationProvider>(
-            builder: (context, navigationProvider, child) {
+        Consumer<NavigationProvider>(builder: (context, navigationProvider, child) {
           return InkWell(
             onTap: () {
               if (_screenWidth <= 786) {
@@ -55,9 +55,7 @@ class _ActorCardState extends State<ActorCard> {
                     isDismissible: true,
                     enableDrag: false,
                     elevation: 0,
-                    shape: const RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(50))),
+                    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(50))),
                     builder: (context) {
                       return Container(
                         constraints: const BoxConstraints(
@@ -87,11 +85,15 @@ class _ActorCardState extends State<ActorCard> {
                 ),
                 borderRadius: const BorderRadius.all(Radius.circular(100)),
               ),
-              child: CircleAvatar(
-                radius: widget.ratio,
-                backgroundImage: NetworkImage(
-                    ApiConstants.movieImageBaseUrlw500 + widget.castImage),
-              ),
+              child: widget.castImage.isNotEmpty
+                  ? CircleAvatar(
+                      radius: widget.ratio,
+                      backgroundImage: NetworkImage(ApiConstants.movieImageBaseUrlw500 + widget.castImage),
+                    )
+                  : CircleAvatar(
+                      radius: widget.ratio,
+                      backgroundImage: const AssetImage(noProfilePic),
+                    ),
             ),
           );
         }),

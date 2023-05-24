@@ -21,31 +21,34 @@ class MovieInfoScreen extends StatefulWidget {
 }
 
 class _MovieInfoScreenState extends State<MovieInfoScreen> {
-  final ScrollController scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    final movieInfoProvider =
-        Provider.of<MovieInfoProvider>(context, listen: false);
+    final movieInfoProvider = Provider.of<MovieInfoProvider>(context, listen: false);
     final movieProvider = Provider.of<MoviesProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      movieInfoProvider.getMoviesInfoAPI(
-          movieId: widget.movieId, appendToResponse: "credits");
+      movieInfoProvider.getMoviesInfoAPI(movieId: widget.movieId, appendToResponse: "credits");
       movieProvider.getSimilarMoviesAPI(movieId: widget.movieId);
     });
   }
 
   @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final double _screenWidth = MediaQuery.of(context).size.width;
-    return Consumer<MovieInfoProvider>(
-        builder: (context, movieInfoProvider, child) {
+    return Consumer<MovieInfoProvider>(builder: (context, movieInfoProvider, child) {
       return Scaffold(
         backgroundColor: Colors.transparent,
         extendBodyBehindAppBar: true,
         body: SingleChildScrollView(
-          controller: scrollController,
+          controller: _scrollController,
           child: Center(
             child: Container(
               alignment: Alignment.bottomCenter,
@@ -72,8 +75,9 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                   ),
                   Padding(
                     padding: EdgeInsets.only(
-                        left: _screenWidth <= 525 ? 0 : 40,
-                        right: _screenWidth <= 525 ? 0 : 50),
+                      left: _screenWidth <= 525 ? 0 : 40,
+                      right: _screenWidth <= 525 ? 0 : 50,
+                    ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -93,8 +97,7 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                           margin: const EdgeInsets.only(left: 15, top: 5),
                           child: Text(
                             "${movieInfoProvider.runtime} . ${movieInfoProvider.genre} . ${movieInfoProvider.releaseYear}",
-                            style:
-                                const TextStyle(fontSize: 14, color: ICON_GREY),
+                            style: const TextStyle(fontSize: 14, color: ICON_GREY),
                           ),
                         ),
                         Container(
@@ -107,8 +110,7 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                             maxLines: 4,
                             linkColor: WHITE,
                             animation: true,
-                            style:
-                                const TextStyle(fontSize: 14, color: ICON_GREY),
+                            style: const TextStyle(fontSize: 14, color: ICON_GREY),
                           ),
                         ),
                         Container(
@@ -120,11 +122,9 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                           ),
                         ),
                         Container(
-                          height:
-                              getActorSectionHeight(screenSize: _screenWidth),
+                          height: getActorSectionHeight(screenSize: _screenWidth),
                           decoration: BoxDecoration(
-                            border: Border.all(
-                                color: DARK_JUNGLE_GREEN_1, width: 1),
+                            border: Border.all(color: DARK_JUNGLE_GREEN_1, width: 1),
                           ),
                           margin: const EdgeInsets.only(top: 20),
                           child: const Cast(),
@@ -138,11 +138,9 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                           ),
                         ),
                         Container(
-                          height: getSimilarMoviesSectionHeight(
-                              screenSize: _screenWidth),
+                          height: getSimilarMoviesSectionHeight(screenSize: _screenWidth),
                           margin: const EdgeInsets.only(top: 20),
-                          child:
-                              SimilarMovies(scrollController: scrollController),
+                          child: SimilarMovies(scrollController: _scrollController),
                         ),
                         Row(
                           mainAxisSize: MainAxisSize.min,
@@ -150,13 +148,11 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              margin: const EdgeInsets.only(
-                                  top: 20, bottom: 20, left: 10),
+                              margin: const EdgeInsets.only(top: 20, bottom: 20, left: 10),
                               alignment: Alignment.center,
                               decoration: const BoxDecoration(
                                   shape: BoxShape.rectangle,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5)),
+                                  borderRadius: BorderRadius.all(Radius.circular(5)),
                                   color: tuna),
                               height: 50,
                               width: 130,

@@ -69,13 +69,14 @@ class _NavigationMenuState extends State<NavigationMenu> {
         body: Stack(
           children: [
             ValueListenableBuilder<int>(
-                valueListenable: _currentScreenNo,
-                builder: (context, hasConsent, child) {
-                  return IndexedStack(
-                    index: _currentScreenNo.value,
-                    children: _screens,
-                  );
-                }),
+              valueListenable: _currentScreenNo,
+              builder: (context, hasConsent, child) {
+                return IndexedStack(
+                  index: _currentScreenNo.value,
+                  children: _screens,
+                );
+              },
+            ),
             if (_screenWidth <= 750)
               Positioned(
                 bottom: 0,

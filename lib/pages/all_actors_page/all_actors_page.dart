@@ -17,8 +17,7 @@ class AllActorsPage extends StatefulWidget {
 }
 
 class _AllActorsPageState extends State<AllActorsPage> {
-  final PagingController<int, Actors> _pagingController =
-      PagingController(firstPageKey: 1);
+  final PagingController<int, Actors> _pagingController = PagingController(firstPageKey: 1);
   int columns = 6;
   Map<String, dynamic> layoutData = {};
   double ratio = 60;
@@ -53,27 +52,30 @@ class _AllActorsPageState extends State<AllActorsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    layoutData = getActorCircularWidgetWidth(screenWidth: screenWidth);
+    final _screenWidth = MediaQuery.of(context).size.width;
+    final bool _screenWidth600 = _screenWidth >= 600;
+    layoutData = getActorCircularWidgetWidth(screenWidth: _screenWidth);
     columns = layoutData["columns"].toInt();
     ratio = layoutData["ratio"];
 
     return Scaffold(
       backgroundColor: tealishBlue,
-      appBar: AppBar(
-        backgroundColor: tealishBlue,
-        leading: IconButton(
-          onPressed: () {},
-          icon: const Icon(
-            Icons.arrow_back,
-            color: WHITE,
-          ),
-        ),
-        title: const Text(
-          "Popular Actors",
-          style: TextStyle(fontSize: 18, color: WHITE),
-        ),
-      ),
+      appBar: _screenWidth600
+          ? null
+          : AppBar(
+              backgroundColor: tealishBlue,
+              leading: IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: WHITE,
+                ),
+              ),
+              title: const Text(
+                "Popular Actors",
+                style: TextStyle(fontSize: 18, color: WHITE),
+              ),
+            ),
       body: SafeArea(
         child: Center(
           child: Container(

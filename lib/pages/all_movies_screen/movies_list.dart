@@ -33,8 +33,7 @@ class MovieListScreen extends StatefulWidget {
 }
 
 class _MovieListScreenState extends State<MovieListScreen> {
-  final PagingController<int, Movies> _pagingController =
-      PagingController(firstPageKey: 1);
+  final PagingController<int, Movies> _pagingController = PagingController(firstPageKey: 1);
 
   int columns = 5;
   Map<String, dynamic> layoutData = {};
@@ -73,8 +72,7 @@ class _MovieListScreenState extends State<MovieListScreen> {
   String getReleaseDate({required DateTime? releaseDate}) {
     String movieReleaseDateValue;
     if (releaseDate != null) {
-      movieReleaseDateValue =
-          DateFormat("yyyy-MM-dd").format(releaseDate).toString();
+      movieReleaseDateValue = DateFormat("yyyy-MM-dd").format(releaseDate).toString();
       return movieReleaseDateValue;
     } else {
       return Constants.time00;
@@ -83,53 +81,58 @@ class _MovieListScreenState extends State<MovieListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    layoutData = getMovieCardWidth(screenWidth: screenWidth);
+    final double _screenWidth = MediaQuery.of(context).size.width;
+    final bool _screenWidth600 = _screenWidth >= 600;
+    layoutData = getMovieCardWidth(screenWidth: _screenWidth);
     columns = layoutData["columns"];
     isMovieTitleVisible = layoutData["isMovieTitleVisible"];
 
     return Consumer<MoviesProvider>(builder: (context, movieProvider, child) {
       return Scaffold(
         backgroundColor: tealishBlue,
-        appBar: AppBar(
-          backgroundColor: tealishBlue,
-          leading: IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(
-              Icons.arrow_back,
-              color: WHITE,
+        appBar: _screenWidth600
+            ? null
+            : AppBar(
+                backgroundColor: tealishBlue,
+                leading: IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: WHITE,
+                  ),
+                ),
+                title: Text(
+                  widget.screenTitle,
+                  style: const TextStyle(fontSize: 18, color: WHITE),
+                ),
+              ),
+        body: SafeArea(
+          child: PagedGridView<int, Movies>(
+            showNewPageProgressIndicatorAsGridChild: false,
+            showNewPageErrorIndicatorAsGridChild: false,
+            showNoMoreItemsIndicatorAsGridChild: false,
+            pagingController: _pagingController,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              childAspectRatio: _screenWidth >= 900 ? 0.56666 : 0.66666,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              crossAxisCount: columns,
             ),
-          ),
-          title: Text(
-            widget.screenTitle,
-            style: const TextStyle(fontSize: 18, color: WHITE),
-          ),
-        ),
-        body: PagedGridView<int, Movies>(
-          showNewPageProgressIndicatorAsGridChild: false,
-          showNewPageErrorIndicatorAsGridChild: false,
-          showNoMoreItemsIndicatorAsGridChild: false,
-          pagingController: _pagingController,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            childAspectRatio: screenWidth >= 900 ? 0.56666 : 0.66666,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-            crossAxisCount: columns,
-          ),
-          builderDelegate: PagedChildBuilderDelegate<Movies>(
-            itemBuilder: (context, item, index) => InkWell(
-              onTap: () {
-                Navigation().navigateToMoviesInfoPage(
-                  context: context,
-                  movieId: item.id.toString(),
-                  screenWidth: screenWidth,
-                );
-              },
-              child: MovieCard(
-                movieName: item.title ?? "",
-                imageURL: item.posterPath ?? "",
-                movieReleaseDate: getReleaseDate(releaseDate: item.releaseDate),
-                isMovieTitleVisible: isMovieTitleVisible,
+            builderDelegate: PagedChildBuilderDelegate<Movies>(
+              itemBuilder: (context, item, index) => InkWell(
+                onTap: () {
+                  Navigation().navigateToMoviesInfoPage(
+                    context: context,
+                    movieId: item.id.toString(),
+                    screenWidth: _screenWidth,
+                  );
+                },
+                child: MovieCard(
+                  movieName: item.title ?? "",
+                  imageURL: item.posterPath ?? "",
+                  movieReleaseDate: getReleaseDate(releaseDate: item.releaseDate),
+                  isMovieTitleVisible: isMovieTitleVisible,
+                ),
               ),
             ),
           ),

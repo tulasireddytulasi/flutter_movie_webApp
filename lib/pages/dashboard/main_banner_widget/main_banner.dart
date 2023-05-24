@@ -32,7 +32,7 @@ class _MainBannerState extends State<MainBanner> with SingleTickerProviderStateM
   void initState() {
     super.initState();
     _moviesProvider = Provider.of<MoviesProvider>(context, listen: false);
-    _moviesProvider.getMovieDetails(pageNo: 1, movieType: "upcoming"); // popular upcoming
+    _moviesProvider.getMovieDetails(pageNo: 1, movieType: "popular"); // popular upcoming
     genere.join(" . ");
 
     /// Create an animation controller
@@ -71,7 +71,8 @@ class _MainBannerState extends State<MainBanner> with SingleTickerProviderStateM
 
     return Consumer<MoviesProvider>(
       builder: (context, moviesProvider, child) {
-        final String posterSize = _screenWidth600 ? ApiConstants.movieImageBaseUrlw1280 : ApiConstants.movieImageBaseUrlw500;
+        final String posterSize =
+            _screenWidth600 ? ApiConstants.movieImageBaseUrlw1280 : ApiConstants.movieImageBaseUrlw500;
         final _movieBannerData = moviesProvider.movieBannerModel.moviesList?.first;
         final String _logo = _movieBannerData?.logo ?? "";
         final String poster = _screenWidth600 ? _movieBannerData?.backDrop ?? "" : _movieBannerData?.poster ?? "";
