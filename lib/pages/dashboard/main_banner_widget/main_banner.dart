@@ -119,7 +119,7 @@ class _MainBannerState extends State<MainBanner> with SingleTickerProviderStateM
                             ),
                           ),
                   ),
-                  PlayButtons(genere: genere),
+                  PlayButtons(genere: genere, movieId: _id, youTubeVideoKey: _youTubeVideoKey),
                   AnimatedLogoWidget(
                     id: _id,
                     youTubeVideoKey: _youTubeVideoKey,

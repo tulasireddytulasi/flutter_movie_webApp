@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:moviewebapp/pages/youtube_player_screen/youtube_player_screen.dart';
 import 'package:moviewebapp/utils/assets_path.dart';
 import 'package:moviewebapp/utils/colors.dart';
 
 class PlayButtonWidget extends StatelessWidget {
-  const PlayButtonWidget({Key? key}) : super(key: key);
+  const PlayButtonWidget({Key? key, required this.youTubeVideoKey}) : super(key: key);
+  final String youTubeVideoKey;
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => YouTubeVideoPlayer(videoId: youTubeVideoKey),
+          ),
+        );
+      },
       child: Container(
         width: 56,
         padding: const EdgeInsets.only(bottom: 1, top: 1),
