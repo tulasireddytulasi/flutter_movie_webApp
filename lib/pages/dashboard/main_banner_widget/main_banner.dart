@@ -94,14 +94,8 @@ class _MainBannerState extends State<MainBanner> with SingleTickerProviderStateM
                       return const LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [
-                          tealishBlue,
-                          tealishBlue,
-                          Colors.transparent,
-                        ],
-                      ).createShader(
-                        Rect.fromLTRB(0, 1, rect.width, rect.height),
-                      );
+                        colors: [tealishBlue, tealishBlue, Colors.transparent],
+                      ).createShader(Rect.fromLTRB(0, 1, rect.width, rect.height));
                     },
                     blendMode: BlendMode.dstIn,
                     child: poster.isNotEmpty
@@ -123,11 +117,7 @@ class _MainBannerState extends State<MainBanner> with SingleTickerProviderStateM
                           ),
                   ),
                   PlayButtons(genere: genere),
-                  AnimatedLogoWidget(
-                    description: Constants.longText,
-                    logo: _logo,
-                    scaleAnimation: _scaleAnimation,
-                  ),
+                  AnimatedLogoWidget(description: Constants.longText, logo: _logo, scaleAnimation: _scaleAnimation),
                 ],
               );
       },

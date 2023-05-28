@@ -115,6 +115,7 @@ class _DashboardState extends State<Dashboard> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => MovieListScreen(
+                                showAppBar: true,
                                 screenTitle: moviesDataMap["$index"]["movieLabel"],
                                 movieType: moviesDataMap["$index"]["movieType"],
                                 withOriginalLanguage: moviesDataMap["$index"]["withOriginalLanguage"],

@@ -22,11 +22,13 @@ class MovieListScreen extends StatefulWidget {
     required this.movieType,
     this.withGenres,
     required this.screenTitle,
+    this.showAppBar = false,
   }) : super(key: key);
   final String withOriginalLanguage;
   final String movieType;
   final String? withGenres;
   final String screenTitle;
+  final bool showAppBar;
 
   @override
   _MovieListScreenState createState() => _MovieListScreenState();
@@ -90,9 +92,8 @@ class _MovieListScreenState extends State<MovieListScreen> {
     return Consumer<MoviesProvider>(builder: (context, movieProvider, child) {
       return Scaffold(
         backgroundColor: tealishBlue,
-        appBar: _screenWidth600
-            ? null
-            : AppBar(
+        appBar: widget.showAppBar
+            ? AppBar(
                 backgroundColor: tealishBlue,
                 leading: IconButton(
                   onPressed: () => Navigator.of(context).pop(),
@@ -105,7 +106,8 @@ class _MovieListScreenState extends State<MovieListScreen> {
                   widget.screenTitle,
                   style: const TextStyle(fontSize: 18, color: WHITE),
                 ),
-              ),
+              )
+            : null,
         body: SafeArea(
           child: PagedGridView<int, Movies>(
             showNewPageProgressIndicatorAsGridChild: false,

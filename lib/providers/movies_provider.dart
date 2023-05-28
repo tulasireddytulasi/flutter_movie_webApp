@@ -87,7 +87,8 @@ class MoviesProvider extends ChangeNotifier {
     _similarMoviePosters.clear();
     _similarMovieId.clear();
     try {
-      _getPopularMoviesModel = await getSimilarMoviesListData(movieId: movieId, pageNo: "1", withOriginalLanguage: "en");
+      _getPopularMoviesModel =
+          await getSimilarMoviesListData(movieId: movieId, pageNo: "1", withOriginalLanguage: "en");
 
       _getPopularMoviesModel.results?.forEach((element) {
         if (element.posterPath != null && element.posterPath!.isNotEmpty) {
@@ -118,5 +119,12 @@ class MoviesProvider extends ChangeNotifier {
     } catch (error) {
       log("getMovieLogos error: $error");
     }
+  }
+
+  Future<List> getMovieData({required String movieId}) async {
+    var movieData = await getMovieLogosAPI(movieId: movieId);
+    var movieData2 = await getSimilarMoviesListData(movieId: movieId, pageNo: "1", withOriginalLanguage: "en");
+
+    return await Future.wait([movieData, movieData2] as Iterable<Future>);
   }
 }

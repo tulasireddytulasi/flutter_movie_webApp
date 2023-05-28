@@ -33,8 +33,8 @@ class _NavigationMenuState extends State<NavigationMenu> {
     const ProfileScreen(),
   ];
   final List<String> appBarTitles = ["Home", "Movies", "People", "Blogs"];
-  final List<String> bottomBarTitles = ["Dashboard", "Movies", "People", "Blogs", "Account"];
-  final List<String> iconAssetPaths = [homeIcon, videoIcon, tvIcon, blogIcon, userIcon];
+  final List<String> bottomBarTitles = ["Dashboard", "Movies", "People", "Blogs"]; // "Account"
+  final List<String> iconAssetPaths = [homeIcon, videoIcon, tvIcon, blogIcon]; // userIcon
 
   @override
   void initState() {
