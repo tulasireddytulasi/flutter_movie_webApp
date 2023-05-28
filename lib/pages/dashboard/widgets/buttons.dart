@@ -3,12 +3,15 @@ import 'package:moviewebapp/pages/widgets/reusable_button.dart';
 import 'package:moviewebapp/utils/assets_path.dart';
 import 'package:moviewebapp/utils/colors.dart';
 import 'package:moviewebapp/utils/constants.dart';
+import 'package:moviewebapp/utils/navigation/navigation.dart';
 
 class Buttons extends StatelessWidget {
-  const Buttons({Key? key}) : super(key: key);
+  const Buttons({Key? key, required this.id}) : super(key: key);
+  final String id;
 
   @override
   Widget build(BuildContext context) {
+    final double _screenWidth = MediaQuery.of(context).size.width;
     return Row(
       children: [
         ProceedButton(
@@ -61,7 +64,13 @@ class Buttons extends StatelessWidget {
           buttonWidth: 120,
           color: WHITE.withOpacity(0.1),
           borderRadius: 4,
-          callingAPI: () {},
+          callingAPI: () {
+            Navigation().navigateToMoviesInfoPage(
+              context: context,
+              movieId: id,
+              screenWidth: _screenWidth,
+            );
+          },
           bottomPadding: 10,
           topPadding: 10,
         ),

@@ -74,7 +74,9 @@ class _MainBannerState extends State<MainBanner> with SingleTickerProviderStateM
         final String posterSize =
             _screenWidth600 ? ApiConstants.movieImageBaseUrlw1280 : ApiConstants.movieImageBaseUrlw500;
         final _movieBannerData = moviesProvider.movieBannerModel.moviesList?.first;
+        final String _id = _movieBannerData?.id ?? "";
         final String _logo = _movieBannerData?.logo ?? "";
+        final String _description = _movieBannerData?.description ?? "";
         final String poster = _screenWidth600 ? _movieBannerData?.backDrop ?? "" : _movieBannerData?.poster ?? "";
         return _logo.isEmpty
             ? Shimmer.fromColors(
@@ -117,7 +119,12 @@ class _MainBannerState extends State<MainBanner> with SingleTickerProviderStateM
                           ),
                   ),
                   PlayButtons(genere: genere),
-                  AnimatedLogoWidget(description: Constants.longText, logo: _logo, scaleAnimation: _scaleAnimation),
+                  AnimatedLogoWidget(
+                    id: _id,
+                    description: _description,
+                    logo: _logo,
+                    scaleAnimation: _scaleAnimation,
+                  ),
                 ],
               );
       },

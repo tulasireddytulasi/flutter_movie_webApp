@@ -12,7 +12,9 @@ class MovieBannerModel {
   });
 
   factory MovieBannerModel.fromJson(Map<String, dynamic> json) => MovieBannerModel(
-        moviesList: json["moviesList"] == null ? [] : List<MoviesList>.from(json["moviesList"]!.map((x) => MoviesList.fromJson(x))),
+        moviesList: json["moviesList"] == null
+            ? []
+            : List<MoviesList>.from(json["moviesList"]!.map((x) => MoviesList.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -23,6 +25,7 @@ class MovieBannerModel {
 class MoviesList {
   String? id;
   String? title;
+  String? description;
   String? poster;
   String? backDrop;
   String? logo;
@@ -31,6 +34,7 @@ class MoviesList {
   MoviesList({
     this.id,
     this.title,
+    this.description,
     this.poster,
     this.backDrop,
     this.logo,
@@ -40,6 +44,7 @@ class MoviesList {
   factory MoviesList.fromJson(Map<String, dynamic> json) => MoviesList(
         id: json["id"],
         title: json["title"],
+        description: json["description"],
         poster: json["poster"],
         backDrop: json["backDrop"],
         logo: json["logo"],
@@ -49,6 +54,7 @@ class MoviesList {
   Map<String, dynamic> toJson() => {
         "id": id,
         "title": title,
+        "description": description,
         "poster": poster,
         "backDrop": backDrop,
         "logo": logo,

@@ -8,11 +8,12 @@ class AnimatedLogoWidget extends StatefulWidget {
   const AnimatedLogoWidget({
     Key? key,
     required this.scaleAnimation,
+    required this.id,
     required this.logo,
     required this.description,
   }) : super(key: key);
   final Animation<double> scaleAnimation;
-  final String logo, description;
+  final String id, logo, description;
 
   @override
   State<AnimatedLogoWidget> createState() => _AnimatedLogoWidgetState();
@@ -45,11 +46,11 @@ class _AnimatedLogoWidgetState extends State<AnimatedLogoWidget> {
             const SizedBox(height: 10),
             SizedBox(
               width: _screenWidth600 ? 500 : _screenWidth - 40,
-              child: const Text(
-                Constants.longText,
+              child: Text(
+                widget.description,
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
                   color: WHITE,
                   height: 1.5,
@@ -57,7 +58,7 @@ class _AnimatedLogoWidgetState extends State<AnimatedLogoWidget> {
               ),
             ),
             const SizedBox(height: 20),
-            const Buttons(),
+            Buttons(id: widget.id),
             const SizedBox(height: 50),
           ],
         ),

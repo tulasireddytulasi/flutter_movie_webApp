@@ -51,6 +51,7 @@ class MoviesProvider extends ChangeNotifier {
           {
             "id": _data?.id.toString(),
             "title": _data?.title.toString(),
+            "description": _data?.overview.toString(),
             "poster": _data?.posterPath.toString(),
             "backDrop": _data?.backdropPath.toString(),
             "logo": _movieLogo,
