@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/pages/widgets/reusable_button.dart';
+import 'package:moviewebapp/pages/youtube_player_screen/youtube_player_screen.dart';
 import 'package:moviewebapp/utils/assets_path.dart';
 import 'package:moviewebapp/utils/colors.dart';
 import 'package:moviewebapp/utils/constants.dart';
 import 'package:moviewebapp/utils/navigation/navigation.dart';
 
 class Buttons extends StatelessWidget {
-  const Buttons({Key? key, required this.id}) : super(key: key);
+  const Buttons({Key? key, required this.id, required this.youTubeVideoKey}) : super(key: key);
   final String id;
+  final String youTubeVideoKey;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +35,14 @@ class Buttons extends StatelessWidget {
           buttonWidth: 80,
           color: WHITE,
           borderRadius: 4,
-          callingAPI: () {},
+          callingAPI: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => YouTubeVideoPlayer(videoId: youTubeVideoKey),
+              ),
+            );
+          },
           bottomPadding: 10,
           topPadding: 10,
         ),

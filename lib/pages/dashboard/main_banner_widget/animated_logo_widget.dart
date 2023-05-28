@@ -11,9 +11,10 @@ class AnimatedLogoWidget extends StatefulWidget {
     required this.id,
     required this.logo,
     required this.description,
+    required this.youTubeVideoKey,
   }) : super(key: key);
   final Animation<double> scaleAnimation;
-  final String id, logo, description;
+  final String id, logo, description, youTubeVideoKey;
 
   @override
   State<AnimatedLogoWidget> createState() => _AnimatedLogoWidgetState();
@@ -58,7 +59,7 @@ class _AnimatedLogoWidgetState extends State<AnimatedLogoWidget> {
               ),
             ),
             const SizedBox(height: 20),
-            Buttons(id: widget.id),
+            Buttons(id: widget.id, youTubeVideoKey: widget.youTubeVideoKey),
             const SizedBox(height: 50),
           ],
         ),

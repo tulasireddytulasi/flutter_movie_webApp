@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:moviewebapp/models/get_movies_model.dart';
 import 'package:moviewebapp/models/movie_banner_model.dart';
 import 'package:moviewebapp/models/movie_logos_and_posters_model.dart';
+import 'package:moviewebapp/models/youtube_video_model.dart';
 import 'package:moviewebapp/responses/movie_apis.dart';
 
 class MoviesProvider extends ChangeNotifier {
@@ -13,6 +14,9 @@ class MoviesProvider extends ChangeNotifier {
 
   MovieLogosAndPostersModel _movieLogosAndPostersModel = MovieLogosAndPostersModel();
   MovieLogosAndPostersModel get movieLogosAndPostersModel => _movieLogosAndPostersModel;
+
+  YouTubeVideosModel _youTubeVideosModel = YouTubeVideosModel();
+  YouTubeVideosModel get youTubeVideosModel => _youTubeVideosModel;
 
   String _movieLogo = "";
   String get movieLogo => _movieLogo;
@@ -45,7 +49,17 @@ class MoviesProvider extends ChangeNotifier {
     try {
       await getPopularMoviesAPI(pageNo: pageNo, movieType: movieType);
       final _data = _getPopularMoviesModel.results?.first;
+      await getMovieVideos(movieId: _data?.id.toString() ?? "");
       await getMovieLogos(movieId: _data?.id.toString() ?? "");
+
+      String _youTubeKey = "";
+      for (var videosData in _youTubeVideosModel.results ?? []) {
+        if (videosData.type == "Trailer" && videosData.official!) {
+          _youTubeKey = videosData.key ?? "";
+          break;
+        }
+      }
+
       Map<String, dynamic> _movieData = {
         "moviesList": [
           {
@@ -55,6 +69,7 @@ class MoviesProvider extends ChangeNotifier {
             "poster": _data?.posterPath.toString(),
             "backDrop": _data?.backdropPath.toString(),
             "logo": _movieLogo,
+            "youTubeVideoKey": _youTubeKey,
             "genre": ["drama", "horror"]
           }
         ]
@@ -66,7 +81,14 @@ class MoviesProvider extends ChangeNotifier {
     }
 
     notifyListeners();
-    //  return _movieBannerModel;
+  }
+
+  Future<void> getMovieVideos({required String movieId}) async {
+    try {
+      _youTubeVideosModel = await getMovieVideosAPI(movieId: movieId);
+    } catch (error) {
+      log("getMovieVideos error: $error");
+    }
   }
 
   Future<void> getPopularMoviesAPI({required int pageNo, required String movieType}) async {

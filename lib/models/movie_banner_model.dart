@@ -25,6 +25,7 @@ class MovieBannerModel {
 class MoviesList {
   String? id;
   String? title;
+  String? youTubeVideoKey;
   String? description;
   String? poster;
   String? backDrop;
@@ -34,6 +35,7 @@ class MoviesList {
   MoviesList({
     this.id,
     this.title,
+    this.youTubeVideoKey,
     this.description,
     this.poster,
     this.backDrop,
@@ -44,6 +46,7 @@ class MoviesList {
   factory MoviesList.fromJson(Map<String, dynamic> json) => MoviesList(
         id: json["id"],
         title: json["title"],
+        youTubeVideoKey: json["youTubeVideoKey"],
         description: json["description"],
         poster: json["poster"],
         backDrop: json["backDrop"],
@@ -54,6 +57,7 @@ class MoviesList {
   Map<String, dynamic> toJson() => {
         "id": id,
         "title": title,
+        "youTubeVideoKey": youTubeVideoKey,
         "description": description,
         "poster": poster,
         "backDrop": backDrop,
