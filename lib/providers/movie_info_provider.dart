@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:moviewebapp/models/get_movie_info_model.dart';
 import 'package:moviewebapp/models/review_model.dart';
+import 'package:moviewebapp/models/youtube_video_model.dart';
 import 'package:moviewebapp/pages/actors_page/actors_page.dart';
 import 'package:moviewebapp/pages/movie_info_screen/movie_info.dart';
 import 'package:moviewebapp/responses/api_constants.dart';
@@ -138,10 +139,29 @@ class MovieInfoProvider extends ChangeNotifier {
     _backdropPath = "";
   }
 
-  void getMoviesInfoAPI(
-      {required String movieId, required String appendToResponse}) async {
-    _getMovieInfo = await getMoviesInfoData(
-        movieId: movieId, appendToResponse: appendToResponse);
+  String _youTubeKey = "";
+  String get youTubeKey => _youTubeKey;
+
+  Future<void> getMovieVideos({required String movieId}) async {
+    bool newVideo = false;
+    try {
+      YouTubeVideosModel _youTubeVideosModel = await getMovieVideosAPI(movieId: movieId);
+      for (var videosData in _youTubeVideosModel.results ?? []) {
+        if (videosData.type == "Trailer" && videosData.official!) {
+          newVideo = true;
+          _youTubeKey = videosData.key ?? "";
+          break;
+        }
+      }
+      if (!newVideo) _youTubeKey = "";
+      notifyListeners();
+    } catch (error) {
+      log("getMovieVideos error: $error");
+    }
+  }
+
+  Future<void> getMoviesInfoAPI({required String movieId, required String appendToResponse}) async {
+    _getMovieInfo = await getMoviesInfoData(movieId: movieId, appendToResponse: appendToResponse);
     _movieTitle = _getMovieInfo.title ?? "";
     _overview = _getMovieInfo.overview ?? "NA";
     _currentMovieId = _getMovieInfo.id.toString();
@@ -189,11 +209,9 @@ class MovieInfoProvider extends ChangeNotifier {
 
   void notify() => notifyListeners();
 
-  Future<void> getMovieReviewsInfoAPI(
-      {required String movieId, required String pageNo}) async {
+  Future<void> getMovieReviewsInfoAPI({required String movieId, required String pageNo}) async {
     try {
-      ReviewModel _reviewModel =
-          await getMovieReviews(movieId: movieId, pageNo: pageNo);
+      ReviewModel _reviewModel = await getMovieReviews(movieId: movieId, pageNo: pageNo);
       clearData();
       processReviewData(reviewModel: _reviewModel);
     } catch (error) {
@@ -221,16 +239,12 @@ class MovieInfoProvider extends ChangeNotifier {
           _avatarImg.add(avatarPath);
         }
       } else {
-        _avatarImg.add(avatarPath.isNotEmpty
-            ? ApiConstants.movieImageBaseUrlw185 + avatarPath
-            : avatarPath);
+        _avatarImg.add(avatarPath.isNotEmpty ? ApiConstants.movieImageBaseUrlw185 + avatarPath : avatarPath);
       }
       _authorName.add(element.author ?? "");
-      final String reviewDate =
-          element.updatedAt?.toIso8601String() ?? Constants.time00;
+      final String reviewDate = element.updatedAt?.toIso8601String() ?? Constants.time00;
       if (reviewDate.isNotEmpty && reviewDate != Constants.time00) {
-        String reviewDateValue =
-            DateFormat("yyyy-MM-dd").format(element.updatedAt!).toString();
+        String reviewDateValue = DateFormat("yyyy-MM-dd").format(element.updatedAt!).toString();
         _reviewDate.add(reviewDateValue);
       } else {
         _reviewDate.add(Constants.time00);

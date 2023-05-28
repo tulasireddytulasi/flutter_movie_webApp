@@ -10,9 +10,7 @@ import 'package:provider/provider.dart';
 class MovieBannerWidget extends StatefulWidget {
   final String movieBannerImage;
   final bool showBanner;
-  const MovieBannerWidget(
-      {Key? key, required this.movieBannerImage, required this.showBanner})
-      : super(key: key);
+  const MovieBannerWidget({Key? key, required this.movieBannerImage, required this.showBanner}) : super(key: key);
 
   @override
   _MovieBannerWidgetState createState() => _MovieBannerWidgetState();
@@ -33,11 +31,7 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
                 return const LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    pickledBlueWood,
-                    pickledBlueWood,
-                    Colors.transparent
-                  ],
+                  colors: [pickledBlueWood, pickledBlueWood, Colors.transparent],
                 ).createShader(
                   Rect.fromLTRB(0, 1, rect.width, rect.height),
                 );
@@ -52,17 +46,14 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
                   duration: const Duration(milliseconds: 1200),
                   child: widget.movieBannerImage.isNotEmpty
                       ? Image.network(
-                          ApiConstants.movieImageBaseUrlw1280 +
-                              widget.movieBannerImage,
-                          width: getBottomSheetWidth(screenWidth: screenWidth) +
-                              30,
+                          ApiConstants.movieImageBaseUrlw1280 + widget.movieBannerImage,
+                          width: getBottomSheetWidth(screenWidth: screenWidth) + 30,
                           fit: BoxFit.cover,
                           key: UniqueKey(),
                         )
                       : Image.asset(
                           movieBackDrop2,
-                          width: getBottomSheetWidth(screenWidth: screenWidth) +
-                              30,
+                          width: getBottomSheetWidth(screenWidth: screenWidth) + 30,
                           fit: BoxFit.cover,
                           key: UniqueKey(),
                         ),
@@ -75,16 +66,13 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
             right: 0,
             child: InkWell(
               onTap: () {
-                final movieInfoProvider =
-                    Provider.of<MovieInfoProvider>(context, listen: false);
+                final movieInfoProvider = Provider.of<MovieInfoProvider>(context, listen: false);
                 movieInfoProvider.removePreviousAllMoviesIds();
                 Navigator.of(context).pop();
               },
               child: Container(
-                decoration: BoxDecoration(
-                    border: Border.all(color: BLACK, width: 2),
-                    shape: BoxShape.circle,
-                    color: BLACK),
+                decoration:
+                    BoxDecoration(border: Border.all(color: BLACK, width: 2), shape: BoxShape.circle, color: BLACK),
                 padding: const EdgeInsets.all(2),
                 margin: const EdgeInsets.all(10),
                 child: const Icon(
@@ -99,22 +87,17 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
             left: 0,
             child: InkWell(
               onTap: () {
-                final movieInfoProvider =
-                    Provider.of<MovieInfoProvider>(context, listen: false);
-                final movieProvider =
-                    Provider.of<MoviesProvider>(context, listen: false);
+                final movieInfoProvider = Provider.of<MovieInfoProvider>(context, listen: false);
+                final movieProvider = Provider.of<MoviesProvider>(context, listen: false);
                 if (movieInfoProvider.previousMoviesIds.isNotEmpty) {
-                  String movieId =
-                      movieInfoProvider.previousMoviesIds.elementAt(0);
-                  movieInfoProvider.getMoviesInfoAPI(
-                      movieId: movieId, appendToResponse: "credits");
+                  String movieId = movieInfoProvider.previousMoviesIds.elementAt(0);
+                  movieInfoProvider.getMoviesInfoAPI(movieId: movieId, appendToResponse: "credits");
                   movieProvider.getSimilarMoviesAPI(movieId: movieId);
-                  movieInfoProvider.getMovieReviewsInfoAPI(
-                      movieId: movieId, pageNo: "1");
+                  movieInfoProvider.getMovieReviewsInfoAPI(movieId: movieId, pageNo: "1");
+                  movieInfoProvider.getMovieVideos(movieId: movieId);
                   movieInfoProvider.removePreviousMoviesIds();
                 } else {
-                  final movieInfoProvider =
-                      Provider.of<MovieInfoProvider>(context, listen: false);
+                  final movieInfoProvider = Provider.of<MovieInfoProvider>(context, listen: false);
                   movieInfoProvider.removePreviousAllMoviesIds();
                   Navigator.of(context).pop();
                 }
@@ -140,8 +123,7 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
 class ImageViewWidget extends StatelessWidget {
   final String url;
   final double width;
-  const ImageViewWidget({Key? key, required this.url, required this.width})
-      : super(key: key);
+  const ImageViewWidget({Key? key, required this.url, required this.width}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

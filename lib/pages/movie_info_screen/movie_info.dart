@@ -6,6 +6,7 @@ import 'package:moviewebapp/pages/movie_info_screen/widgets/rating_row_widget.da
 import 'package:moviewebapp/pages/movie_info_screen/widgets/reviews_list_widget.dart';
 import 'package:moviewebapp/pages/movie_info_screen/widgets/similar_movies.dart';
 import 'package:moviewebapp/pages/movie_info_screen/widgets/trailer_button.dart';
+import 'package:moviewebapp/pages/youtube_player_screen/youtube_player_screen.dart';
 import 'package:moviewebapp/providers/movie_info_provider.dart';
 import 'package:moviewebapp/providers/movies_provider.dart';
 import 'package:moviewebapp/utils/colors.dart';
@@ -28,9 +29,10 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
     super.initState();
     final movieInfoProvider = Provider.of<MovieInfoProvider>(context, listen: false);
     final movieProvider = Provider.of<MoviesProvider>(context, listen: false);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      movieInfoProvider.getMoviesInfoAPI(movieId: widget.movieId, appendToResponse: "credits");
-      movieProvider.getSimilarMoviesAPI(movieId: widget.movieId);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await movieInfoProvider.getMoviesInfoAPI(movieId: widget.movieId, appendToResponse: "credits");
+      await movieProvider.getSimilarMoviesAPI(movieId: widget.movieId);
+      await movieInfoProvider.getMovieVideos(movieId: widget.movieId);
     });
   }
 
@@ -147,21 +149,49 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              margin: const EdgeInsets.only(top: 20, bottom: 20, left: 10),
-                              alignment: Alignment.center,
-                              decoration: const BoxDecoration(
-                                  shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                                  color: tuna),
-                              height: 50,
-                              width: 130,
-                              child: const Text(
-                                "TRAILER",
-                                style: TextStyle(fontSize: 20, color: WHITE),
+                            InkWell(
+                              onTap: () {
+                                if (movieInfoProvider.youTubeKey.isNotEmpty) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => YouTubeVideoPlayer(videoId: movieInfoProvider.youTubeKey),
+                                    ),
+                                  );
+                                } else {
+                                  showAlert(context: context);
+                                }
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.only(top: 20, bottom: 20, left: 10),
+                                alignment: Alignment.center,
+                                decoration: const BoxDecoration(
+                                    shape: BoxShape.rectangle,
+                                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                                    color: tuna),
+                                height: 50,
+                                width: 130,
+                                child: const Text(
+                                  "TRAILER",
+                                  style: TextStyle(fontSize: 20, color: WHITE),
+                                ),
                               ),
                             ),
-                            const TrailerButtons(),
+                            InkWell(
+                              onTap: () {
+                                if (movieInfoProvider.youTubeKey.isNotEmpty) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => YouTubeVideoPlayer(videoId: movieInfoProvider.youTubeKey),
+                                    ),
+                                  );
+                                } else {
+                                  showAlert(context: context);
+                                }
+                              },
+                              child: const TrailerButtons(),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 10),
@@ -188,4 +218,21 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
       );
     });
   }
+}
+
+void showAlert({required BuildContext context}) {
+  showDialog(
+    context: context,
+    builder: (context) => const Center(
+      child: AlertDialog(
+        content: Text(
+          "Video unavailable for this movie",
+          style: TextStyle(
+            fontSize: 24,
+            color: BLACK,
+          ),
+        ),
+      ),
+    ),
+  );
 }

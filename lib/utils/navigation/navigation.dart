@@ -8,13 +8,9 @@ import 'package:provider/provider.dart';
 
 class Navigation {
   /// Navigated from DashboardScreen or All Movies Screen to Movies Info Screen
-  navigateToMoviesInfoPage(
-      {required BuildContext context,
-      required String movieId,
-      required double screenWidth}) {
+  navigateToMoviesInfoPage({required BuildContext context, required String movieId, required double screenWidth}) {
     if (screenWidth >= 600) {
-      final NavigationProvider navigationProvider =
-          Provider.of<NavigationProvider>(context, listen: false);
+      final NavigationProvider navigationProvider = Provider.of<NavigationProvider>(context, listen: false);
       navigationProvider.setMovieInfoScreen(movieId: movieId);
       navigationProvider.setCurrentScreenIndex(currentScreenIndex: 0);
       showModalBottomSheet(
@@ -25,8 +21,7 @@ class Navigation {
           enableDrag: false,
           elevation: 0,
           //  barrierColor: Colors.black.withAlpha(1),
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(50))),
+          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(50))),
           builder: (context) {
             return Container(
               constraints: const BoxConstraints(
@@ -53,11 +48,9 @@ class Navigation {
     required double screenWidth,
   }) {
     if (screenWidth >= 600) {
-      final movieInfoProvider =
-          Provider.of<MovieInfoProvider>(context, listen: false);
+      final movieInfoProvider = Provider.of<MovieInfoProvider>(context, listen: false);
       final movieProvider = Provider.of<MoviesProvider>(context, listen: false);
-      final navigationProvider =
-          Provider.of<NavigationProvider>(context, listen: false);
+      final navigationProvider = Provider.of<NavigationProvider>(context, listen: false);
 
       if (navigationProvider.currentScreenIndex == 1) {
         navigationProvider.setMovieInfoScreen(movieId: movieId);
@@ -65,17 +58,14 @@ class Navigation {
       }
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        movieInfoProvider.addPreviousMoviesIds(
-            movieId: movieInfoProvider.currentMovieId);
-        movieInfoProvider.getMoviesInfoAPI(
-            movieId: movieId, appendToResponse: "credits");
+        movieInfoProvider.addPreviousMoviesIds(movieId: movieInfoProvider.currentMovieId);
+        movieInfoProvider.getMoviesInfoAPI(movieId: movieId, appendToResponse: "credits");
         movieProvider.getSimilarMoviesAPI(movieId: movieId);
       });
     } else {
       Navigator.push(
         context,
-        MaterialPageRoute(
-            builder: (context) => MovieInfoScreen(movieId: movieId)),
+        MaterialPageRoute(builder: (context) => MovieInfoScreen(movieId: movieId)),
       );
     }
   }
@@ -89,32 +79,27 @@ class Navigation {
     if (canNavigateToNewPage) {
       Navigator.push(
         context,
-        MaterialPageRoute(
-            builder: (context) => MovieInfoScreen(movieId: movieId)),
+        MaterialPageRoute(builder: (context) => MovieInfoScreen(movieId: movieId)),
       );
     } else {
-      final movieInfoProvider =
-          Provider.of<MovieInfoProvider>(context, listen: false);
+      final movieInfoProvider = Provider.of<MovieInfoProvider>(context, listen: false);
       final movieProvider = Provider.of<MoviesProvider>(context, listen: false);
-      final navigationProvider =
-          Provider.of<NavigationProvider>(context, listen: false);
+      final navigationProvider = Provider.of<NavigationProvider>(context, listen: false);
 
       if (navigationProvider.currentScreenIndex == 1) {
         navigationProvider.setMovieInfoScreen(movieId: movieId);
         navigationProvider.setCurrentScreenIndex(currentScreenIndex: 0);
       }
 
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        movieInfoProvider.addPreviousMoviesIds(
-            movieId: movieInfoProvider.currentMovieId);
-        movieInfoProvider.getMoviesInfoAPI(
-            movieId: movieId, appendToResponse: "credits");
-        movieProvider.getSimilarMoviesAPI(movieId: movieId);
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        movieInfoProvider.addPreviousMoviesIds(movieId: movieInfoProvider.currentMovieId);
+        await movieInfoProvider.getMoviesInfoAPI(movieId: movieId, appendToResponse: "credits");
+        await movieProvider.getSimilarMoviesAPI(movieId: movieId);
+        await movieInfoProvider.getMovieVideos(movieId: movieId);
         movieInfoProvider.getMovieReviewsInfoAPI(movieId: movieId, pageNo: "1");
       });
       if (scrollController != null) {
-        scrollController.animateTo(0,
-            duration: const Duration(milliseconds: 500), curve: Curves.ease);
+        scrollController.animateTo(0, duration: const Duration(milliseconds: 500), curve: Curves.ease);
       }
     }
   }
