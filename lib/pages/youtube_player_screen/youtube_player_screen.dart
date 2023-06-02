@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:html' as html;
+import 'package:universal_html/html.dart' as html;
 import 'dart:ui' as ui;
 import 'package:moviewebapp/utils/colors.dart';
 
