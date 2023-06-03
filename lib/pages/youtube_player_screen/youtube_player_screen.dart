@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:universal_html/html.dart' as html;
-import 'dart:ui' as ui;
 import 'package:moviewebapp/utils/colors.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class YouTubeVideoPlayer extends StatefulWidget {
   final String videoId;
-  static const String _youtubeId = "youtube-video-player-id";
-
   const YouTubeVideoPlayer({Key? key, required this.videoId}) : super(key: key);
 
   @override
@@ -14,19 +11,18 @@ class YouTubeVideoPlayer extends StatefulWidget {
 }
 
 class _YouTubeVideoPlayerState extends State<YouTubeVideoPlayer> {
+  final YoutubePlayerController _youTubeController = YoutubePlayerController(
+    params: const YoutubePlayerParams(
+      showControls: true,
+      showFullscreenButton: true,
+      enableCaption: false,
+    ),
+  );
+
   @override
   void initState() {
     super.initState();
-    final iframeElement = html.IFrameElement()
-      ..width = '100%'
-      ..height = '100%'
-      ..src = 'https://www.youtube.com/embed/${widget.videoId}'
-      ..style.border = 'none';
-    // ignore: undefined_prefixed_name
-    ui.platformViewRegistry.registerViewFactory(
-      widget.videoId,
-      (int viewId) => iframeElement,
-    );
+    _youTubeController.loadVideoById(videoId: widget.videoId);
   }
 
   @override
@@ -55,32 +51,12 @@ class _YouTubeVideoPlayerState extends State<YouTubeVideoPlayer> {
         child: SizedBox(
           width: _width,
           height: _height,
-          child: HtmlElementView(
-            viewType: widget.videoId,
+          child: YoutubePlayer(
+            controller: _youTubeController,
+            aspectRatio: 16 / 9,
           ),
         ),
       ),
     );
   }
-}
-
-void showYouTubeVideo({
-  required BuildContext context,
-  required double screenWidth,
-  required double screenHeight,
-  required String youtubeId,
-}) {
-  showDialog(
-    context: context,
-    builder: (context) => Center(
-      child: AlertDialog(
-        contentPadding: const EdgeInsets.all(0),
-        content: SizedBox(
-          width: screenWidth,
-          height: screenHeight,
-          child: HtmlElementView(viewType: youtubeId),
-        ),
-      ),
-    ),
-  );
 }

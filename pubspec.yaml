@@ -22,8 +22,7 @@ dependencies:
   lottie: ^1.0.1
   infinite_scroll_pagination: ^3.2.0
   shimmer: ^2.0.0
-  expandable_text: ^2.3.0
-  universal_html: ^2.2.2
+  youtube_player_iframe: ^4.0.4
 
 dev_dependencies:
   flutter_test:
