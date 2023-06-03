@@ -1,8 +1,8 @@
-import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/pages/actors_page/widgets/ActorMoviesWidget.dart';
 import 'package:moviewebapp/pages/actors_page/widgets/actors_Images_widget.dart';
 import 'package:moviewebapp/pages/actors_page/widgets/lable_widget.dart';
+import 'package:moviewebapp/pages/movie_info_screen/widgets/expandable_text_widget.dart';
 import 'package:moviewebapp/providers/actors_info_provider.dart';
 import 'package:moviewebapp/responses/api_constants.dart';
 import 'package:moviewebapp/utils/colors.dart';
@@ -23,8 +23,7 @@ class _ActorsPageState extends State<ActorsPage> {
   @override
   void initState() {
     super.initState();
-    final actorsInfoProvider =
-        Provider.of<ActorsInfoProvider>(context, listen: false);
+    final actorsInfoProvider = Provider.of<ActorsInfoProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       actorsInfoProvider.getActorsInfoAPI(actorId: widget.actorId);
       actorsInfoProvider.getActorsImagesAPI(actorId: widget.actorId);
@@ -74,10 +73,8 @@ class _ActorsPageState extends State<ActorsPage> {
               ),
             ),
       body: SafeArea(
-        child: Consumer<ActorsInfoProvider>(
-            builder: (context, actorsInfoProvider, child) {
-          final double _pageWidth =
-              getBottomSheetWidth(screenWidth: _screenWidth) + 30;
+        child: Consumer<ActorsInfoProvider>(builder: (context, actorsInfoProvider, child) {
+          final double _pageWidth = getBottomSheetWidth(screenWidth: _screenWidth) + 30;
           return SingleChildScrollView(
             controller: scrollController,
             child: Center(
@@ -124,9 +121,7 @@ class _ActorsPageState extends State<ActorsPage> {
                             },
                             child: Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(color: BLACK, width: 2),
-                                  shape: BoxShape.circle,
-                                  color: BLACK),
+                                  border: Border.all(color: BLACK, width: 2), shape: BoxShape.circle, color: BLACK),
                               padding: const EdgeInsets.all(2),
                               margin: const EdgeInsets.all(10),
                               child: const Icon(
@@ -149,12 +144,9 @@ class _ActorsPageState extends State<ActorsPage> {
                             borderRadius: BorderRadius.circular(5),
                             child: actorsInfoProvider.profilePic != ""
                                 ? Image.network(
-                                    ApiConstants.movieImageBaseUrlw500 +
-                                        actorsInfoProvider.profilePic,
-                                    height: getProfileImageSize(
-                                        screenSize: _screenWidth),
-                                    width: getProfileImageSize(
-                                        screenSize: _screenWidth),
+                                    ApiConstants.movieImageBaseUrlw500 + actorsInfoProvider.profilePic,
+                                    height: getProfileImageSize(screenSize: _screenWidth),
+                                    width: getProfileImageSize(screenSize: _screenWidth),
                                     fit: BoxFit.cover,
                                   )
                                 : Container(),
@@ -175,10 +167,7 @@ class _ActorsPageState extends State<ActorsPage> {
                                 softWrap: true,
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 4,
-                                style: const TextStyle(
-                                    fontSize: 18,
-                                    color: WHITE,
-                                    fontWeight: FontWeight.bold),
+                                style: const TextStyle(fontSize: 18, color: WHITE, fontWeight: FontWeight.bold),
                               ),
                             ),
                             Row(
@@ -186,8 +175,7 @@ class _ActorsPageState extends State<ActorsPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
-                                  padding: const EdgeInsets.only(
-                                      left: 0, right: 5, top: 10, bottom: 0),
+                                  padding: const EdgeInsets.only(left: 0, right: 5, top: 10, bottom: 0),
                                   child: const Icon(
                                     Icons.map,
                                     color: GREY,
@@ -197,28 +185,19 @@ class _ActorsPageState extends State<ActorsPage> {
                                   // decoration: BoxDecoration(
                                   //   border: Border.all(color: WHITE, width: 1),
                                   // ),
-                                  margin:
-                                      const EdgeInsets.only(left: 0, top: 10),
+                                  margin: const EdgeInsets.only(left: 0, top: 10),
                                   child: RichText(
                                     softWrap: true,
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 4,
                                     text: TextSpan(children: [
                                       TextSpan(
-                                        text: actorsInfoProvider
-                                            .totalMoviesActed
-                                            .toString(),
-                                        style: const TextStyle(
-                                            fontSize: 18,
-                                            color: WHITE,
-                                            fontWeight: FontWeight.bold),
+                                        text: actorsInfoProvider.totalMoviesActed.toString(),
+                                        style: const TextStyle(fontSize: 18, color: WHITE, fontWeight: FontWeight.bold),
                                       ),
                                       const TextSpan(
                                         text: " movies",
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            color: WHITE,
-                                            fontWeight: FontWeight.normal),
+                                        style: TextStyle(fontSize: 18, color: WHITE, fontWeight: FontWeight.normal),
                                       ),
                                     ]),
                                   ),
@@ -236,10 +215,7 @@ class _ActorsPageState extends State<ActorsPage> {
                                 softWrap: true,
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 4,
-                                style: const TextStyle(
-                                    fontSize: 18,
-                                    color: WHITE,
-                                    fontWeight: FontWeight.bold),
+                                style: const TextStyle(fontSize: 18, color: WHITE, fontWeight: FontWeight.bold),
                               ),
                             ),
                           ],
@@ -255,8 +231,7 @@ class _ActorsPageState extends State<ActorsPage> {
                       // decoration: BoxDecoration(
                       //   border: Border.all(color: WHITE, width: 1),
                       // ),
-                      padding: const EdgeInsets.only(
-                          left: 0, right: 0, top: 10, bottom: 10),
+                      padding: const EdgeInsets.only(left: 0, right: 0, top: 10, bottom: 10),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -279,18 +254,11 @@ class _ActorsPageState extends State<ActorsPage> {
                                 children: [
                                   TextSpan(
                                     text: actorsInfoProvider.dob,
-                                    style: const TextStyle(
-                                        fontSize: 14,
-                                        color: WHITE,
-                                        fontWeight: FontWeight.normal),
+                                    style: const TextStyle(fontSize: 14, color: WHITE, fontWeight: FontWeight.normal),
                                   ),
                                   TextSpan(
-                                    text:
-                                        " in ${actorsInfoProvider.birthPlace}",
-                                    style: const TextStyle(
-                                        fontSize: 14,
-                                        color: WHITE,
-                                        fontWeight: FontWeight.normal),
+                                    text: " in ${actorsInfoProvider.birthPlace}",
+                                    style: const TextStyle(fontSize: 14, color: WHITE, fontWeight: FontWeight.normal),
                                   ),
                                 ],
                               ),
@@ -305,16 +273,11 @@ class _ActorsPageState extends State<ActorsPage> {
                         // border: Border.all(color: WHITE, width: 1),
                         color: GREY.withOpacity(0.1),
                       ),
-                      padding: const EdgeInsets.only(
-                          left: 20, top: 20, right: 10, bottom: 15),
+                      padding: const EdgeInsets.only(left: 20, top: 20, right: 10, bottom: 15),
                       child: ExpandableText(
-                        actorsInfoProvider.biography,
-                        expandText: 'show more',
-                        collapseText: 'show less',
-                        maxLines: 8,
-                        linkColor: GREY,
-                        animation: true,
-                        style: const TextStyle(
+                        text: actorsInfoProvider.biography,
+                        maxLines: 3,
+                        textStyle: const TextStyle(
                           fontSize: 14,
                           color: WHITE,
                           fontWeight: FontWeight.bold,
@@ -323,15 +286,13 @@ class _ActorsPageState extends State<ActorsPage> {
                     ),
                     const LabelWidget(label: "Actor Pics"),
                     Container(
-                      height: getSimilarMoviesSectionHeight(
-                          screenSize: _screenWidth),
+                      height: getSimilarMoviesSectionHeight(screenSize: _screenWidth),
                       margin: const EdgeInsets.only(top: 0, left: 10),
                       child: ActorsImages(),
                     ),
                     const LabelWidget(label: "Known For"),
                     Container(
-                      height: getSimilarMoviesSectionHeight(
-                          screenSize: _screenWidth),
+                      height: getSimilarMoviesSectionHeight(screenSize: _screenWidth),
                       margin: const EdgeInsets.only(top: 0, left: 10),
                       child: ActorMoviesWidget(actorId: widget.actorId),
                     ),

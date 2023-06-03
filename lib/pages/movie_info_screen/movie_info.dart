@@ -111,20 +111,9 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                           alignment: Alignment.topLeft,
                           margin: const EdgeInsets.only(left: 15, top: 20),
                           child: ExpandableText(
-                            text: movieInfoProvider.overview +
-                                " " +
-                                movieInfoProvider.overview +
-                                " " +
-                                movieInfoProvider.overview +
-                                " " +
-                                movieInfoProvider.overview,
-                            // movieInfoProvider.overview,
-                            // expandText: 'show more',
-                            // collapseText: 'show less',
-                            // maxLines: 4,
-                            // linkColor: WHITE,
-                            // animation: true,
-                            // style: const TextStyle(fontSize: 14, color: ICON_GREY),
+                            text: movieInfoProvider.overview,
+                            maxLines: 3,
+                            textStyle: const TextStyle(fontSize: 14, color: ICON_GREY),
                           ),
                         ),
                         Container(
