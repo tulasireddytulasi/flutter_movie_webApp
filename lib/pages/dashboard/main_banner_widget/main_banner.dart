@@ -5,7 +5,6 @@ import 'package:moviewebapp/providers/movies_provider.dart';
 import 'package:moviewebapp/responses/api_constants.dart';
 import 'package:moviewebapp/utils/assets_path.dart';
 import 'package:moviewebapp/utils/colors.dart';
-import 'package:moviewebapp/utils/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 

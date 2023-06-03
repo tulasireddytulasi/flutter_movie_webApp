@@ -1,6 +1,7 @@
-import 'package:expandable_text/expandable_text.dart';
+// import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/pages/movie_info_screen/widgets/cast.dart';
+import 'package:moviewebapp/pages/movie_info_screen/widgets/expandable_text_widget.dart';
 import 'package:moviewebapp/pages/movie_info_screen/widgets/movie_banner_widget.dart';
 import 'package:moviewebapp/pages/movie_info_screen/widgets/rating_row_widget.dart';
 import 'package:moviewebapp/pages/movie_info_screen/widgets/reviews_list_widget.dart';
@@ -89,30 +90,41 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                         Container(
                           alignment: Alignment.topLeft,
                           margin: const EdgeInsets.only(left: 15, top: 5),
-                          child: Text(
+                          child: SelectableText(
                             movieInfoProvider.movieTitle,
+                            showCursor: true,
+                            cursorColor: BLUE,
                             style: const TextStyle(fontSize: 26, color: WHITE),
                           ),
                         ),
                         Container(
                           alignment: Alignment.topLeft,
                           margin: const EdgeInsets.only(left: 15, top: 5),
-                          child: Text(
+                          child: SelectableText(
                             "${movieInfoProvider.runtime} . ${movieInfoProvider.genre} . ${movieInfoProvider.releaseYear}",
                             style: const TextStyle(fontSize: 14, color: ICON_GREY),
+                            showCursor: true,
+                            cursorColor: BLUE,
                           ),
                         ),
                         Container(
                           alignment: Alignment.topLeft,
                           margin: const EdgeInsets.only(left: 15, top: 20),
                           child: ExpandableText(
-                            movieInfoProvider.overview,
-                            expandText: 'show more',
-                            collapseText: 'show less',
-                            maxLines: 4,
-                            linkColor: WHITE,
-                            animation: true,
-                            style: const TextStyle(fontSize: 14, color: ICON_GREY),
+                            text: movieInfoProvider.overview +
+                                " " +
+                                movieInfoProvider.overview +
+                                " " +
+                                movieInfoProvider.overview +
+                                " " +
+                                movieInfoProvider.overview,
+                            // movieInfoProvider.overview,
+                            // expandText: 'show more',
+                            // collapseText: 'show less',
+                            // maxLines: 4,
+                            // linkColor: WHITE,
+                            // animation: true,
+                            // style: const TextStyle(fontSize: 14, color: ICON_GREY),
                           ),
                         ),
                         Container(
