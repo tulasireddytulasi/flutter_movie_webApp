@@ -14,7 +14,7 @@ class PlayButtonWidget extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => YouTubeVideoPlayer(videoId: youTubeVideoKey),
+            builder: (context) => YouTubePlayer(videoId: youTubeVideoKey),
           ),
         );
       },

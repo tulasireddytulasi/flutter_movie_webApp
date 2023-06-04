@@ -156,7 +156,7 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => YouTubeVideoPlayer(videoId: movieInfoProvider.youTubeKey),
+                                      builder: (context) => YouTubePlayer(videoId: movieInfoProvider.youTubeKey),
                                     ),
                                   );
                                 } else {
@@ -184,7 +184,7 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => YouTubeVideoPlayer(videoId: movieInfoProvider.youTubeKey),
+                                      builder: (context) => YouTubePlayer(videoId: movieInfoProvider.youTubeKey),
                                     ),
                                   );
                                 } else {
