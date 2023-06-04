@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:moviewebapp/models/popular_actors_model.dart';
@@ -10,8 +9,8 @@ import 'package:moviewebapp/utils/colors.dart';
 import 'package:moviewebapp/utils/screen_sizes.dart';
 
 class AllActorsPage extends StatefulWidget {
-  const AllActorsPage({Key? key}) : super(key: key);
-
+  const AllActorsPage({Key? key, this.showAppBar = false}) : super(key: key);
+  final bool showAppBar;
   @override
   _AllActorsPageState createState() => _AllActorsPageState();
 }
@@ -60,9 +59,8 @@ class _AllActorsPageState extends State<AllActorsPage> {
 
     return Scaffold(
       backgroundColor: tealishBlue,
-      appBar: _screenWidth600
-          ? null
-          : AppBar(
+      appBar: widget.showAppBar
+          ? AppBar(
               backgroundColor: tealishBlue,
               leading: IconButton(
                 onPressed: () {},
@@ -75,7 +73,8 @@ class _AllActorsPageState extends State<AllActorsPage> {
                 "Popular Actors",
                 style: TextStyle(fontSize: 18, color: WHITE),
               ),
-            ),
+            )
+          : null,
       body: SafeArea(
         child: Center(
           child: Container(
