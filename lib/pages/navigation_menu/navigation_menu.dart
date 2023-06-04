@@ -3,11 +3,13 @@ import 'package:moviewebapp/pages/all_actors_page/all_actors_page.dart';
 import 'package:moviewebapp/pages/all_movies_screen/movies_list.dart';
 import 'package:moviewebapp/pages/blogs_screen/blogs_screen.dart';
 import 'package:moviewebapp/pages/dashboard/dashboard.dart';
-import 'package:moviewebapp/pages/navigation_menu/custom_bottom_navbar.dart';
+import 'package:moviewebapp/pages/navigation_menu/custom_bottom_navbar_2.dart';
+
 import 'package:moviewebapp/pages/navigation_menu/movie_app_bar.dart';
 import 'package:moviewebapp/pages/profile_screen/profile_screen.dart';
 import 'package:moviewebapp/providers/dashboard_provider.dart';
 import 'package:moviewebapp/utils/assets_path.dart';
+import 'package:moviewebapp/utils/colors.dart';
 import 'package:provider/provider.dart';
 
 class NavigationMenu extends StatefulWidget {
@@ -77,23 +79,16 @@ class _NavigationMenuState extends State<NavigationMenu> {
                 );
               },
             ),
-            if (_screenWidth <= 750)
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  alignment: Alignment.bottomCenter,
-                  child: CustomBottomNavigationBar(
-                    defaultSelectedIndex: 0,
-                    onChange: (value) => _currentScreenNo.value = value,
-                    titles: bottomBarTitles,
-                    imgurls: iconAssetPaths,
-                  ),
-                ),
-              ),
           ],
         ),
+        bottomNavigationBar: (_screenWidth <= 750)
+            ? CustomBottomNavigationBar(
+                defaultSelectedIndex: 0,
+                onChange: (value) => _currentScreenNo.value = value,
+                titles: bottomBarTitles,
+                imgUrls: iconAssetPaths,
+              )
+            : const SizedBox.shrink(),
       );
     });
   }

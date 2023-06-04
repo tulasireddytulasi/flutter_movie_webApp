@@ -1,6 +1,5 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/pages/all_actors_page/all_actors_page.dart';
 import 'package:moviewebapp/pages/navigation_menu/navigation_menu.dart';
 import 'package:moviewebapp/providers/actors_info_provider.dart';
 import 'package:moviewebapp/providers/dashboard_provider.dart';
