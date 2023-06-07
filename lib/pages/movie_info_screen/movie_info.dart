@@ -7,11 +7,11 @@ import 'package:moviewebapp/pages/movie_info_screen/widgets/rating_row_widget.da
 import 'package:moviewebapp/pages/movie_info_screen/widgets/reviews_list_widget.dart';
 import 'package:moviewebapp/pages/movie_info_screen/widgets/similar_movies.dart';
 import 'package:moviewebapp/pages/movie_info_screen/widgets/trailer_button.dart';
-import 'package:moviewebapp/pages/youtube_player_screen/youtube_player_screen.dart';
 import 'package:moviewebapp/providers/movie_info_provider.dart';
 import 'package:moviewebapp/providers/movies_provider.dart';
 import 'package:moviewebapp/utils/colors.dart';
 import 'package:moviewebapp/utils/commom_functions.dart';
+import 'package:moviewebapp/utils/navigation/navigation.dart';
 import 'package:provider/provider.dart';
 
 class MovieInfoScreen extends StatefulWidget {
@@ -153,12 +153,8 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                             InkWell(
                               onTap: () {
                                 if (movieInfoProvider.youTubeKey.isNotEmpty) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => YouTubePlayer(videoId: movieInfoProvider.youTubeKey),
-                                    ),
-                                  );
+                                  Navigation()
+                                      .youTubeScreen(context: context, youTubeVideoKey: movieInfoProvider.youTubeKey);
                                 } else {
                                   showAlert(context: context);
                                 }
@@ -181,12 +177,8 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                             InkWell(
                               onTap: () {
                                 if (movieInfoProvider.youTubeKey.isNotEmpty) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => YouTubePlayer(videoId: movieInfoProvider.youTubeKey),
-                                    ),
-                                  );
+                                  Navigation()
+                                      .youTubeScreen(context: context, youTubeVideoKey: movieInfoProvider.youTubeKey);
                                 } else {
                                   showAlert(context: context);
                                 }

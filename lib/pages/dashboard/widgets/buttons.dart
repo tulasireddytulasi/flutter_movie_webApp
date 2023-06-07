@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/pages/widgets/reusable_button.dart';
-import 'package:moviewebapp/pages/youtube_player_screen/youtube_player_screen.dart';
 import 'package:moviewebapp/utils/assets_path.dart';
 import 'package:moviewebapp/utils/colors.dart';
 import 'package:moviewebapp/utils/constants.dart';
@@ -35,14 +34,7 @@ class Buttons extends StatelessWidget {
           buttonWidth: 80,
           color: WHITE,
           borderRadius: 4,
-          callingAPI: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => YouTubePlayer(videoId: youTubeVideoKey),
-              ),
-            );
-          },
+          callingAPI: () => Navigation().youTubeScreen(context: context, youTubeVideoKey: youTubeVideoKey),
           bottomPadding: 10,
           topPadding: 10,
         ),
