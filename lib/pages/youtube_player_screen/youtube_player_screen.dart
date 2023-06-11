@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/pages/youtube_player_screen/widgets/mobile_youtube_player.dart';
-import 'dart:html' as html;
-import 'dart:ui' as ui;
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 class YouTubePlayer extends StatefulWidget {
   const YouTubePlayer({Key? key, required this.videoId}) : super(key: key);
@@ -13,22 +10,23 @@ class YouTubePlayer extends StatefulWidget {
 }
 
 class _YouTubePlayerState extends State<YouTubePlayer> {
+  static const String youTubeVideoURL = "https://www.youtube.com/embed/";
+  final PlatformWebViewController _youTubeController = PlatformWebViewController(
+    const PlatformWebViewControllerCreationParams(),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    _youTubeController.loadRequest(
+      LoadRequestParams(
+        uri: Uri.parse(youTubeVideoURL + widget.videoId),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final iframeElement = html.IFrameElement()
-      ..width = '100%'
-      ..height = '100%'
-      ..src = 'https://www.youtube.com/embed/${widget.videoId}'
-      ..style.border = 'none';
-    // ignore: undefined_prefixed_name
-    ui.platformViewRegistry.registerViewFactory(
-      widget.videoId,
-      (int viewId) => iframeElement,
-    );
-
-    final _width = MediaQuery.of(context).size.width;
-    final _height = MediaQuery.of(context).size.height;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF1B2230),
@@ -44,18 +42,9 @@ class _YouTubePlayerState extends State<YouTubePlayer> {
           style: TextStyle(fontSize: 18, color: Colors.white),
         ),
       ),
-      body: kIsWeb
-          ? Center(
-              child: SizedBox(
-                width: _width,
-                height: _height,
-                child: HtmlElementView(
-                  viewType: widget.videoId,
-                ),
-              ),
-            )
-          : Container(),
-      // MobileYouTubePlayer(videoId: widget.videoId),
+      body: PlatformWebViewWidget(
+        PlatformWebViewWidgetCreationParams(controller: _youTubeController),
+      ).build(context),
     );
   }
 }

@@ -22,7 +22,6 @@ class PlayButtons extends StatefulWidget {
 class _PlayButtonsState extends State<PlayButtons> {
   @override
   Widget build(BuildContext context) {
-    print("youTubeVideoKey: ${widget.youTubeVideoKey}");
     final double _screenWidth = MediaQuery.of(context).size.width;
     final bool _screenWidth600 = _screenWidth >= 600;
     return Visibility(
