@@ -22,16 +22,17 @@ class NavigationMenu extends StatefulWidget {
 class _NavigationMenuState extends State<NavigationMenu> {
   late ValueNotifier<int> _currentScreenNo;
   final _screens = [
-    // const TestingWidgets(),
     const Dashboard(),
     const MovieListScreen(
       withOriginalLanguage: "en",
       movieType: "popular",
       withGenres: "",
       screenTitle: "Popular Movies",
+      showAppBar: false,
+      showLeadingIcon: false,
     ),
-    const AllActorsPage(),
-    const BlogsScreen(),
+    const AllActorsPage(showAppBar: false, showLeadingIcon: false),
+    const BlogsScreen(showAppBar: false),
     const ProfileScreen(),
   ];
   final List<String> appBarTitles = ["Home", "Movies", "People", "Blogs"];
@@ -42,6 +43,27 @@ class _NavigationMenuState extends State<NavigationMenu> {
   void initState() {
     super.initState();
     _currentScreenNo = ValueNotifier<int>(0);
+  }
+
+  setMovies({required int screenNo, required bool showAppBar, required bool showLeadingIcon}) {
+    switch (screenNo) {
+      case 1:
+        _screens[screenNo] = MovieListScreen(
+          withOriginalLanguage: "en",
+          movieType: "popular",
+          withGenres: "",
+          screenTitle: "Popular Movies",
+          showAppBar: showAppBar,
+          showLeadingIcon: showLeadingIcon,
+        );
+        break;
+      case 2:
+        _screens[screenNo] = AllActorsPage(showAppBar: showAppBar, showLeadingIcon: showLeadingIcon);
+        break;
+      case 3:
+        _screens[screenNo] = BlogsScreen(showAppBar: showAppBar);
+        break;
+    }
   }
 
   @override
@@ -57,7 +79,10 @@ class _NavigationMenuState extends State<NavigationMenu> {
                 centerTitle: true,
                 title: MovieAppBar(
                   defaultSelectedIndex: 0,
-                  onChange: (value) => _currentScreenNo.value = value,
+                  onChange: (value) {
+                    setMovies(screenNo: value, showAppBar: false, showLeadingIcon: false);
+                    _currentScreenNo.value = value;
+                  },
                   titles: appBarTitles,
                 ),
                 leading: IconButton(
@@ -84,7 +109,10 @@ class _NavigationMenuState extends State<NavigationMenu> {
         bottomNavigationBar: (_screenWidth <= 750)
             ? CustomBottomNavigationBar(
                 defaultSelectedIndex: 0,
-                onChange: (value) => _currentScreenNo.value = value,
+                onChange: (value) {
+                  setMovies(screenNo: value, showAppBar: true, showLeadingIcon: false);
+                  _currentScreenNo.value = value;
+                },
                 titles: bottomBarTitles,
                 imgUrls: iconAssetPaths,
               )

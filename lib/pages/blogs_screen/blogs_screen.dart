@@ -3,10 +3,11 @@ import 'package:moviewebapp/pages/blogs_screen/blogs_view_screen.dart';
 import 'package:moviewebapp/pages/blogs_screen/dummy_data.dart';
 import 'package:moviewebapp/pages/blogs_screen/widgets/blod_card.dart';
 import 'package:moviewebapp/utils/colors.dart';
-import 'package:moviewebapp/utils/constants.dart';
+import 'package:moviewebapp/utils/styles.dart';
 
 class BlogsScreen extends StatefulWidget {
-  const BlogsScreen({Key? key}) : super(key: key);
+  const BlogsScreen({Key? key, required this.showAppBar}) : super(key: key);
+  final bool showAppBar;
 
   @override
   _BlogsScreenState createState() => _BlogsScreenState();
@@ -18,17 +19,15 @@ class _BlogsScreenState extends State<BlogsScreen> {
     final double _screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: tealishBlue,
-      appBar: AppBar(
-        backgroundColor: tealishBlue,
-        title: const Text(
-          "Marvel Blogs",
-          style: TextStyle(
-            fontSize: 30,
-            color: GREY,
-            fontFamily: montserratSemiBold,
-          ),
-        ),
-      ),
+      appBar: widget.showAppBar
+          ? AppBar(
+              backgroundColor: tealishBlue,
+              title: const Text(
+                "Marvel Blogs",
+                style: semiBoldGrey30,
+              ),
+            )
+          : null,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(

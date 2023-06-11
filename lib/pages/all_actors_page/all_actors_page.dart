@@ -7,10 +7,12 @@ import 'package:moviewebapp/pages/home_page/widgets/circular_image_widgets.dart'
 import 'package:moviewebapp/responses/movie_apis.dart';
 import 'package:moviewebapp/utils/colors.dart';
 import 'package:moviewebapp/utils/screen_sizes.dart';
+import 'package:moviewebapp/utils/styles.dart';
 
 class AllActorsPage extends StatefulWidget {
-  const AllActorsPage({Key? key, this.showAppBar = false}) : super(key: key);
+  const AllActorsPage({Key? key, required this.showAppBar, required this.showLeadingIcon}) : super(key: key);
   final bool showAppBar;
+  final bool showLeadingIcon;
   @override
   _AllActorsPageState createState() => _AllActorsPageState();
 }
@@ -62,16 +64,18 @@ class _AllActorsPageState extends State<AllActorsPage> {
       appBar: widget.showAppBar
           ? AppBar(
               backgroundColor: tealishBlue,
-              leading: IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.arrow_back,
-                  color: WHITE,
-                ),
-              ),
+              leading: widget.showLeadingIcon
+                  ? IconButton(
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: WHITE,
+                      ),
+                    )
+                  : null,
               title: const Text(
                 "Popular Actors",
-                style: TextStyle(fontSize: 18, color: WHITE),
+                style: semiBoldGrey30,
               ),
             )
           : null,

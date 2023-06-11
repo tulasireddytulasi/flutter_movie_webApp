@@ -13,6 +13,7 @@ import 'package:moviewebapp/utils/colors.dart';
 import 'package:moviewebapp/utils/commom_functions.dart';
 import 'package:moviewebapp/utils/constants.dart';
 import 'package:moviewebapp/utils/navigation/navigation.dart';
+import 'package:moviewebapp/utils/styles.dart';
 import 'package:provider/provider.dart';
 
 class MovieListScreen extends StatefulWidget {
@@ -22,13 +23,15 @@ class MovieListScreen extends StatefulWidget {
     required this.movieType,
     this.withGenres,
     required this.screenTitle,
-    this.showAppBar = false,
+    required this.showAppBar,
+    this.showLeadingIcon = true,
   }) : super(key: key);
   final String withOriginalLanguage;
   final String movieType;
   final String? withGenres;
   final String screenTitle;
   final bool showAppBar;
+  final bool showLeadingIcon;
 
   @override
   _MovieListScreenState createState() => _MovieListScreenState();
@@ -95,16 +98,18 @@ class _MovieListScreenState extends State<MovieListScreen> {
         appBar: widget.showAppBar
             ? AppBar(
                 backgroundColor: tealishBlue,
-                leading: IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    color: WHITE,
-                  ),
-                ),
+                leading: widget.showLeadingIcon
+                    ? IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const Icon(
+                          Icons.arrow_back,
+                          color: WHITE,
+                        ),
+                      )
+                    : null,
                 title: Text(
                   widget.screenTitle,
-                  style: const TextStyle(fontSize: 18, color: WHITE),
+                  style: semiBoldGrey30,
                 ),
               )
             : null,
