@@ -2,50 +2,25 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/models/get_movies_model.dart';
+import 'package:moviewebapp/providers/movies_provider.dart';
 import 'package:moviewebapp/responses/movie_apis.dart';
 import 'package:moviewebapp/utils/constants.dart';
+import 'package:provider/provider.dart';
 
 class DashBoardProvider extends ChangeNotifier {
-  String _movieTitle = "";
-  String get movieTitle => _movieTitle;
-
-  String _movieID = "";
-  String get movieID => _movieID;
-
-  String _moviePoster = "";
-  String get moviePoster => _moviePoster;
-
-  String _backdropPath = "";
-  String get backdropPath => _backdropPath;
-
   Color _appBarBackgroundColor = Colors.transparent;
+
   Color get appBarBackgroundColor => _appBarBackgroundColor;
 
   double _appBarElevation = 0.0;
+
   double get appBarElevation => _appBarElevation;
 
-  setAppBarColorAndElevation({required Color color, required double elevation}) {
-    _appBarBackgroundColor = color;
-    _appBarElevation = elevation;
-    notifyListeners();
-  }
-
-  setMovieData({
-    required String movieTitle,
-    required String movieID,
-    required String moviePoster,
-    required String backdropPath,
-  }) {
-    _movieTitle = movieTitle;
-    _movieID = movieID;
-    _moviePoster = moviePoster;
-    _backdropPath = backdropPath;
-    notifyListeners();
-  }
-
   final List<MoviesModel> _moviesModelList = [];
+
   List<MoviesModel> get moviesModelList => _moviesModelList;
   final List<String> _moviesLabelList = [];
+
   List<String> get moviesLabelList => _moviesLabelList;
 
   final Map<String, dynamic> _moviesDataMapObject = {
@@ -92,9 +67,16 @@ class DashBoardProvider extends ChangeNotifier {
       "withGenres": "878",
     },
   };
+
   Map<String, dynamic> get moviesDataMapObject => _moviesDataMapObject;
 
-  getAllMoviesList() async {
+  setAppBarColorAndElevation({required Color color, required double elevation}) {
+    _appBarBackgroundColor = color;
+    _appBarElevation = elevation;
+    notifyListeners();
+  }
+
+  Future<void> getAllMoviesList() async {
     try {
       for (Map<String, dynamic> moviesDataMapObject in _moviesDataMapObject.values) {
         final MoviesModel _movieModel = await getPopularMoviesList(
@@ -110,6 +92,21 @@ class DashBoardProvider extends ChangeNotifier {
     } catch (error, stackTrace) {
       log("getAllMoviesList error: $error");
       log("getAllMoviesList stackTrace: $stackTrace");
+    }
+  }
+
+  bool _isDataLoaded = false;
+  bool get isDataLoaded => _isDataLoaded;
+  getDashBoardData({required BuildContext context}) async {
+    try {
+      _isDataLoaded = false;
+      MoviesProvider _moviesProvider = Provider.of<MoviesProvider>(context, listen: false);
+      _moviesProvider.getMovieDetails(pageNo: 1, movieType: "popular");
+      await Future.wait([_moviesProvider.getMovieDetails(pageNo: 1, movieType: "popular"), getAllMoviesList()]);
+      _isDataLoaded = true;
+    } catch (error, stackTrace) {
+      log("getDashBoardData error: $error");
+      log("getDashBoardData stackTrace: $stackTrace");
     }
   }
 }

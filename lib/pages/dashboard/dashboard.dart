@@ -4,10 +4,12 @@ import 'package:moviewebapp/pages/dashboard/main_banner_widget/main_banner.dart'
 import 'package:moviewebapp/pages/dashboard/widgets/movie_label.dart';
 import 'package:moviewebapp/pages/dashboard/widgets/movies_list.dart';
 import 'package:moviewebapp/providers/dashboard_provider.dart';
+import 'package:moviewebapp/utils/assets_path.dart';
 import 'package:moviewebapp/utils/colors.dart';
 import 'package:moviewebapp/utils/commom_functions.dart';
 import 'package:moviewebapp/utils/constants.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -25,7 +27,7 @@ class _DashboardState extends State<Dashboard> {
   void initState() {
     super.initState();
     dashBoardProvider = Provider.of<DashBoardProvider>(context, listen: false);
-    dashBoardProvider.getAllMoviesList();
+    dashBoardProvider.getDashBoardData(context: context);
     _scrollController.addListener(_onScroll);
   }
 
@@ -55,55 +57,72 @@ class _DashboardState extends State<Dashboard> {
         onNotification: (scrollNotification) {
           return true;
         },
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          child: Column(
-            children: [
-              const MainBanner(),
-              Consumer<DashBoardProvider>(
-                builder: (context, dashBoardProvider, child) {
-                  if (dashBoardProvider.moviesModelList.isNotEmpty) {
-                    return Column(
-                      children: List.generate(
-                        dashBoardProvider.moviesModelList.length,
-                        (index) => Column(
-                          children: [
-                            MovieLabel(
-                              movieLabel: dashBoardProvider.moviesLabelList[index],
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => MovieListScreen(
-                                      showAppBar: true,
-                                      screenTitle: dashBoardProvider.moviesDataMapObject["$index"]["movieLabel"],
-                                      movieType: dashBoardProvider.moviesDataMapObject["$index"]["movieType"],
-                                      withOriginalLanguage: dashBoardProvider.moviesDataMapObject["$index"]
-                                          ["withOriginalLanguage"],
-                                      withGenres: dashBoardProvider.moviesDataMapObject["$index"]["withGenres"],
-                                    ),
-                                  ),
-                                );
-                              },
+        child: Consumer<DashBoardProvider>(builder: (context, dashBoardProvider, child) {
+          if (dashBoardProvider.isDataLoaded) {
+            return SingleChildScrollView(
+              controller: _scrollController,
+              child: Column(
+                children: [
+                  const MainBanner(),
+                  Consumer<DashBoardProvider>(
+                    builder: (context, dashBoardProvider, child) {
+                      if (dashBoardProvider.moviesModelList.isNotEmpty) {
+                        return Column(
+                          children: List.generate(
+                            dashBoardProvider.moviesModelList.length,
+                            (index) => Column(
+                              children: [
+                                MovieLabel(
+                                  movieLabel: dashBoardProvider.moviesLabelList[index],
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => MovieListScreen(
+                                          showAppBar: true,
+                                          screenTitle: dashBoardProvider.moviesDataMapObject["$index"]["movieLabel"],
+                                          movieType: dashBoardProvider.moviesDataMapObject["$index"]["movieType"],
+                                          withOriginalLanguage: dashBoardProvider.moviesDataMapObject["$index"]
+                                              ["withOriginalLanguage"],
+                                          withGenres: dashBoardProvider.moviesDataMapObject["$index"]["withGenres"],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                                Container(
+                                  height: getSimilarMoviesSectionHeight(screenSize: _screenWidth),
+                                  margin: const EdgeInsets.only(top: 16),
+                                  child: MoviesList(moviesModel: dashBoardProvider.moviesModelList[index]),
+                                ),
+                              ],
                             ),
-                            Container(
-                              height: getSimilarMoviesSectionHeight(screenSize: _screenWidth),
-                              margin: const EdgeInsets.only(top: 16),
-                              child: MoviesList(moviesModel: dashBoardProvider.moviesModelList[index]),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  } else {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                },
+                          ),
+                        );
+                      } else {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 100),
+                ],
               ),
-              const SizedBox(height: 100),
-            ],
-          ),
-        ),
+            );
+          } else {
+            return Center(
+              child: Shimmer.fromColors(
+                baseColor: Colors.grey[300] ?? Colors.grey,
+                highlightColor: tealishBlue1,
+                child: Image.asset(
+                  movieBackDrop2,
+                  width: double.infinity,
+                  height: 600,
+                  fit: BoxFit.fitWidth,
+                ),
+              ),
+            );
+          }
+        }),
       ),
     );
   }
