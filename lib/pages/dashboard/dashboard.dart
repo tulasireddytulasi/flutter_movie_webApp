@@ -17,12 +17,15 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  late DashBoardProvider dashBoardProvider;
   final ScrollController _scrollController = ScrollController();
   bool _isScrolled = false;
 
   @override
   void initState() {
     super.initState();
+    dashBoardProvider = Provider.of<DashBoardProvider>(context, listen: false);
+    dashBoardProvider.getAllMoviesList();
     _scrollController.addListener(_onScroll);
   }
 
@@ -34,7 +37,6 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void _onScroll() {
-    final dashBoardProvider = Provider.of<DashBoardProvider>(context, listen: false);
     // Update the state based on scroll position
     _isScrolled = _scrollController.position.pixels >= 100;
     if (_isScrolled) {
@@ -43,51 +45,6 @@ class _DashboardState extends State<Dashboard> {
       dashBoardProvider.setAppBarColorAndElevation(color: Colors.transparent, elevation: 0.0);
     }
   }
-
-  Map<String, dynamic> moviesDataMap = {
-    "0": {
-      "movieLabel": Constants.popularMovies,
-      "movieType": Constants.popular,
-      "withOriginalLanguage": Constants.english,
-      "withGenres": "",
-    },
-    "1": {
-      "movieLabel": Constants.topRatedMovies,
-      "movieType": Constants.topRated,
-      "withOriginalLanguage": Constants.english,
-      "withGenres": "",
-    },
-    "2": {
-      "movieLabel": Constants.nowPlayingMovies,
-      "movieType": Constants.nowPlaying,
-      "withOriginalLanguage": Constants.english,
-      "withGenres": "",
-    },
-    "3": {
-      "movieLabel": Constants.horrorMovies,
-      "movieType": Constants.topRated,
-      "withOriginalLanguage": Constants.english,
-      "withGenres": "27",
-    },
-    "4": {
-      "movieLabel": Constants.thrillerMovies,
-      "movieType": Constants.topRated,
-      "withOriginalLanguage": Constants.english,
-      "withGenres": "53",
-    },
-    "5": {
-      "movieLabel": Constants.romanceMovies,
-      "movieType": Constants.topRated,
-      "withOriginalLanguage": Constants.english,
-      "withGenres": "10749",
-    },
-    "6": {
-      "movieLabel": Constants.scificMovies,
-      "movieType": Constants.topRated,
-      "withOriginalLanguage": Constants.english,
-      "withGenres": "878",
-    },
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -103,42 +60,45 @@ class _DashboardState extends State<Dashboard> {
           child: Column(
             children: [
               const MainBanner(),
-              Column(
-                children: List.generate(
-                  moviesDataMap.length,
-                  (index) => Column(
-                    children: [
-                      MovieLabel(
-                        movieLabel: moviesDataMap["$index"]["movieLabel"],
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MovieListScreen(
-                                showAppBar: true,
-                                screenTitle: moviesDataMap["$index"]["movieLabel"],
-                                movieType: moviesDataMap["$index"]["movieType"],
-                                withOriginalLanguage: moviesDataMap["$index"]["withOriginalLanguage"],
-                                withGenres: moviesDataMap["$index"]["withGenres"],
-                              ),
+              Consumer<DashBoardProvider>(
+                builder: (context, dashBoardProvider, child) {
+                  if (dashBoardProvider.moviesModelList.isNotEmpty) {
+                    return Column(
+                      children: List.generate(
+                        dashBoardProvider.moviesModelList.length,
+                        (index) => Column(
+                          children: [
+                            MovieLabel(
+                              movieLabel: dashBoardProvider.moviesLabelList[index],
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MovieListScreen(
+                                      showAppBar: true,
+                                      screenTitle: dashBoardProvider.moviesDataMapObject["$index"]["movieLabel"],
+                                      movieType: dashBoardProvider.moviesDataMapObject["$index"]["movieType"],
+                                      withOriginalLanguage: dashBoardProvider.moviesDataMapObject["$index"]
+                                          ["withOriginalLanguage"],
+                                      withGenres: dashBoardProvider.moviesDataMapObject["$index"]["withGenres"],
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
-                          );
-                        },
-                      ),
-                      Container(
-                        height: getSimilarMoviesSectionHeight(
-                          screenSize: _screenWidth,
-                        ),
-                        margin: const EdgeInsets.only(top: 16),
-                        child: MoviesList(
-                          movieType: moviesDataMap["$index"]["movieType"],
-                          withOriginalLanguage: moviesDataMap["$index"]["withOriginalLanguage"],
-                          withGenres: moviesDataMap["$index"]["withGenres"],
+                            Container(
+                              height: getSimilarMoviesSectionHeight(screenSize: _screenWidth),
+                              margin: const EdgeInsets.only(top: 16),
+                              child: MoviesList(moviesModel: dashBoardProvider.moviesModelList[index]),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
+                    );
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                },
               ),
               const SizedBox(height: 100),
             ],
