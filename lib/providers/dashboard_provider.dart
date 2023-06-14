@@ -100,9 +100,7 @@ class DashBoardProvider extends ChangeNotifier {
   getDashBoardData({required BuildContext context}) async {
     try {
       _isDataLoaded = false;
-      MoviesProvider _moviesProvider = Provider.of<MoviesProvider>(context, listen: false);
-      _moviesProvider.getMovieDetails(pageNo: 1, movieType: "popular");
-      await Future.wait([_moviesProvider.getMovieDetails(pageNo: 1, movieType: "popular"), getAllMoviesList()]);
+      await getAllMoviesList();
       _isDataLoaded = true;
     } catch (error, stackTrace) {
       log("getDashBoardData error: $error");

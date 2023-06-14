@@ -31,7 +31,7 @@ class _MainBannerState extends State<MainBanner> with SingleTickerProviderStateM
   void initState() {
     super.initState();
     _moviesProvider = Provider.of<MoviesProvider>(context, listen: false);
-    // _moviesProvider.getMovieDetails(pageNo: 1, movieType: "popular"); // popular upcoming
+    _moviesProvider.getMovieDetails(pageNo: 1, movieType: "popular"); // popular upcoming
     genere.join(" . ");
 
     /// Create an animation controller

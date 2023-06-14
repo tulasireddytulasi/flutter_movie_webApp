@@ -57,72 +57,55 @@ class _DashboardState extends State<Dashboard> {
         onNotification: (scrollNotification) {
           return true;
         },
-        child: Consumer<DashBoardProvider>(builder: (context, dashBoardProvider, child) {
-          if (dashBoardProvider.isDataLoaded) {
-            return SingleChildScrollView(
-              controller: _scrollController,
-              child: Column(
-                children: [
-                  const MainBanner(),
-                  Consumer<DashBoardProvider>(
-                    builder: (context, dashBoardProvider, child) {
-                      if (dashBoardProvider.moviesModelList.isNotEmpty) {
-                        return Column(
-                          children: List.generate(
-                            dashBoardProvider.moviesModelList.length,
-                            (index) => Column(
-                              children: [
-                                MovieLabel(
-                                  movieLabel: dashBoardProvider.moviesLabelList[index],
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => MovieListScreen(
-                                          showAppBar: true,
-                                          screenTitle: dashBoardProvider.moviesDataMapObject["$index"]["movieLabel"],
-                                          movieType: dashBoardProvider.moviesDataMapObject["$index"]["movieType"],
-                                          withOriginalLanguage: dashBoardProvider.moviesDataMapObject["$index"]
-                                              ["withOriginalLanguage"],
-                                          withGenres: dashBoardProvider.moviesDataMapObject["$index"]["withGenres"],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                                Container(
-                                  height: getSimilarMoviesSectionHeight(screenSize: _screenWidth),
-                                  margin: const EdgeInsets.only(top: 16),
-                                  child: MoviesList(moviesModel: dashBoardProvider.moviesModelList[index]),
-                                ),
-                              ],
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          child: Column(
+            children: [
+              const MainBanner(),
+              Consumer<DashBoardProvider>(
+                builder: (context, dashBoardProvider, child) {
+                  if (dashBoardProvider.moviesModelList.isNotEmpty) {
+                    return Column(
+                      children: List.generate(
+                        dashBoardProvider.moviesModelList.length,
+                        (index) => Column(
+                          children: [
+                            MovieLabel(
+                              movieLabel: dashBoardProvider.moviesLabelList[index],
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MovieListScreen(
+                                      showAppBar: true,
+                                      screenTitle: dashBoardProvider.moviesDataMapObject["$index"]["movieLabel"],
+                                      movieType: dashBoardProvider.moviesDataMapObject["$index"]["movieType"],
+                                      withOriginalLanguage: dashBoardProvider.moviesDataMapObject["$index"]
+                                          ["withOriginalLanguage"],
+                                      withGenres: dashBoardProvider.moviesDataMapObject["$index"]["withGenres"],
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
-                          ),
-                        );
-                      } else {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 100),
-                ],
+                            Container(
+                              height: getSimilarMoviesSectionHeight(screenSize: _screenWidth),
+                              margin: const EdgeInsets.only(top: 16),
+                              child: MoviesList(moviesModel: dashBoardProvider.moviesModelList[index]),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                },
               ),
-            );
-          } else {
-            return Center(
-              child: Shimmer.fromColors(
-                baseColor: Colors.grey[300] ?? Colors.grey,
-                highlightColor: tealishBlue1,
-                child: Image.asset(
-                  movieBackDrop2,
-                  width: double.infinity,
-                  height: 600,
-                  fit: BoxFit.fitWidth,
-                ),
-              ),
-            );
-          }
-        }),
+              const SizedBox(height: 100),
+            ],
+          ),
+        ),
       ),
     );
   }
