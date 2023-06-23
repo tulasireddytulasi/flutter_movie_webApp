@@ -19,6 +19,7 @@ class _MainBannerState extends State<MainBanner> with SingleTickerProviderStateM
   late MoviesProvider _moviesProvider;
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
+  bool _onHoverAnimationActive = false;
   List<String> genere = [
     "Ominous",
     "Gritty",
@@ -36,7 +37,7 @@ class _MainBannerState extends State<MainBanner> with SingleTickerProviderStateM
 
     /// Create an animation controller
     _controller = AnimationController(
-      duration: const Duration(seconds: 1),
+      duration: const Duration(milliseconds: 600),
       vsync: this,
     );
 
@@ -55,6 +56,7 @@ class _MainBannerState extends State<MainBanner> with SingleTickerProviderStateM
     } else {
       _controller.forward();
     }
+    _onHoverAnimationActive = true;
   }
 
   @override
@@ -119,12 +121,33 @@ class _MainBannerState extends State<MainBanner> with SingleTickerProviderStateM
                           ),
                   ),
                   PlayButtons(genere: genere, movieId: _id, youTubeVideoKey: _youTubeVideoKey),
-                  AnimatedLogoWidget(
-                    id: _id,
-                    youTubeVideoKey: _youTubeVideoKey,
-                    description: _description,
-                    logo: _logo,
-                    scaleAnimation: _scaleAnimation,
+                  Visibility(
+                    visible: _screenWidth600,
+                    child: Positioned(
+                      bottom: 0,
+                      left: 50,
+                      child: InkWell(
+                        onTap: () {},
+                        onHover: (onHover) {
+                          if (_onHoverAnimationActive) {
+                            if (onHover) {
+                              if (_controller.status == AnimationStatus.completed) {
+                                _controller.reverse();
+                              }
+                            } else {
+                              _controller.forward();
+                            }
+                          }
+                        },
+                        child: AnimatedLogoWidget(
+                          id: _id,
+                          youTubeVideoKey: _youTubeVideoKey,
+                          description: _description,
+                          logo: _logo,
+                          scaleAnimation: _scaleAnimation,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               );
