@@ -38,8 +38,7 @@ class _ActorMoviesWidgetState extends State<ActorMoviesWidget> {
       _movieId.add(element.id.toString());
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final actorsInfoProvider =
-          Provider.of<ActorsInfoProvider>(context, listen: false);
+      final actorsInfoProvider = Provider.of<ActorsInfoProvider>(context, listen: false);
       _moviesModel = moviesModel;
       totalMovies = moviesModel.cast?.length ?? 0;
       actorsInfoProvider.setTotalMoviesActed(totalMoviesActed: totalMovies);
@@ -73,18 +72,14 @@ class _ActorMoviesWidgetState extends State<ActorMoviesWidget> {
                 scrollDirection: Axis.horizontal,
                 shrinkWrap: true,
                 itemBuilder: (BuildContext context, int index) {
-                  return InkWell(
-                    onTap: () {
-                      Navigation().navigateFromActorInfoScreenToMoviesInfoPage(
-                        context: context,
-                        movieId: _movieId[index],
-                        screenWidth: _screenWidth,
-                      );
-                    },
-                    child: MoviesCard(
-                      actorName: _title[index],
-                      castImage: _img[index],
+                  return MoviesCard(
+                    movieName: _title[index],
+                    poster: _img[index],
+                    movieId: _movieId[index],
+                    voidCallback: () => Navigation().navigateFromActorInfoScreenToMoviesInfoPage(
+                      context: context,
                       movieId: _movieId[index],
+                      screenWidth: _screenWidth,
                     ),
                   );
                 });

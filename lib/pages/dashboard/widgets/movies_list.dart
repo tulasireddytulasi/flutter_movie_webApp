@@ -24,18 +24,14 @@ class _MoviesListState extends State<MoviesList> {
       scrollDirection: Axis.horizontal,
       shrinkWrap: true,
       itemBuilder: (BuildContext context, int index) {
-        return InkWell(
-          onTap: () {
-            Navigation().navigateToMoviesInfoPage(
-              context: context,
-              movieId: widget.moviesModel.results?[index].id.toString() ?? "",
-              screenWidth: _screenWidth,
-            );
-          },
-          child: MoviesCard(
-            actorName: widget.moviesModel.results?[index].title ?? "",
-            castImage: widget.moviesModel.results?[index].posterPath ?? "",
+        return MoviesCard(
+          movieName: widget.moviesModel.results?[index].title ?? "",
+          poster: widget.moviesModel.results?[index].posterPath ?? "",
+          movieId: widget.moviesModel.results?[index].id.toString() ?? "",
+          voidCallback: () => Navigation().navigateToMoviesInfoPage(
+            context: context,
             movieId: widget.moviesModel.results?[index].id.toString() ?? "",
+            screenWidth: _screenWidth,
           ),
         );
       },
