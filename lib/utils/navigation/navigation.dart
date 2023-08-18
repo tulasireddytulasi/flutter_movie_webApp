@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/pages/bottom_sheet/bottom_sheet_widget.dart';
 import 'package:moviewebapp/pages/movie_info_screen/movie_info.dart';
+import 'package:moviewebapp/pages/youtube_player_screen/widgets/mobile_youtube_player.dart';
 import 'package:moviewebapp/pages/youtube_player_screen/youtube_player_screen.dart';
 import 'package:moviewebapp/providers/movie_info_provider.dart';
 import 'package:moviewebapp/providers/movies_provider.dart';
@@ -111,14 +112,14 @@ class Navigation {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => YouTubePlayer(videoId: youTubeVideoKey),
+          builder: (context) => MobileYouTubePlayer(videoId: youTubeVideoKey),
         ),
       );
     } else {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => YouTubePlayer(videoId: youTubeVideoKey),
+          builder: (context) => MobileYouTubePlayer(videoId: youTubeVideoKey),
         ),
       );
     }

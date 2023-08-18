@@ -120,8 +120,7 @@ class _ActorsPageState extends State<ActorsPage> {
                               Navigator.of(context).pop();
                             },
                             child: Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: BLACK, width: 2), shape: BoxShape.circle, color: BLACK),
+                              decoration: BoxDecoration(border: Border.all(color: BLACK, width: 2), shape: BoxShape.circle, color: BLACK),
                               padding: const EdgeInsets.all(2),
                               margin: const EdgeInsets.all(10),
                               child: const Icon(
@@ -228,9 +227,6 @@ class _ActorsPageState extends State<ActorsPage> {
                       thickness: 1,
                     ),
                     Container(
-                      // decoration: BoxDecoration(
-                      //   border: Border.all(color: WHITE, width: 1),
-                      // ),
                       padding: const EdgeInsets.only(left: 0, right: 0, top: 10, bottom: 10),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
