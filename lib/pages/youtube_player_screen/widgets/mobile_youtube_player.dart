@@ -21,7 +21,6 @@ class _MobileYouTubePlayerState extends State<MobileYouTubePlayer> {
   @override
   void initState() {
     super.initState();
-    print("SSSSSSSSS: ${14 / 12}");
     _youTubeController.loadVideoById(videoId: widget.videoId);
   }
 
