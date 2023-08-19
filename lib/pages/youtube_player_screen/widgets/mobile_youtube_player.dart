@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviewebapp/utils/colors.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class MobileYouTubePlayer extends StatefulWidget {
@@ -30,8 +31,9 @@ class _MobileYouTubePlayerState extends State<MobileYouTubePlayer> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      backgroundColor: PURE_BLACK,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1B2230),
+        backgroundColor: tealishBlue,
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(
@@ -44,11 +46,13 @@ class _MobileYouTubePlayerState extends State<MobileYouTubePlayer> {
           style: TextStyle(fontSize: 18, color: Colors.white),
         ),
       ),
-      body: SizedBox(
-        width: double.infinity,
-        child: YoutubePlayer(
-          controller: _youTubeController,
-          // aspectRatio: screenWidth / screenHeight,
+      body: Center(
+        child: SizedBox(
+          width: double.infinity,
+          child: YoutubePlayer(
+            controller: _youTubeController,
+            // aspectRatio: screenWidth / screenHeight,
+          ),
         ),
       ),
     );
