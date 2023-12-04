@@ -1,4 +1,4 @@
-package com.example.moviewebapp
+package com.codefussion.moviebytes
 
 import io.flutter.embedding.android.FlutterActivity
 
