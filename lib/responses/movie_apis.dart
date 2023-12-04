@@ -161,7 +161,7 @@ Future<ActorInfoModel> getActorsInfo({required String actorId}) async {
 
 Future<PopularActorsModel> getPopularActorsInfo({required String languageCode, required int pageNo}) async {
   PopularActorsModel getPopularActorsInfo;
-  final String _actorsInfo = "person/popular/?&language=$languageCode&page=$pageNo&api_key=${ApiConstants.apiKey}";
+  final String _actorsInfo = "person/popular?language=$languageCode&page=$pageNo&api_key=${ApiConstants.apiKey}";
   try {
     Response response = await getMethod(_actorsInfo);
     getPopularActorsInfo = popularActorsModelFromJson(response.body);
