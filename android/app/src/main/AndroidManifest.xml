@@ -3,7 +3,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="moviewebapp"
+        android:label="Marvel Movies"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
