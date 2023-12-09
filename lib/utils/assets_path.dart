@@ -41,5 +41,6 @@ const doctorStrange3BlogPoster = "assets/blogs/doctorStrange3.jpg";
 const doctorStrange4BlogPoster = "assets/blogs/doctorStrange4.jpg";
 const doctorStrange5BlogPoster = "assets/blogs/doctorStrange5.jpg";
 const doctorStrange6BlogPoster = "assets/blogs/doctorStrange6.jpg";
-
 const noProfilePic = "assets/images/no_profile_pic.png";
+const searchIcon = "assets/icons/search_icon.svg";
+const movieIcon = "assets/images/movie_icon.png";

@@ -44,19 +44,19 @@ class DashBoardProvider extends ChangeNotifier {
     },
     "3": {
       "movieLabel": Constants.horrorMovies,
-      "movieType": Constants.topRated,
+      "movieType": Constants.latest,
       "withOriginalLanguage": Constants.english,
       "withGenres": "27",
     },
     "4": {
       "movieLabel": Constants.thrillerMovies,
-      "movieType": Constants.topRated,
+      "movieType": Constants.upcoming,
       "withOriginalLanguage": Constants.english,
       "withGenres": "53",
     },
     "5": {
       "movieLabel": Constants.romanceMovies,
-      "movieType": Constants.topRated,
+      "movieType": Constants.popular,
       "withOriginalLanguage": Constants.english,
       "withGenres": "10749",
     },

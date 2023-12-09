@@ -24,6 +24,7 @@ dependencies:
   shimmer: ^2.0.0
   webview_flutter_web: ^0.2.2+1
   youtube_player_iframe: ^4.0.4
+  flutter_svg: ^2.0.9
 
 dev_dependencies:
   change_app_package_name: ^1.1.0

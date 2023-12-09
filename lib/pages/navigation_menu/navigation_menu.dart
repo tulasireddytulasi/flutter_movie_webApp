@@ -9,7 +9,6 @@ import 'package:moviewebapp/pages/navigation_menu/movie_app_bar.dart';
 import 'package:moviewebapp/pages/profile_screen/profile_screen.dart';
 import 'package:moviewebapp/providers/dashboard_provider.dart';
 import 'package:moviewebapp/utils/assets_path.dart';
-import 'package:moviewebapp/utils/colors.dart';
 import 'package:provider/provider.dart';
 
 class NavigationMenu extends StatefulWidget {
@@ -73,22 +72,16 @@ class _NavigationMenuState extends State<NavigationMenu> {
     return Consumer<DashBoardProvider>(builder: (context, dashBoardProvider, child) {
       return Scaffold(
         appBar: _screenWidth >= 750
-            ? AppBar(
-                backgroundColor: dashBoardProvider.appBarBackgroundColor,
-                elevation: dashBoardProvider.appBarElevation,
-                centerTitle: true,
-                title: MovieAppBar(
+            ? PreferredSize(
+                preferredSize: const Size.fromHeight(60.0),
+                child: MovieAppBar(
                   defaultSelectedIndex: 0,
+                  backGroundColor: dashBoardProvider.appBarBackgroundColor,
                   onChange: (value) {
                     setMovies(screenNo: value, showAppBar: false, showLeadingIcon: false);
                     _currentScreenNo.value = value;
                   },
                   titles: appBarTitles,
-                ),
-                leading: IconButton(
-                  icon: Image.asset("assets/images/movie_icon.png"),
-                  iconSize: 22,
-                  onPressed: () {},
                 ),
               )
             : null,
