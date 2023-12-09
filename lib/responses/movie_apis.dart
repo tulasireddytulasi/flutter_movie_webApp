@@ -51,8 +51,12 @@ Future<MoviesModel> getPopularMoviesList({
   }
 }
 
-Future<List<Movies>> fetchMovies(
-    {required int pageKey, required String movieType, required String withOriginalLanguage, String? withGenres}) async {
+Future<List<Movies>> fetchMovies({
+  required int pageKey,
+  required String movieType,
+  required String withOriginalLanguage,
+  String? withGenres,
+}) async {
   try {
     final response = await getMoviesList(
       movieType: movieType,
@@ -63,6 +67,31 @@ Future<List<Movies>> fetchMovies(
     if (response.statusCode == 200) {
       MoviesModel getMoviesModel = getMoviesFromJson(response.body);
       final List<Movies> movies = getMoviesModel.results!;
+      return movies;
+    } else {
+      throw Exception('Failed to load page');
+    }
+  } catch (error) {
+    rethrow;
+  }
+}
+
+Future<List<Movies>> searchMovies({
+  required int pageNo,
+  required String movieQuery,
+  required String withOriginalLanguage,
+  String language = "en-US",
+  String? withGenres,
+  bool includeAdult = false,
+}) async {
+  try {
+    final String getSearchMoviesURL = "/search/movie?query=$movieQuery&api_key=${ApiConstants.apiKey}"
+        "&with_original_language=$withOriginalLanguage&language=$language&page=$pageNo"
+        "&with_genres=$withGenres&include_adult=$includeAdult";
+    final response = await getMethod(getSearchMoviesURL);
+    if (response.statusCode == 200) {
+      MoviesModel getSearchMoviesModel = getMoviesFromJson(response.body);
+      final List<Movies> movies = getSearchMoviesModel.results!;
       return movies;
     } else {
       throw Exception('Failed to load page');

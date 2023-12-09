@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/providers/movies_provider.dart';
 import 'package:moviewebapp/responses/api_constants.dart';
+import 'package:moviewebapp/utils/assets_path.dart';
 import 'package:moviewebapp/utils/colors.dart';
 import 'package:moviewebapp/utils/constants.dart';
 import 'package:provider/provider.dart';
@@ -33,6 +34,18 @@ class MovieCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(4),
               child: Image.network(
                 ApiConstants.movieImageBaseUrlw500 + imageURL,
+                errorBuilder: (context, error, stackTrace) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(movieThumbnail, fit: BoxFit.cover),
+                        const SizedBox(height: 10),
+                        Text('Error: $error', style: const TextStyle(fontSize: 14, color: WHITE),),
+                      ],
+                    ),
+                  );
+                },
                 fit: BoxFit.cover,
               ),
             ),

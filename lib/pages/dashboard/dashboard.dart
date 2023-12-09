@@ -39,7 +39,7 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void _onScroll() {
-    // Update the state based on scroll position
+    /// Update the state based on scroll position
     _isScrolled = _scrollController.position.pixels >= 100;
     if (_isScrolled) {
       dashBoardProvider.setAppBarColorAndElevation(color: tealishBlue, elevation: 1.0);

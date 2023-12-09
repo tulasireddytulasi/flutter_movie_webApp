@@ -44,3 +44,4 @@ const doctorStrange6BlogPoster = "assets/blogs/doctorStrange6.jpg";
 const noProfilePic = "assets/images/no_profile_pic.png";
 const searchIcon = "assets/icons/search_icon.svg";
 const movieIcon = "assets/images/movie_icon.png";
+const movieThumbnail = "assets/images/movie_thumbnail.jpg";
