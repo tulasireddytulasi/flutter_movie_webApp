@@ -80,18 +80,7 @@ class _MainBannerState extends State<MainBanner> with SingleTickerProviderStateM
         final String _youTubeVideoKey = _movieBannerData?.youTubeVideoKey ?? "";
         final String _description = _movieBannerData?.description ?? "";
         final String poster = _screenWidth600 ? _movieBannerData?.backDrop ?? "" : _movieBannerData?.poster ?? "";
-        return _logo.isEmpty
-            ? Shimmer.fromColors(
-                baseColor: Colors.grey[300] ?? Colors.grey,
-                highlightColor: tealishBlue1,
-                child: Image.asset(
-                  movieBackDrop2,
-                  width: double.infinity,
-                  height: 600,
-                  fit: BoxFit.fitWidth,
-                ),
-              )
-            : Stack(
+        return Stack(
                 children: [
                   ShaderMask(
                     shaderCallback: (rect) {

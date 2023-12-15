@@ -30,13 +30,16 @@ class _AnimatedLogoWidgetState extends State<AnimatedLogoWidget> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ScaleTransition(
-          scale: widget.scaleAnimation,
-          alignment: Alignment.bottomLeft,
-          child: Image.network(
-            ApiConstants.movieImageBaseUrlw500 + widget.logo,
-            width: 200,
-            fit: BoxFit.fitWidth,
+        Visibility(
+          visible: widget.logo.isNotEmpty,
+          child: ScaleTransition(
+            scale: widget.scaleAnimation,
+            alignment: Alignment.bottomLeft,
+            child: Image.network(
+              ApiConstants.movieImageBaseUrlw500 + widget.logo,
+              width: 200,
+              fit: BoxFit.fitWidth,
+            ),
           ),
         ),
         const SizedBox(height: 10),
