@@ -1,11 +1,12 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/pages/navigation_menu/navigation_menu.dart';
-import 'package:moviewebapp/providers/actors_info_provider.dart';
-import 'package:moviewebapp/providers/dashboard_provider.dart';
-import 'package:moviewebapp/providers/movie_info_provider.dart';
-import 'package:moviewebapp/providers/movies_provider.dart';
-import 'package:moviewebapp/providers/navigation_provider.dart';
+import 'package:moviewebapp/app/providers/actors_info_provider.dart';
+import 'package:moviewebapp/app/providers/dashboard_provider.dart';
+import 'package:moviewebapp/app/providers/movie_info_provider.dart';
+import 'package:moviewebapp/app/providers/movies_provider.dart';
+import 'package:moviewebapp/app/providers/navigation_provider.dart';
+import 'package:moviewebapp/app/views/navigation_menu/navigation_menu.dart';
+
 import 'package:provider/provider.dart';
 
 void main() {
