@@ -16,6 +16,10 @@ class Navigation {
       navigationProvider.setMovieInfoScreen(movieId: movieId);
       navigationProvider.setCurrentScreenIndex(currentScreenIndex: 0);
       showModalBottomSheet(
+          constraints: const BoxConstraints(
+            minWidth: 900,
+            minHeight: 300,
+          ),
           context: context,
           backgroundColor: Colors.transparent,
           isScrollControlled: true,
@@ -27,7 +31,7 @@ class Navigation {
           builder: (context) {
             return Container(
               constraints: const BoxConstraints(
-                maxWidth: 600,
+                minWidth: 600,
                 minHeight: 300,
               ),
               child: const BottomSheetWidget(),
