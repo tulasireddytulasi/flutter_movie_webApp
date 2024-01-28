@@ -193,9 +193,9 @@ double getActorImageRadius({required double screenSize}) {
 
 double getActorSectionHeight({required double screenSize}) {
   if (screenSize >= 1360) {
-    return 200;
+    return 210;
   } else if (screenSize >= 900) {
-    return 200;
+    return 210;
   } else {
     return 150;
   }

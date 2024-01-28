@@ -50,6 +50,10 @@ class _ActorCardState extends State<ActorCard> {
                 navigationProvider.setCurrentScreenIndex(currentScreenIndex: 1);
                 showModalBottomSheet(
                     context: context,
+                    constraints: const BoxConstraints(
+                      minWidth: 900,
+                      minHeight: 300,
+                    ),
                     backgroundColor: Colors.transparent,
                     isScrollControlled: true,
                     isDismissible: true,
@@ -59,7 +63,7 @@ class _ActorCardState extends State<ActorCard> {
                     builder: (context) {
                       return Container(
                         constraints: const BoxConstraints(
-                          maxWidth: 600,
+                          minWidth: 600,
                           minHeight: 300,
                         ),
                         child: const BottomSheetWidget(),

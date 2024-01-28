@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:moviewebapp/animations/ripple_animation.dart';
+import 'package:moviewebapp/app/core/animations/ripple_animation.dart';
 import 'package:moviewebapp/app/models/get_movies_model.dart';
 import 'package:moviewebapp/app/views/all_movies_screen/widgets/movie_card.dart';
 import 'package:moviewebapp/app/providers/movies_provider.dart';
