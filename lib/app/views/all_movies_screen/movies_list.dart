@@ -62,8 +62,8 @@ class _MovieListScreenState extends State<MovieListScreen> {
       );
       _pagingController.appendPage(movies, pageKey + 1);
     } catch (error, stackTrace) {
-      log("error: $error");
-      log("stackTrace: $stackTrace");
+      log("fetchMovies error: $error");
+      log("fetchMovies stackTrace: $stackTrace");
       _pagingController.error = error;
     }
   }

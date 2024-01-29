@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:moviewebapp/app/core/repository/json_objects/marvel_movies_json.dart';
 import 'package:moviewebapp/app/models/get_movies_model.dart';
 import 'package:moviewebapp/app/core/responses/movie_apis.dart';
 import 'package:moviewebapp/app/core/utils/constants.dart';
@@ -74,6 +76,26 @@ class DashBoardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  loadMarvelMovies() {
+    try {
+      final Map<String, dynamic> _moviesDataMapObject = {
+        "0": {
+          "movieLabel": Constants.marvelMovies,
+          "movieDataModel": MoviesRepo.marvelMovies,
+        },
+      };
+
+      for (Map<String, dynamic> moviesDataMapObject in _moviesDataMapObject.values) {
+        final MoviesModel _movieModel = getMoviesFromJson(json.encode(moviesDataMapObject["movieDataModel"]));
+        _moviesLabelList.add(moviesDataMapObject["movieLabel"].toString());
+        _moviesModelList.add(_movieModel);
+      }
+    } catch (error, stackTrace) {
+      log("loadMarvelMovies error: $error");
+      log("loadMarvelMovies stackTrace: $stackTrace");
+    }
+  }
+
   Future<void> getAllMoviesList() async {
     try {
       for (Map<String, dynamic> moviesDataMapObject in _moviesDataMapObject.values) {
@@ -98,8 +120,10 @@ class DashBoardProvider extends ChangeNotifier {
   getDashBoardData({required BuildContext context}) async {
     try {
       _isDataLoaded = false;
+      loadMarvelMovies();
       await getAllMoviesList();
       _isDataLoaded = true;
+      notifyListeners();
     } catch (error, stackTrace) {
       log("getDashBoardData error: $error");
       log("getDashBoardData stackTrace: $stackTrace");

@@ -39,8 +39,8 @@ class _AllActorsPageState extends State<AllActorsPage> {
       );
       _pagingController.appendPage(actorsList, pageKey + 1);
     } catch (error, stackTrace) {
-      log("error: $error");
-      log("stackTrace: $stackTrace");
+      log("fetchPopularActors error: $error");
+      log("fetchPopularActors stackTrace: $stackTrace");
       _pagingController.error = error;
     }
   }

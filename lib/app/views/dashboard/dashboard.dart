@@ -59,9 +59,10 @@ class _DashboardState extends State<Dashboard> {
           child: Column(
             children: [
               const MainBanner(),
-              Consumer<DashBoardProvider>(
-                builder: (context, dashBoardProvider, child) {
-                  if (dashBoardProvider.moviesModelList.isNotEmpty) {
+              Selector<DashBoardProvider, bool>(
+                selector: (_, provider) => provider.isDataLoaded,
+                builder: (context, isDataLoaded, __) {
+                  if (isDataLoaded) {
                     return Column(
                       children: List.generate(
                         dashBoardProvider.moviesModelList.length,
@@ -77,8 +78,7 @@ class _DashboardState extends State<Dashboard> {
                                       showAppBar: true,
                                       screenTitle: dashBoardProvider.moviesDataMapObject["$index"]["movieLabel"],
                                       movieType: dashBoardProvider.moviesDataMapObject["$index"]["movieType"],
-                                      withOriginalLanguage: dashBoardProvider.moviesDataMapObject["$index"]
-                                          ["withOriginalLanguage"],
+                                      withOriginalLanguage: dashBoardProvider.moviesDataMapObject["$index"]["withOriginalLanguage"],
                                       withGenres: dashBoardProvider.moviesDataMapObject["$index"]["withGenres"],
                                     ),
                                   ),
