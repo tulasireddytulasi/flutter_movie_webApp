@@ -19,7 +19,7 @@ class MoviesModel {
   int? totalResults;
 
   factory MoviesModel.fromJson(Map<String, dynamic> json) => MoviesModel(
-        page: json["page"] == null ? null : json["page"],
+        page: json["page"],
         results: json["results"] == null
             ? null
             : List<Movies>.from(json["results"].map((x) => Movies.fromJson(x))),
