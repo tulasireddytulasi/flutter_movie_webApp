@@ -282,7 +282,7 @@ class _ActorsPageState extends State<ActorsPage> {
                     ),
                     const LabelWidget(label: "Actor Pics"),
                     Container(
-                      height: getSimilarMoviesSectionHeight(screenSize: _screenWidth),
+                      height: _screenWidth >= 900 ? 250 : 130, //getSimilarMoviesSectionHeight(screenSize: _screenWidth),
                       margin: const EdgeInsets.only(top: 0, left: 10),
                       child: ActorsImages(),
                     ),

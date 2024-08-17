@@ -10,17 +10,20 @@ class MovieLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screen = MediaQuery.of(context).size.width;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: [
         Container(
+          width: screen <= 500 ? 220 : null,
           alignment: Alignment.topLeft,
           margin: const EdgeInsets.only(left: 15, top: 0),
           child: Text(
             movieLabel,
-            style: const TextStyle(fontSize: 22, color: WHITE),
+            softWrap: true,
+            style: const TextStyle(fontSize: 18, color: WHITE),
           ),
         ),
         InkWell(

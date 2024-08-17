@@ -96,7 +96,7 @@ class ReviewCard extends StatelessWidget {
             width: 280,
             child: Text(
               reviewContent,
-              maxLines: 6,
+              maxLines: 5,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 fontSize: 14,
