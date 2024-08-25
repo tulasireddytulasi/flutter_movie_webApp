@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/views/home_page/widgets/popular_movie_cards.dart';
-import 'package:moviewebapp/app/core/utils/commom_functions.dart';
+import 'package:moviewebapp/app/core/utils/common_functions.dart';
 
 class MovieCards extends StatelessWidget {
   const MovieCards({Key? key}) : super(key: key);

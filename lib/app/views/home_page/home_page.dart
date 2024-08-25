@@ -4,7 +4,7 @@ import 'package:moviewebapp/app/views/home_page/widgets/main_text.dart';
 import 'package:moviewebapp/app/views/home_page/widgets/movie_cards.dart';
 import 'package:moviewebapp/app/views/home_page/widgets/popular_movie_cards.dart';
 import 'package:moviewebapp/app/core/utils/colors.dart';
-import 'package:moviewebapp/app/core/utils/commom_functions.dart';
+import 'package:moviewebapp/app/core/utils/common_functions.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);

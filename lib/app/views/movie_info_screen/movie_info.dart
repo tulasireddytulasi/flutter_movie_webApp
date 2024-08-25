@@ -9,7 +9,7 @@ import 'package:moviewebapp/app/views/movie_info_screen/widgets/trailer_button.d
 import 'package:moviewebapp/app/providers/movie_info_provider.dart';
 import 'package:moviewebapp/app/providers/movies_provider.dart';
 import 'package:moviewebapp/app/core/utils/colors.dart';
-import 'package:moviewebapp/app/core/utils/commom_functions.dart';
+import 'package:moviewebapp/app/core/utils/common_functions.dart';
 import 'package:moviewebapp/app/core/utils/navigation/navigation.dart';
 import 'package:provider/provider.dart';
 

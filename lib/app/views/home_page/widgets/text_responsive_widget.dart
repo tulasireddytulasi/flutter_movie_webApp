@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/core/utils/colors.dart';
-import 'package:moviewebapp/app/core/utils/commom_functions.dart';
+import 'package:moviewebapp/app/core/utils/common_functions.dart';
 
 class TextResponsiveWidget extends StatefulWidget {
   const TextResponsiveWidget({Key? key}) : super(key: key);

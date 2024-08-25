@@ -4,7 +4,7 @@ import 'package:moviewebapp/app/providers/movies_provider.dart';
 import 'package:moviewebapp/app/core/responses/api_constants.dart';
 import 'package:moviewebapp/app/core/utils/assets_path.dart';
 import 'package:moviewebapp/app/core/utils/colors.dart';
-import 'package:moviewebapp/app/core/utils/commom_functions.dart';
+import 'package:moviewebapp/app/core/utils/common_functions.dart';
 import 'package:provider/provider.dart';
 
 class MovieBannerWidget extends StatefulWidget {

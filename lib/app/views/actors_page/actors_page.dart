@@ -6,7 +6,7 @@ import 'package:moviewebapp/app/views/movie_info_screen/widgets/expandable_text_
 import 'package:moviewebapp/app/providers/actors_info_provider.dart';
 import 'package:moviewebapp/app/core/responses/api_constants.dart';
 import 'package:moviewebapp/app/core/utils/colors.dart';
-import 'package:moviewebapp/app/core/utils/commom_functions.dart';
+import 'package:moviewebapp/app/core/utils/common_functions.dart';
 import 'package:provider/provider.dart';
 
 class ActorsPage extends StatefulWidget {

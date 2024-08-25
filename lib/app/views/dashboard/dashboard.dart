@@ -5,7 +5,7 @@ import 'package:moviewebapp/app/views/dashboard/widgets/movie_label.dart';
 import 'package:moviewebapp/app/views/dashboard/widgets/movies_list.dart';
 import 'package:moviewebapp/app/providers/dashboard_provider.dart';
 import 'package:moviewebapp/app/core/utils/colors.dart';
-import 'package:moviewebapp/app/core/utils/commom_functions.dart';
+import 'package:moviewebapp/app/core/utils/common_functions.dart';
 import 'package:provider/provider.dart';
 
 class Dashboard extends StatefulWidget {

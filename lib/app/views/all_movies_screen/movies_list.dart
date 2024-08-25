@@ -10,7 +10,7 @@ import 'package:moviewebapp/app/providers/movies_provider.dart';
 
 import 'package:moviewebapp/app/core/responses/movie_apis.dart';
 import 'package:moviewebapp/app/core/utils/colors.dart';
-import 'package:moviewebapp/app/core/utils/commom_functions.dart';
+import 'package:moviewebapp/app/core/utils/common_functions.dart';
 import 'package:moviewebapp/app/core/utils/constants.dart';
 import 'package:moviewebapp/app/core/utils/navigation/navigation.dart';
 import 'package:moviewebapp/app/core/utils/styles.dart';

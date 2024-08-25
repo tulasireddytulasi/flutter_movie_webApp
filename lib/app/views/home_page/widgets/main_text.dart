@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/views/home_page/widgets/button_widget.dart';
 import 'package:moviewebapp/app/core/utils/colors.dart';
-import 'package:moviewebapp/app/core/utils/commom_functions.dart';
+import 'package:moviewebapp/app/core/utils/common_functions.dart';
 
 class MainTextWidget extends StatefulWidget {
   const MainTextWidget({Key? key}) : super(key: key);
