@@ -239,7 +239,7 @@ Future<ReviewModel> getMovieReviews({
 
 Future<MovieLogosAndPostersModel> getMovieLogosAPI({required String movieId}) async {
   MovieLogosAndPostersModel movieLogosAndPostersModel;
-  final String _reviewsAPI = "/movie/$movieId/images?api_key=${ApiConstants.apiKey}";
+  final String _reviewsAPI = "movie/$movieId/images?api_key=${ApiConstants.apiKey}";
   try {
     Response response = await getMethod(_reviewsAPI);
     movieLogosAndPostersModel = movieLogosAndPostersModelFromJson(response.body);
@@ -251,7 +251,7 @@ Future<MovieLogosAndPostersModel> getMovieLogosAPI({required String movieId}) as
 
 Future<YouTubeVideosModel> getMovieVideosAPI({required String movieId}) async {
   YouTubeVideosModel youTubeVideosModel;
-  final String _getVideoIdsAPI = "/movie/$movieId/videos?api_key=${ApiConstants.apiKey}";
+  final String _getVideoIdsAPI = "movie/$movieId/videos?api_key=${ApiConstants.apiKey}";
   try {
     Response response = await getMethod(_getVideoIdsAPI);
     youTubeVideosModel = youTubeVideosModelFromJson(response.body);
