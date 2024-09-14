@@ -24,7 +24,6 @@ class _DashboardState extends State<Dashboard> {
   void initState() {
     super.initState();
     dashBoardProvider = Provider.of<DashBoardProvider>(context, listen: false);
-    dashBoardProvider.getDashBoardData(context: context);
     _scrollController.addListener(_onScroll);
   }
 
@@ -59,44 +58,43 @@ class _DashboardState extends State<Dashboard> {
           child: Column(
             children: [
               const MainBanner(),
-              Selector<DashBoardProvider, bool>(
-                selector: (_, provider) => provider.isDataLoaded,
-                builder: (context, isDataLoaded, __) {
-                  if (isDataLoaded) {
-                    return Column(
-                      children: List.generate(
-                        dashBoardProvider.moviesModelList.length,
-                        (index) => Column(
-                          children: [
-                            MovieLabel(
-                              movieLabel: dashBoardProvider.moviesLabelList[index],
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => MovieListScreen(
-                                      showAppBar: true,
-                                      screenTitle: dashBoardProvider.moviesDataMapObject["$index"]["movieLabel"],
-                                      movieType: dashBoardProvider.moviesDataMapObject["$index"]["movieType"],
-                                      withOriginalLanguage: dashBoardProvider.moviesDataMapObject["$index"]["withOriginalLanguage"],
-                                      withGenres: dashBoardProvider.moviesDataMapObject["$index"]["withGenres"],
-                                    ),
-                                  ),
-                                );
-                              },
+              ListView.builder(
+                itemCount: dashBoardProvider.moviesDataMapObject.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                scrollDirection: Axis.vertical,
+                itemBuilder: (context, index) {
+                  final Map<String, dynamic> movieData = dashBoardProvider.moviesDataMapObject["$index"];
+                  return Column(
+                    children: [
+                      MovieLabel(
+                        movieLabel: movieData["movieLabel"],
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MovieListScreen(
+                                showAppBar: true,
+                                screenTitle: movieData["movieLabel"],
+                                movieType: movieData["movieType"],
+                                withOriginalLanguage: movieData["withOriginalLanguage"],
+                                withGenres: movieData["withGenres"],
+                              ),
                             ),
-                            Container(
-                              height: getSimilarMoviesSectionHeight(screenSize: _screenWidth),
-                              margin: const EdgeInsets.only(top: 16),
-                              child: MoviesList(moviesModel: dashBoardProvider.moviesModelList[index]),
-                            ),
-                          ],
+                          );
+                        },
+                      ),
+                      Container(
+                        height: getSimilarMoviesSectionHeight(screenSize: _screenWidth),
+                        margin: const EdgeInsets.only(top: 16),
+                        child: MoviesList(
+                          movieType: dashBoardProvider.moviesDataMapObject["$index"]["movieType"],
+                          withOriginalLanguage: dashBoardProvider.moviesDataMapObject["$index"]["withOriginalLanguage"],
+                          withGenres: dashBoardProvider.moviesDataMapObject["$index"]["withGenres"],
                         ),
                       ),
-                    );
-                  } else {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+                    ],
+                  );
                 },
               ),
               const SizedBox(height: 100),

@@ -25,42 +25,48 @@ class DashBoardProvider extends ChangeNotifier {
 
   final Map<String, dynamic> _moviesDataMapObject = {
     "0": {
+      "movieLabel": Constants.marvelMovies,
+      "movieType": Constants.marvelMovies,
+      "withOriginalLanguage": Constants.english,
+      "withGenres": "",
+    },
+    "1": {
       "movieLabel": Constants.popularMovies,
       "movieType": Constants.popular,
       "withOriginalLanguage": Constants.english,
       "withGenres": "",
     },
-    "1": {
+    "2": {
       "movieLabel": Constants.topRatedMovies,
       "movieType": Constants.topRated,
       "withOriginalLanguage": Constants.english,
       "withGenres": "",
     },
-    "2": {
+    "3": {
       "movieLabel": Constants.nowPlayingMovies,
       "movieType": Constants.nowPlaying,
       "withOriginalLanguage": Constants.english,
       "withGenres": "",
     },
-    "3": {
+    "4": {
       "movieLabel": Constants.horrorMovies,
       "movieType": Constants.popular,
       "withOriginalLanguage": Constants.english,
       "withGenres": "27",
     },
-    "4": {
+    "5": {
       "movieLabel": Constants.thrillerMovies,
       "movieType": Constants.popular,
       "withOriginalLanguage": Constants.english,
       "withGenres": "53",
     },
-    "5": {
+    "6": {
       "movieLabel": Constants.romanceMovies,
       "movieType": Constants.popular,
       "withOriginalLanguage": Constants.english,
       "withGenres": "10749",
     },
-    "6": {
+    "7": {
       "movieLabel": Constants.scificMovies,
       "movieType": Constants.popular,
       "withOriginalLanguage": Constants.english,
@@ -76,57 +82,29 @@ class DashBoardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  loadMarvelMovies() {
+  Future<MoviesModel> getAllMovies({
+    required String withOriginalLanguage,
+    required String movieType,
+    required String? withGenres,
+  }) async {
+    MoviesModel _movieModel = MoviesModel();
     try {
-      final Map<String, dynamic> _moviesDataMapObject = {
-        "0": {
-          "movieLabel": Constants.marvelMovies,
-          "movieDataModel": MoviesRepo.marvelMovies,
-        },
-      };
-
-      for (Map<String, dynamic> moviesDataMapObject in _moviesDataMapObject.values) {
-        final MoviesModel _movieModel = getMoviesFromJson(json.encode(moviesDataMapObject["movieDataModel"]));
-        _moviesLabelList.add(moviesDataMapObject["movieLabel"].toString());
-        _moviesModelList.add(_movieModel);
+      if(movieType == Constants.marvelMovies){
+        _movieModel = getMoviesFromJson(json.encode(MoviesRepo.marvelMovies));
+        return _movieModel;
       }
-    } catch (error, stackTrace) {
-      log("loadMarvelMovies error: $error");
-      log("loadMarvelMovies stackTrace: $stackTrace");
-    }
-  }
+      _movieModel = await getPopularMoviesList(
+        movieType: movieType,
+        pageNo: 1,
+        withOriginalLanguage: withOriginalLanguage,
+        withGenres: withGenres ?? "",
+      );
 
-  Future<void> getAllMoviesList() async {
-    try {
-      for (Map<String, dynamic> moviesDataMapObject in _moviesDataMapObject.values) {
-        final MoviesModel _movieModel = await getPopularMoviesList(
-          movieType: moviesDataMapObject["movieType"],
-          pageNo: 1,
-          withOriginalLanguage: moviesDataMapObject["withOriginalLanguage"],
-          withGenres: moviesDataMapObject["withGenres"],
-        );
-        _moviesLabelList.add(moviesDataMapObject["movieLabel"]);
-        _moviesModelList.add(_movieModel);
-      }
-      notifyListeners();
+      return _movieModel;
     } catch (error, stackTrace) {
       log("getAllMoviesList error: $error");
       log("getAllMoviesList stackTrace: $stackTrace");
-    }
-  }
-
-  bool _isDataLoaded = false;
-  bool get isDataLoaded => _isDataLoaded;
-  getDashBoardData({required BuildContext context}) async {
-    try {
-      _isDataLoaded = false;
-      loadMarvelMovies();
-      await getAllMoviesList();
-      _isDataLoaded = true;
-      notifyListeners();
-    } catch (error, stackTrace) {
-      log("getDashBoardData error: $error");
-      log("getDashBoardData stackTrace: $stackTrace");
+      return _movieModel;
     }
   }
 }

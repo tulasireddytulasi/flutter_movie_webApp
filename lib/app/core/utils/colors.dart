@@ -69,3 +69,4 @@ const tealishBlue5 = Color(0xFF364765);
 const black1 = Color(0xFF1D1C1C);
 const black2 = Color(0xFF7C7C7C);
 const black3 = Color(0xFFC4C4C4);
+const black4 = Color(0xFF3C3C3C);
