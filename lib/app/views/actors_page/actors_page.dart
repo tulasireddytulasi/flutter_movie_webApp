@@ -151,7 +151,7 @@ class _ActorsPageState extends State<ActorsPage> {
                                 : Container(),
                           ),
                         ),
-                        Column(
+                      Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

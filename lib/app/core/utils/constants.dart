@@ -43,7 +43,7 @@ class Constants {
   static const String tamilMovies = "Romance Movies";
   static const String kannadaMovies = "Romance Movies";
 
-  static const String marvelMovies = "Marvel Movies: Phase I, II, and III";
+  static const String marvelMovies = "Marvel Movies";
 
   // Genre Ids
   static const String horror = "28";
