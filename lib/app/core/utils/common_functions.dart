@@ -1,3 +1,5 @@
+import 'package:moviewebapp/app/core/utils/enums.dart';
+
 Map<String, dynamic> getMovieCardWidth({required double screenWidth}) {
   double cardHeight = 0;
   int columns = 5;
@@ -227,4 +229,15 @@ double getProfileImageSize({required double screenSize}) {
     return 160;
   }
   return 120;
+}
+
+getGender({required int genderId}){
+  switch (genderId) {
+    case 1:
+      return Gender.female.name;
+    case 2:
+      return Gender.male.name;
+    default:
+      return Gender.notAvailable.name;
+  }
 }

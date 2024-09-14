@@ -2,12 +2,13 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:moviewebapp/app/models/popular_actors_model.dart';
-import 'package:moviewebapp/app/views/home_page/widgets/circular_image_widgets.dart';
 
 import 'package:moviewebapp/app/core/responses/movie_apis.dart';
 import 'package:moviewebapp/app/core/utils/colors.dart';
 import 'package:moviewebapp/app/core/utils/screen_sizes.dart';
 import 'package:moviewebapp/app/core/utils/styles.dart';
+import 'package:moviewebapp/app/views/all_actors_page/widgets/actor_card.dart';
+import 'package:moviewebapp/app/views/home_page/widgets/circular_image_widgets.dart';
 
 class AllActorsPage extends StatefulWidget {
   const AllActorsPage({Key? key, required this.showAppBar, required this.showLeadingIcon}) : super(key: key);
@@ -85,7 +86,7 @@ class _AllActorsPageState extends State<AllActorsPage> {
             padding: const EdgeInsets.all(10.0),
             width: 1200,
             alignment: Alignment.topCenter,
-            child: PagedGridView<int, Actors>(
+            child: _screenWidth600 ? PagedGridView<int, Actors>(
               showNewPageProgressIndicatorAsGridChild: false,
               showNewPageErrorIndicatorAsGridChild: false,
               showNoMoreItemsIndicatorAsGridChild: false,
@@ -97,6 +98,18 @@ class _AllActorsPageState extends State<AllActorsPage> {
                 crossAxisCount: columns,
               ),
               builderDelegate: PagedChildBuilderDelegate<Actors>(
+                itemBuilder: (context, actorsInfo, index) => ActorCircularCard(
+                  textColor: WHITE,
+                  textSize: 11,
+                  ratio: ratio,
+                  actorName: actorsInfo.name ?? "",
+                  actorId: actorsInfo.id.toString(),
+                  castImage: actorsInfo.profilePath ?? "",
+                ),
+              ),
+            ) : PagedListView<int, Actors>(
+              pagingController: _pagingController,
+              builderDelegate: PagedChildBuilderDelegate<Actors>(
                 itemBuilder: (context, actorsInfo, index) => ActorCard(
                   textColor: WHITE,
                   textSize: 11,
@@ -104,6 +117,9 @@ class _AllActorsPageState extends State<AllActorsPage> {
                   actorName: actorsInfo.name ?? "",
                   actorId: actorsInfo.id.toString(),
                   castImage: actorsInfo.profilePath ?? "",
+                  genderId: actorsInfo.gender ?? 1,
+                  knownFor: actorsInfo.knownForDepartment ?? "",
+                  popularity: actorsInfo.popularity.toString(),
                 ),
               ),
             ),

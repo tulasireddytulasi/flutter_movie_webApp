@@ -22,18 +22,11 @@ class NavigationProvider extends ChangeNotifier {
   String _actorID = "";
   String get actorID => _actorID;
 
-  setOnHover({required String actorID}) {
+  setOnHover({String? actorID}) {
     // _blendMode = BlendMode.saturation;
     // _color = Colors.grey;
-    _actorID = actorID;
-    _borderColor = WHITE;
-    notifyListeners();
-  }
-
-  setOutHover() {
-    _blendMode = null;
-    _color = null;
-    _borderColor = tealishBlue;
+    _actorID = actorID ?? _actorID;
+    _borderColor = (actorID != null && actorID.isNotEmpty) ? WHITE : tealishBlue;
     notifyListeners();
   }
 

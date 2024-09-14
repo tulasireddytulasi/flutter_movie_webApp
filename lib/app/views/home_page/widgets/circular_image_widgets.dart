@@ -7,8 +7,8 @@ import 'package:moviewebapp/app/core/utils/assets_path.dart';
 import 'package:moviewebapp/app/core/utils/colors.dart';
 import 'package:provider/provider.dart';
 
-class ActorCard extends StatefulWidget {
-  const ActorCard({
+class ActorCircularCard extends StatefulWidget {
+  const ActorCircularCard({
     Key? key,
     required this.castImage,
     required this.actorName,
@@ -26,10 +26,10 @@ class ActorCard extends StatefulWidget {
   final double ratio;
 
   @override
-  State<ActorCard> createState() => _ActorCardState();
+  State<ActorCircularCard> createState() => _ActorCircularCardState();
 }
 
-class _ActorCardState extends State<ActorCard> {
+class _ActorCircularCardState extends State<ActorCircularCard> {
   @override
   Widget build(BuildContext context) {
     final double _screenWidth = MediaQuery.of(context).size.width;
@@ -76,7 +76,7 @@ class _ActorCardState extends State<ActorCard> {
               if (val) {
                 navigationProvider.setOnHover(actorID: widget.actorId);
               } else {
-                navigationProvider.setOutHover();
+                navigationProvider.setOnHover();
               }
             },
             child: Container(
