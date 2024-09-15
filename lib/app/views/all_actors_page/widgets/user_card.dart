@@ -100,7 +100,7 @@ class UserCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      popularity,
+                      "Popularity: $popularity",
                       style: const TextStyle(
                         fontSize: 14,
                         color: WHITE,

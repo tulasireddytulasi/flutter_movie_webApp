@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviewebapp/app/core/utils/constants.dart';
 import 'package:moviewebapp/app/views/all_movies_screen/movies_list.dart';
 import 'package:moviewebapp/app/views/dashboard/main_banner_widget/main_banner.dart';
 import 'package:moviewebapp/app/views/dashboard/widgets/movie_label.dart';
@@ -70,13 +71,18 @@ class _DashboardState extends State<Dashboard> {
                       MovieLabel(
                         movieLabel: movieData["movieLabel"],
                         onTap: () {
+                          String movieType = movieData["movieType"];
+                          // Todo: In future will remove this comparison
+                          if(movieType == Constants.marvelMovies){
+                            movieType = Constants.popular;
+                          }
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => MovieListScreen(
                                 showAppBar: true,
                                 screenTitle: movieData["movieLabel"],
-                                movieType: movieData["movieType"],
+                                movieType: movieType,
                                 withOriginalLanguage: movieData["withOriginalLanguage"],
                                 withGenres: movieData["withGenres"],
                               ),
