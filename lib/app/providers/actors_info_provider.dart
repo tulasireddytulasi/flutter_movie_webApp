@@ -22,12 +22,15 @@ class ActorsInfoProvider extends ChangeNotifier {
   ActorInfoModel get actorInfoModel => _actorInfoModel;
 
   PopularActorsModel _popularActorsModel = PopularActorsModel();
+
   PopularActorsModel get popularActorsModel => _popularActorsModel;
 
   final List<String> _actorsImages = [];
+
   List<String> get actorsImages => _actorsImages;
 
   final List<String> _allActorsImages = [];
+
   List<String> get allActorsImages => _allActorsImages;
 
   String _biography = "";
@@ -67,12 +70,15 @@ class ActorsInfoProvider extends ChangeNotifier {
   String get homePage => _homePage;
 
   final List<String> _actorNameList = [];
+
   List<String> get actorNameList => _actorNameList;
 
   final List<String> _actorIdList = [];
+
   List<String> get actorIdList => _actorIdList;
 
   int _totalMoviesActed = 0;
+
   int get totalMoviesActed => _totalMoviesActed;
 
   setTotalMoviesActed({required int totalMoviesActed}) {
@@ -109,10 +115,8 @@ class ActorsInfoProvider extends ChangeNotifier {
         _gender = "Male";
       }
       DateFormat dateFormat = DateFormat("yyyy-MM-dd");
-      if (_actorInfoModel.birthday != null &&
-          _actorInfoModel.birthday.toString().isNotEmpty) {
-        DateTime movieReleaseDate =
-            dateFormat.parse(_actorInfoModel.birthday.toString());
+      if (_actorInfoModel.birthday != null && _actorInfoModel.birthday.toString().isNotEmpty) {
+        DateTime movieReleaseDate = dateFormat.parse(_actorInfoModel.birthday.toString());
         _dob = DateFormat('yyyy-MM-dd').format(movieReleaseDate);
       } else {
         _dob = Constants.time00;
@@ -128,11 +132,9 @@ class ActorsInfoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  getPopularActorsInfoAPI(
-      {required String languageCode, required int pageNo}) async {
+  getPopularActorsInfoAPI({required String languageCode, required int pageNo}) async {
     try {
-      _popularActorsModel = await getPopularActorsInfo(
-          languageCode: languageCode, pageNo: pageNo);
+      _popularActorsModel = await getPopularActorsInfo(languageCode: languageCode, pageNo: pageNo);
 
       _popularActorsModel.actors?.forEach((element) {
         if (element.profilePath != null && element.profilePath!.isNotEmpty) {
@@ -152,8 +154,7 @@ class ActorsInfoProvider extends ChangeNotifier {
     required String languageCode,
   }) async {
     try {
-      _popularActorsModel = await getPopularActorsInfo(
-          languageCode: languageCode, pageNo: pageNo);
+      _popularActorsModel = await getPopularActorsInfo(languageCode: languageCode, pageNo: pageNo);
       final List<Actors> actorsList = _popularActorsModel.actors!;
       return actorsList;
     } catch (error) {
@@ -163,7 +164,7 @@ class ActorsInfoProvider extends ChangeNotifier {
 
   // Share Image with text
   Future<void> shareImage({required String baseUrl, required String imgUrl, required String descText}) async {
-    try{
+    try {
       Uint8List uint8list = await getImageAPI(imgUrl: imgUrl, baseUrl: baseUrl);
       final temp = await getTemporaryDirectory();
       final path = "${temp.path}/image.jpg";
@@ -172,7 +173,7 @@ class ActorsInfoProvider extends ChangeNotifier {
       if (result.status == ShareResultStatus.success) {
         log('Thank you for sharing the picture!');
       }
-    }catch(e, m){
+    } catch (e, m) {
       log('Error shareImage: $e');
       log('Error Stack shareImage: $m');
     }

@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 
 class ActorsPage extends StatefulWidget {
   final String actorId;
+
   const ActorsPage({Key? key, required this.actorId}) : super(key: key);
 
   @override
@@ -19,7 +20,7 @@ class ActorsPage extends StatefulWidget {
 
 class _ActorsPageState extends State<ActorsPage> {
   final ScrollController scrollController = ScrollController();
-   late  ActorsInfoProvider actorsInfoProvider;
+  late ActorsInfoProvider actorsInfoProvider;
 
   @override
   void initState() {
@@ -58,7 +59,7 @@ class _ActorsPageState extends State<ActorsPage> {
               actions: [
                 InkWell(
                   onTap: () async {
-                    if(actorsInfoProvider.profilePic.isEmpty && actorsInfoProvider.actorName.isEmpty) return;
+                    if (actorsInfoProvider.profilePic.isEmpty && actorsInfoProvider.actorName.isEmpty) return;
                     final String name = "Actor Name: ${actorsInfoProvider.actorName}";
 
                     await actorsInfoProvider.shareImage(
@@ -161,7 +162,7 @@ class _ActorsPageState extends State<ActorsPage> {
                                 : Container(),
                           ),
                         ),
-                      Column(
+                        Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
