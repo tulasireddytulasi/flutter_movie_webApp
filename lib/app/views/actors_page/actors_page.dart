@@ -19,12 +19,13 @@ class ActorsPage extends StatefulWidget {
 
 class _ActorsPageState extends State<ActorsPage> {
   final ScrollController scrollController = ScrollController();
+   late  ActorsInfoProvider actorsInfoProvider;
 
   @override
   void initState() {
     super.initState();
-    final actorsInfoProvider = Provider.of<ActorsInfoProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      actorsInfoProvider = Provider.of<ActorsInfoProvider>(context, listen: false);
       actorsInfoProvider.getActorsInfoAPI(actorId: widget.actorId);
       actorsInfoProvider.getActorsImagesAPI(actorId: widget.actorId);
     });
@@ -56,7 +57,16 @@ class _ActorsPageState extends State<ActorsPage> {
               ),
               actions: [
                 InkWell(
-                  onTap: () {},
+                  onTap: () async {
+                    if(actorsInfoProvider.profilePic.isEmpty && actorsInfoProvider.actorName.isEmpty) return;
+                    final String name = "Actor Name: ${actorsInfoProvider.actorName}";
+
+                    await actorsInfoProvider.shareImage(
+                      baseUrl: ApiConstants.movieImageBaseUrlw500,
+                      imgUrl: actorsInfoProvider.profilePic,
+                      descText: name,
+                    );
+                  },
                   child: Container(
                     padding: const EdgeInsets.all(2),
                     margin: const EdgeInsets.all(10),

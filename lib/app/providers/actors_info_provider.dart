@@ -1,4 +1,6 @@
 import 'dart:developer';
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -7,6 +9,8 @@ import 'package:moviewebapp/app/models/actors_info_model.dart';
 import 'package:moviewebapp/app/models/popular_actors_model.dart';
 import 'package:moviewebapp/app/core/responses/movie_apis.dart';
 import 'package:moviewebapp/app/core/utils/constants.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ActorsInfoProvider extends ChangeNotifier {
   ActorImagesModel _actorImagesModel = ActorImagesModel();
@@ -154,6 +158,23 @@ class ActorsInfoProvider extends ChangeNotifier {
       return actorsList;
     } catch (error) {
       rethrow;
+    }
+  }
+
+  // Share Image with text
+  Future<void> shareImage({required String baseUrl, required String imgUrl, required String descText}) async {
+    try{
+      Uint8List uint8list = await getImageAPI(imgUrl: imgUrl, baseUrl: baseUrl);
+      final temp = await getTemporaryDirectory();
+      final path = "${temp.path}/image.jpg";
+      File(path).writeAsBytesSync(uint8list);
+      final result = await Share.shareXFiles([XFile(path)], text: descText);
+      if (result.status == ShareResultStatus.success) {
+        log('Thank you for sharing the picture!');
+      }
+    }catch(e, m){
+      log('Error shareImage: $e');
+      log('Error Stack shareImage: $m');
     }
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:http/http.dart';
 import 'package:moviewebapp/app/core/responses/api_constants.dart';
@@ -22,7 +23,7 @@ Future<Response> getMoviesList({
   final String getPopularMoviesURL = "movie/$movieType?api_key=${ApiConstants.apiKey}&with_original_language="
       "$withOriginalLanguage&page=$pageNo&with_genres=$withGenres";
   try {
-    Response response = await getMethod(getPopularMoviesURL);
+    Response response = await getMethod(url: getPopularMoviesURL);
     return response;
   } catch (error) {
     rethrow;
@@ -88,7 +89,7 @@ Future<List<Movies>> searchMovies({
     final String getSearchMoviesURL = "/search/movie?query=$movieQuery&api_key=${ApiConstants.apiKey}"
         "&with_original_language=$withOriginalLanguage&language=$language&page=$pageNo"
         "&with_genres=$withGenres&include_adult=$includeAdult";
-    final response = await getMethod(getSearchMoviesURL);
+    final response = await getMethod(url: getSearchMoviesURL);
     if (response.statusCode == 200) {
       MoviesModel getSearchMoviesModel = getMoviesFromJson(response.body);
       final List<Movies> movies = getSearchMoviesModel.results!;
@@ -108,7 +109,7 @@ Future<Response> getMoviesInfo({
   final String getPopularMoviesURL = "movie/$movieId?api_key=${ApiConstants.apiKey}&append_to_response="
       "$appendToResponse";
   try {
-    Response response = await getMethod(getPopularMoviesURL);
+    Response response = await getMethod(url: getPopularMoviesURL);
     return response;
   } catch (error) {
     rethrow;
@@ -138,7 +139,7 @@ Future<Response> getSimilarMoviesList({
       "movie/$movieId/recommendations?api_key=${ApiConstants.apiKey}&with_original_language="
       "$withOriginalLanguage&page=$pageNo";
   try {
-    Response response = await getMethod(getPopularMoviesURL);
+    Response response = await getMethod(url: getPopularMoviesURL);
     return response;
   } catch (error) {
     rethrow;
@@ -165,7 +166,7 @@ Future<ActorImagesModel> getPopularActorsImages({required String actorId}) async
   ActorImagesModel getMoviesModel;
   final String _popularActorsImages = "person/$actorId/images?api_key=${ApiConstants.apiKey}";
   try {
-    Response response = await getMethod(_popularActorsImages);
+    Response response = await getMethod(url: _popularActorsImages);
     getMoviesModel = actorImagesModelFromJson(response.body);
     return getMoviesModel;
   } catch (error, stackTrace) {
@@ -177,7 +178,7 @@ Future<ActorInfoModel> getActorsInfo({required String actorId}) async {
   ActorInfoModel getActorsInfo;
   final String _actorsInfo = "person/$actorId?api_key=${ApiConstants.apiKey}";
   try {
-    Response response = await getMethod(_actorsInfo);
+    Response response = await getMethod(url: _actorsInfo);
     getActorsInfo = actorInfoModelFromJson(response.body);
     return getActorsInfo;
   } catch (error, stackTrace) {
@@ -189,7 +190,7 @@ Future<PopularActorsModel> getPopularActorsInfo({required String languageCode, r
   PopularActorsModel getPopularActorsInfo;
   final String _actorsInfo = "person/popular?language=$languageCode&page=$pageNo&api_key=${ApiConstants.apiKey}";
   try {
-    Response response = await getMethod(_actorsInfo);
+    Response response = await getMethod(url: _actorsInfo);
     getPopularActorsInfo = popularActorsModelFromJson(response.body);
     return getPopularActorsInfo;
   } catch (error, stackTrace) {
@@ -214,7 +215,7 @@ Future<ActorMovieModel> getActorsActedMoviesInfo({required String actorId}) asyn
   ActorMovieModel actorsMovieModel;
   final String _actorsInfo = "person/$actorId/movie_credits?&api_key=${ApiConstants.apiKey}";
   try {
-    Response response = await getMethod(_actorsInfo);
+    Response response = await getMethod(url: _actorsInfo);
     actorsMovieModel = ActorMovieModel.fromJson(json.decode(response.body));
     return actorsMovieModel;
   } catch (error, stackTrace) {
@@ -229,7 +230,7 @@ Future<ReviewModel> getMovieReviews({
   ReviewModel _reviewModel;
   final String _reviewsAPI = "movie/$movieId/reviews?api_key=${ApiConstants.apiKey}&page=$pageNo";
   try {
-    Response response = await getMethod(_reviewsAPI);
+    Response response = await getMethod(url: _reviewsAPI);
     _reviewModel = reviewModelFromJson(response.body);
     return _reviewModel;
   } catch (error, stackTrace) {
@@ -241,7 +242,7 @@ Future<MovieLogosAndPostersModel> getMovieLogosAPI({required String movieId}) as
   MovieLogosAndPostersModel movieLogosAndPostersModel;
   final String _reviewsAPI = "movie/$movieId/images?api_key=${ApiConstants.apiKey}";
   try {
-    Response response = await getMethod(_reviewsAPI);
+    Response response = await getMethod(url: _reviewsAPI);
     movieLogosAndPostersModel = movieLogosAndPostersModelFromJson(response.body);
     return movieLogosAndPostersModel;
   } catch (error) {
@@ -253,9 +254,18 @@ Future<YouTubeVideosModel> getMovieVideosAPI({required String movieId}) async {
   YouTubeVideosModel youTubeVideosModel;
   final String _getVideoIdsAPI = "movie/$movieId/videos?api_key=${ApiConstants.apiKey}";
   try {
-    Response response = await getMethod(_getVideoIdsAPI);
+    Response response = await getMethod(url: _getVideoIdsAPI);
     youTubeVideosModel = youTubeVideosModelFromJson(response.body);
     return youTubeVideosModel;
+  } catch (error) {
+    rethrow;
+  }
+}
+
+Future<Uint8List> getImageAPI({required String imgUrl, required String baseUrl}) async {
+  try {
+    Response response = await getMethod(url: imgUrl, baseUrl: baseUrl);
+    return response.bodyBytes;
   } catch (error) {
     rethrow;
   }
