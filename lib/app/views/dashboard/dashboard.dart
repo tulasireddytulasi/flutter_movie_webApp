@@ -57,23 +57,30 @@ class _DashboardState extends State<Dashboard> {
         child: SingleChildScrollView(
           controller: _scrollController,
           child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const MainBanner(),
               ListView.builder(
                 itemCount: dashBoardProvider.moviesDataMapObject.length,
                 shrinkWrap: true,
+                padding: const EdgeInsets.all(0),
                 physics: const NeverScrollableScrollPhysics(),
                 scrollDirection: Axis.vertical,
                 itemBuilder: (context, index) {
                   final Map<String, dynamic> movieData = dashBoardProvider.moviesDataMapObject["$index"];
                   return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       MovieLabel(
                         movieLabel: movieData["movieLabel"],
                         onTap: () {
                           String movieType = movieData["movieType"];
                           // Todo: In future will remove this comparison
-                          if(movieType == Constants.marvelMovies){
+                          if (movieType == Constants.marvelMovies) {
                             movieType = Constants.popular;
                           }
                           Navigator.push(
