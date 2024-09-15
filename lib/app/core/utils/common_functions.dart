@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/core/utils/enums.dart';
 
 Map<String, dynamic> getMovieCardWidth({required double screenWidth}) {
@@ -240,4 +241,36 @@ getGender({required int genderId}){
     default:
       return Gender.notAvailable.name;
   }
+}
+
+void showCustomSnackBar({
+  required BuildContext context,
+  required String message,
+  String? actionLabel,
+  VoidCallback? action,
+  Duration duration = const Duration(seconds: 4),
+  Color backgroundColor = Colors.black,
+  SnackBarBehavior behavior = SnackBarBehavior.fixed,
+}) {
+  final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+  if(scaffoldMessenger.mounted){
+    scaffoldMessenger.hideCurrentSnackBar();
+  }
+
+  final snackBar = SnackBar(
+    content: Text(message),
+    duration: duration,
+    backgroundColor: backgroundColor,
+    behavior: behavior,
+    action: actionLabel != null && action != null
+        ? SnackBarAction(
+      label: actionLabel,
+      onPressed: action,
+    )
+        : null,
+  );
+
+  // Show the SnackBar
+  scaffoldMessenger.showSnackBar(snackBar);
 }

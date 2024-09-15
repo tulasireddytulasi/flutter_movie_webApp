@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviewebapp/app/providers/universal_provider.dart';
 import 'package:moviewebapp/app/views/actors_page/widgets/ActorMoviesWidget.dart';
 import 'package:moviewebapp/app/views/actors_page/widgets/actors_Images_widget.dart';
 import 'package:moviewebapp/app/views/actors_page/widgets/lable_widget.dart';
@@ -62,7 +63,9 @@ class _ActorsPageState extends State<ActorsPage> {
                     if (actorsInfoProvider.profilePic.isEmpty && actorsInfoProvider.actorName.isEmpty) return;
                     final String name = "Actor Name: ${actorsInfoProvider.actorName}";
 
-                    await actorsInfoProvider.shareImage(
+                    final UniversalProvider universalProvider = Provider.of<UniversalProvider>(context, listen: false);
+
+                    await universalProvider.shareImage(
                       baseUrl: ApiConstants.movieImageBaseUrlw500,
                       imgUrl: actorsInfoProvider.profilePic,
                       descText: name,
