@@ -25,6 +25,17 @@ class _ActorsImagesState extends State<ActorsImages> {
               itemBuilder: (BuildContext context, int index) {
                 return ActorsImagesCard(
                   actorImage: actorInfoProvider.actorsImages[index].toString(),
+                  voidCallback: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ImagePreviewScreen(
+                          actorNames: [actorInfoProvider.actorName],
+                          actorsImages: actorInfoProvider.actorsImages,
+                        ),
+                      ),
+                    );
+                  },
                 );
               })
           : Container(
@@ -40,12 +51,10 @@ class _ActorsImagesState extends State<ActorsImages> {
 }
 
 class ActorsImagesCard extends StatelessWidget {
-  ActorsImagesCard({
-    Key? key,
-    required this.actorImage,
-  }) : super(key: key);
+  const ActorsImagesCard({Key? key, required this.actorImage, required this.voidCallback}) : super(key: key);
 
   final String actorImage;
+  final VoidCallback voidCallback;
 
   @override
   Widget build(BuildContext context) {
@@ -53,9 +62,7 @@ class ActorsImagesCard extends StatelessWidget {
     return Column(
       children: [
         InkWell(
-          onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const ImagePreviewScreen()));
-          },
+          onTap: voidCallback,
           child: Container(
             padding: const EdgeInsets.only(left: 10),
             child: ClipRRect(
