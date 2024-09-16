@@ -30,6 +30,7 @@ class _ActorsImagesState extends State<ActorsImages> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => ImagePreviewScreen(
+                          currentIndex: index,
                           actorNames: [actorInfoProvider.actorName],
                           actorsImages: actorInfoProvider.actorsImages,
                         ),

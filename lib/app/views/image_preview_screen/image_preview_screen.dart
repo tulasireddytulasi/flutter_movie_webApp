@@ -9,10 +9,12 @@ class ImagePreviewScreen extends StatefulWidget {
     Key? key,
     required this.actorsImages,
     required this.actorNames,
+    required this.currentIndex,
   }) : super(key: key);
 
   final List<String> actorsImages;
   final List<String> actorNames;
+  final int currentIndex;
 
   @override
   State<ImagePreviewScreen> createState() => _ImagePreviewScreenState();
@@ -20,6 +22,7 @@ class ImagePreviewScreen extends StatefulWidget {
 
 class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
   late final UniversalProvider universalProvider;
+  late final PageController _pageController;
 
   int currentIndex = 0;
 
@@ -27,6 +30,14 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
   void initState() {
     super.initState();
     universalProvider = Provider.of<UniversalProvider>(context, listen: false);
+    _pageController = PageController(initialPage: widget.currentIndex);
+    currentIndex = widget.currentIndex;
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -49,6 +60,7 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
       ),
       body: Center(
         child: PageView.builder(
+          controller: _pageController,
           itemCount: widget.actorsImages.length,
           onPageChanged: (value) {
             currentIndex = value;
