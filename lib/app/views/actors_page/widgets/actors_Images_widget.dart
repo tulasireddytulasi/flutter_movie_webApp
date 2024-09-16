@@ -3,10 +3,11 @@ import 'package:moviewebapp/app/providers/actors_info_provider.dart';
 import 'package:moviewebapp/app/core/responses/api_constants.dart';
 import 'package:moviewebapp/app/core/utils/colors.dart';
 import 'package:moviewebapp/app/core/utils/common_functions.dart';
+import 'package:moviewebapp/app/views/image_preview_screen/image_preview_screen.dart';
 import 'package:provider/provider.dart';
 
 class ActorsImages extends StatefulWidget {
-  ActorsImages({Key? key}) : super(key: key);
+  const ActorsImages({Key? key}) : super(key: key);
 
   @override
   _ActorsImagesState createState() => _ActorsImagesState();
@@ -15,8 +16,7 @@ class ActorsImages extends StatefulWidget {
 class _ActorsImagesState extends State<ActorsImages> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<ActorsInfoProvider>(
-        builder: (context, actorInfoProvider, child) {
+    return Consumer<ActorsInfoProvider>(builder: (context, actorInfoProvider, child) {
       return actorInfoProvider.actorsImages.isNotEmpty
           ? ListView.builder(
               itemCount: actorInfoProvider.actorsImages.length,
@@ -53,7 +53,9 @@ class ActorsImagesCard extends StatelessWidget {
     return Column(
       children: [
         InkWell(
-          onTap: () {},
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const ImagePreviewScreen()));
+          },
           child: Container(
             padding: const EdgeInsets.only(left: 10),
             child: ClipRRect(
