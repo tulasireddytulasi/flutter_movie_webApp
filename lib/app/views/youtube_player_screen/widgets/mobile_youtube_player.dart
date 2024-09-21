@@ -27,12 +27,13 @@ class _MobileYouTubePlayerState extends State<MobileYouTubePlayer> {
 
   @override
   Widget build(BuildContext context) {
+    final screenOrientation = MediaQuery.of(context).orientation;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: PURE_BLACK,
-      appBar: AppBar(
+      appBar: screenOrientation == Orientation.portrait ? AppBar(
         backgroundColor: tealishBlue,
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -45,7 +46,7 @@ class _MobileYouTubePlayerState extends State<MobileYouTubePlayer> {
           "YouTube player",
           style: TextStyle(fontSize: 18, color: Colors.white),
         ),
-      ),
+      ) : null,
       body: Center(
         child: SizedBox(
           width: double.infinity,
