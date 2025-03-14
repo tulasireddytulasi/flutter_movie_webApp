@@ -23,6 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
+    namespace 'com.codefussion.moviebytes'
     compileSdkVersion flutter.compileSdkVersion
 
     compileOptions {
