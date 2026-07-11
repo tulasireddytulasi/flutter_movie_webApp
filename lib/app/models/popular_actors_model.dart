@@ -70,7 +70,7 @@ class Actors {
                 json["known_for"].map((x) => KnownFor.fromJson(x))),
         knownForDepartment: json["known_for_department"],
         name: json["name"],
-        popularity: json["popularity"].toDouble(),
+        popularity: json["popularity"]?.toDouble(),
         profilePath: json["profile_path"],
       );
 
@@ -141,16 +141,16 @@ class KnownFor {
         originalTitle: json["original_title"],
         overview: json["overview"],
         posterPath: json["poster_path"],
-        releaseDate: json["release_date"] == null
+        releaseDate: (json["release_date"] == null || json["release_date"].isEmpty)
             ? null
-            : DateTime.parse(json["release_date"]),
+            : DateTime.tryParse(json["release_date"]),
         title: json["title"],
         video: json["video"],
-        voteAverage: json["vote_average"].toDouble(),
+        voteAverage: json["vote_average"]?.toDouble(),
         voteCount: json["vote_count"],
-        firstAirDate: json["first_air_date"] == null
+        firstAirDate: (json["first_air_date"] == null || json["first_air_date"].isEmpty)
             ? null
-            : DateTime.parse(json["first_air_date"]),
+            : DateTime.tryParse(json["first_air_date"]),
         name: json["name"],
         originCountry: json["origin_country"] == null
             ? null

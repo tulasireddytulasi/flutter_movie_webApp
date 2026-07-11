@@ -1,6 +1,0 @@
-package com.codefussion.moviebytes
-
-import io.flutter.embedding.android.FlutterActivity
-
-class MainActivity: FlutterActivity() {
-}

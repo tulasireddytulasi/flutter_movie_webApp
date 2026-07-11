@@ -191,6 +191,7 @@ Future<PopularActorsModel> getPopularActorsInfo({required String languageCode, r
   final String _actorsInfo = "person/popular?language=$languageCode&page=$pageNo&api_key=${ApiConstants.apiKey}";
   try {
     Response response = await getMethod(url: _actorsInfo);
+    print("getPopularActorsInfo response: ${response.body}");
     getPopularActorsInfo = popularActorsModelFromJson(response.body);
     return getPopularActorsInfo;
   } catch (error, stackTrace) {
