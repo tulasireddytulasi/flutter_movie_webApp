@@ -23,7 +23,7 @@ dependencies:
   infinite_scroll_pagination: ^4.0.0
   shimmer: ^3.0.0
   webview_flutter_web: ^0.2.2+1
-  youtube_player_iframe: ^5.2.1
+  youtube_player_iframe: ^6.0.2
   flutter_svg: ^2.0.9
   share_plus: ^10.0.2
   path_provider: ^2.1.4
