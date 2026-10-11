@@ -7,7 +7,7 @@
 //   google_fonts: ^6.2.1
 //
 // Requires Flutter 3.27+ (uses Color.withValues). Replace _buildItems() with
-// your real API; the images here are placeholders.
+// your real API when celebrity data is available.
 
 import 'dart:ui' as ui;
 
@@ -34,16 +34,16 @@ class Tokens {
 }
 
 class GalleryApp extends StatelessWidget {
-  const GalleryApp({super.key});
+  const GalleryApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) => MaterialApp(
-    debugShowCheckedModeBanner: false,
-    theme: ThemeData.dark(useMaterial3: true).copyWith(
-      scaffoldBackgroundColor: Tokens.obsidian,
-      textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
-    ),
-    home: const GalleryScreen(),
-  );
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.dark(useMaterial3: true).copyWith(
+          scaffoldBackgroundColor: Tokens.obsidian,
+          textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
+        ),
+        home: const GalleryScreen(),
+      );
 }
 
 // ───────────────────────── Model ─────────────────────────
@@ -53,29 +53,69 @@ class CelebItem {
   final String category;
   final String caption;
   final double ratio; // width / height
-  const CelebItem(this.id, this.name, this.category, this.caption, this.ratio);
-
-  String get url => 'https://picsum.photos/seed/celeb$id/600/${(600 / ratio).round()}';
+  final String url;
+  const CelebItem(this.id, this.name, this.category, this.caption, this.ratio, this.url);
 }
 
-const _names = [
-  'Aurelia Voss', 'Mateo Lindqvist', 'Sienna Okafor', 'Julian Marchetti',
-  'Priya Anand', 'Leo Beaumont', 'Isadora Wren', 'Kai Nakamura',
-];
+const _celebPhotos = <String, List<String>>{
+  'Amala Paul': [
+    'https://cdn.thefridaymovies.com/celebs/AmalaPaul%201.jpg',
+    'https://cdn.thefridaymovies.com/celebs/AmalaPaul%202.jpg',
+    'https://cdn.thefridaymovies.com/celebs/AmalaPaul%203.jpg',
+    'https://cdn.thefridaymovies.com/celebs/AmalaPaul%204.jpg',
+  ],
+  'Dharsha Gupta': [
+    'https://cdn.thefridaymovies.com/celebs/DharshaGupta%201.jpg',
+    'https://cdn.thefridaymovies.com/celebs/DharshaGupta%202.jpg',
+    'https://cdn.thefridaymovies.com/celebs/DharshaGupta%203.jpg',
+    'https://cdn.thefridaymovies.com/celebs/DharshaGupta%204.jpg',
+  ],
+  'Ramya Ranganathan': [
+    'https://cdn.thefridaymovies.com/celebs/RamyaRanganathan%201.jpg',
+    'https://cdn.thefridaymovies.com/celebs/RamyaRanganathan%202.jpg',
+    'https://cdn.thefridaymovies.com/celebs/RamyaRanganathan%203.jpg',
+    'https://cdn.thefridaymovies.com/celebs/RamyaRanganathan%204.jpg',
+  ],
+  'Rashmika': [
+    'https://cdn.thefridaymovies.com/celebs/Rashmikha%201.jpg',
+    'https://cdn.thefridaymovies.com/celebs/Rashmikha%202.jpg',
+    'https://cdn.thefridaymovies.com/celebs/Rashmikha%203.jpg',
+    'https://cdn.thefridaymovies.com/celebs/Rashmikha%204.jpg',
+  ],
+  'Sam': [
+    'https://cdn.thefridaymovies.com/celebs/Sam%201.jpg',
+    'https://cdn.thefridaymovies.com/celebs/Sam%202.jpg',
+    'https://cdn.thefridaymovies.com/celebs/Sam%203.jpg',
+    'https://cdn.thefridaymovies.com/celebs/Sam%204.jpg',
+  ],
+  'Thamizhvani': [
+    'https://cdn.thefridaymovies.com/celebs/Thamizhvani%201.jpg',
+    'https://cdn.thefridaymovies.com/celebs/Thamizhvani%202.jpg',
+    'https://cdn.thefridaymovies.com/celebs/Thamizhvani%203.jpg',
+    'https://cdn.thefridaymovies.com/celebs/Thamizhvani%204.jpg',
+  ],
+};
 const _tags = ['Red Carpet', 'Editorial', 'Candid', 'Portrait', 'Runway'];
 // 1:1, 3:4, 2:3, 9:16
 const _ratios = [1.0, 3 / 4, 2 / 3, 9 / 16];
 
-List<CelebItem> _buildItems(int start, int count) => List.generate(count, (i) {
-  final id = start + i;
-  return CelebItem(
-    id,
-    _names[id % _names.length],
-    _tags[(id * 3) % _tags.length],
-    'Captured at the season’s most talked-about evening.',
-    _ratios[(id * 7 + id ~/ 3) % _ratios.length],
-  );
-});
+List<CelebItem> _buildItems() {
+  final items = <CelebItem>[];
+  for (final celeb in _celebPhotos.entries) {
+    for (final url in celeb.value) {
+      final id = items.length;
+      items.add(CelebItem(
+        id,
+        celeb.key,
+        _tags[(id * 3) % _tags.length],
+        'Captured at the season’s most talked-about evening.',
+        _ratios[(id * 7 + id ~/ 3) % _ratios.length],
+        url,
+      ));
+    }
+  }
+  return items;
+}
 
 // ───────────────────────── Palette cache ─────────────────────────
 class PaletteCache {
@@ -93,9 +133,7 @@ class PaletteCache {
           ResizeImage(CachedNetworkImageProvider(url), width: 96),
           maximumColorCount: 8,
         );
-        final c = palette.vibrantColor?.color ??
-            palette.dominantColor?.color ??
-            Tokens.gold;
+        final c = palette.vibrantColor?.color ?? palette.dominantColor?.color ?? Tokens.gold;
         return _colors[url] = c;
       } catch (_) {
         return _colors[url] = Tokens.charcoal;
@@ -106,35 +144,14 @@ class PaletteCache {
 
 // ───────────────────────── Gallery screen ─────────────────────────
 class GalleryScreen extends StatefulWidget {
-  const GalleryScreen({super.key});
+  const GalleryScreen({Key? key}) : super(key: key);
   @override
   State<GalleryScreen> createState() => _GalleryScreenState();
 }
 
 class _GalleryScreenState extends State<GalleryScreen> {
   final _scroll = ScrollController();
-  final List<CelebItem> _items = _buildItems(0, 24);
-  bool _loading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _scroll.addListener(_maybeLoadMore);
-  }
-
-  void _maybeLoadMore() {
-    if (_loading || !_scroll.hasClients) return;
-    if (_scroll.position.pixels > _scroll.position.maxScrollExtent - 1200) {
-      _loading = true;
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (!mounted) return;
-        setState(() {
-          _items.addAll(_buildItems(_items.length, 16));
-          _loading = false;
-        });
-      });
-    }
-  }
+  final List<CelebItem> _items = _buildItems();
 
   @override
   void dispose() {
@@ -171,17 +188,11 @@ class _GalleryScreenState extends State<GalleryScreen> {
                       children: [
                         Text('THE EDIT',
                             style: GoogleFonts.inter(
-                                fontSize: 11,
-                                letterSpacing: 3,
-                                color: Tokens.gold,
-                                fontWeight: FontWeight.w600)),
+                                fontSize: 11, letterSpacing: 3, color: Tokens.gold, fontWeight: FontWeight.w600)),
                         const SizedBox(height: 4),
                         Text('Gallery',
                             style: GoogleFonts.playfairDisplay(
-                                fontSize: 38,
-                                height: 1.05,
-                                color: Tokens.text,
-                                fontWeight: FontWeight.w500)),
+                                fontSize: 38, height: 1.05, color: Tokens.text, fontWeight: FontWeight.w500)),
                       ],
                     ),
                   ),
@@ -193,9 +204,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
               child: MasonryGridView.builder(
                 controller: _scroll,
                 padding: const EdgeInsets.fromLTRB(14, 8, 14, 40),
-                gridDelegate:
-                const SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2),
+                gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
                 mainAxisSpacing: 14,
                 crossAxisSpacing: 14,
                 itemCount: _items.length,
@@ -224,8 +233,7 @@ class GalleryCard extends StatefulWidget {
   final CelebItem item;
   final ScrollController scroll;
   final VoidCallback onTap;
-  const GalleryCard(
-      {super.key, required this.item, required this.scroll, required this.onTap});
+  const GalleryCard({Key? key, required this.item, required this.scroll, required this.onTap}) : super(key: key);
   @override
   State<GalleryCard> createState() => _GalleryCardState();
 }
@@ -314,8 +322,7 @@ class _GalleryCardState extends State<GalleryCard> {
 }
 
 /// Morphs border-radius 24 → 0 (and back) during the Hero flight.
-HeroFlightShuttleBuilder heroShuttle(CelebItem item) =>
-        (flightContext, animation, direction, fromCtx, toCtx) {
+HeroFlightShuttleBuilder heroShuttle(CelebItem item) => (flightContext, animation, direction, fromCtx, toCtx) {
       return AnimatedBuilder(
         animation: animation,
         builder: (_, __) {
@@ -371,19 +378,13 @@ class _CardFace extends StatelessWidget {
                         children: [
                           Text(item.category.toUpperCase(),
                               style: GoogleFonts.inter(
-                                  fontSize: 9.5,
-                                  letterSpacing: 1.8,
-                                  color: Tokens.gold,
-                                  fontWeight: FontWeight.w600)),
+                                  fontSize: 9.5, letterSpacing: 1.8, color: Tokens.gold, fontWeight: FontWeight.w600)),
                           const SizedBox(height: 4),
                           Text(item.name,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.playfairDisplay(
-                                  fontSize: 18,
-                                  height: 1.15,
-                                  color: Tokens.text,
-                                  fontWeight: FontWeight.w500)),
+                                  fontSize: 18, height: 1.15, color: Tokens.text, fontWeight: FontWeight.w500)),
                         ],
                       ),
                     ),
@@ -424,8 +425,7 @@ class _ParallaxImage extends StatelessWidget {
         double dy = 0;
         final box = ctx.findRenderObject();
         if (box is RenderBox && box.attached && box.hasSize) {
-          final centerY =
-              box.localToGlobal(Offset(0, box.size.height / 2)).dy;
+          final centerY = box.localToGlobal(Offset(0, box.size.height / 2)).dy;
           // Image drifts at 0.15x of the card's distance from viewport centre,
           // i.e. 0.15x relative to scroll speed.
           dy = (centerY - viewportH / 2) * Tokens.parallax;
@@ -453,13 +453,12 @@ class _ParallaxImage extends StatelessWidget {
 class DetailScreen extends StatefulWidget {
   final CelebItem item;
   final Animation<double> animation;
-  const DetailScreen({super.key, required this.item, required this.animation});
+  const DetailScreen({Key? key, required this.item, required this.animation}) : super(key: key);
   @override
   State<DetailScreen> createState() => _DetailScreenState();
 }
 
-class _DetailScreenState extends State<DetailScreen>
-    with SingleTickerProviderStateMixin {
+class _DetailScreenState extends State<DetailScreen> with SingleTickerProviderStateMixin {
   double _dy = 0;
   double _from = 0;
   late final AnimationController _snap;
@@ -467,10 +466,8 @@ class _DetailScreenState extends State<DetailScreen>
   @override
   void initState() {
     super.initState();
-    _snap = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 280))
-      ..addListener(() => setState(
-              () => _dy = _from * (1 - Curves.easeOutCubic.transform(_snap.value))));
+    _snap = AnimationController(vsync: this, duration: const Duration(milliseconds: 280))
+      ..addListener(() => setState(() => _dy = _from * (1 - Curves.easeOutCubic.transform(_snap.value))));
   }
 
   @override
@@ -494,8 +491,7 @@ class _DetailScreenState extends State<DetailScreen>
     final item = widget.item;
     final h = MediaQuery.sizeOf(context).height;
     final drag = (_dy.abs() / (h * 0.5)).clamp(0.0, 1.0);
-    final curved =
-    CurvedAnimation(parent: widget.animation, curve: Tokens.curve);
+    final curved = CurvedAnimation(parent: widget.animation, curve: Tokens.curve);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -526,8 +522,7 @@ class _DetailScreenState extends State<DetailScreen>
                   tag: 'celeb-${item.id}',
                   flightShuttleBuilder: heroShuttle(item),
                   child: ClipRRect(
-                    borderRadius:
-                    BorderRadius.circular(Tokens.radius * drag),
+                    borderRadius: BorderRadius.circular(Tokens.radius * drag),
                     child: CachedNetworkImage(
                       imageUrl: item.url,
                       fit: BoxFit.cover,
@@ -549,8 +544,7 @@ class _DetailScreenState extends State<DetailScreen>
                 child: FadeTransition(
                   opacity: curved,
                   child: SlideTransition(
-                    position: Tween(begin: const Offset(0, 0.25), end: Offset.zero)
-                        .animate(curved),
+                    position: Tween(begin: const Offset(0, 0.25), end: Offset.zero).animate(curved),
                     child: _MetaPanel(item: item),
                   ),
                 ),
@@ -607,21 +601,13 @@ class _MetaPanel extends StatelessWidget {
             children: [
               Text(item.category.toUpperCase(),
                   style: GoogleFonts.inter(
-                      fontSize: 11,
-                      letterSpacing: 2.4,
-                      color: Tokens.gold,
-                      fontWeight: FontWeight.w600)),
+                      fontSize: 11, letterSpacing: 2.4, color: Tokens.gold, fontWeight: FontWeight.w600)),
               const SizedBox(height: 8),
               Text(item.name,
                   style: GoogleFonts.playfairDisplay(
-                      fontSize: 34,
-                      height: 1.08,
-                      color: Tokens.text,
-                      fontWeight: FontWeight.w500)),
+                      fontSize: 34, height: 1.08, color: Tokens.text, fontWeight: FontWeight.w500)),
               const SizedBox(height: 10),
-              Text(item.caption,
-                  style: GoogleFonts.inter(
-                      fontSize: 14, height: 1.5, color: Tokens.textMuted)),
+              Text(item.caption, style: GoogleFonts.inter(fontSize: 14, height: 1.5, color: Tokens.textMuted)),
               const SizedBox(height: 20),
               Row(
                 children: [
@@ -645,14 +631,14 @@ class _GoldButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => OutlinedButton.icon(
-    onPressed: () {},
-    icon: Icon(icon, size: 18),
-    label: Text(label),
-    style: OutlinedButton.styleFrom(
-      foregroundColor: Tokens.gold,
-      side: const BorderSide(color: Tokens.gold, width: 1),
-      shape: const StadiumBorder(),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-    ),
-  );
+        onPressed: () {},
+        icon: Icon(icon, size: 18),
+        label: Text(label),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: Tokens.gold,
+          side: const BorderSide(color: Tokens.gold, width: 1),
+          shape: const StadiumBorder(),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        ),
+      );
 }
