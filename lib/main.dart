@@ -10,6 +10,8 @@ import 'package:moviewebapp/app/views/navigation_menu/navigation_menu.dart';
 
 import 'package:provider/provider.dart';
 
+// import 'app/views/celebs_screen/celebs_screen.dart';
+
 void main() {
   runApp(const MyApp());
 }

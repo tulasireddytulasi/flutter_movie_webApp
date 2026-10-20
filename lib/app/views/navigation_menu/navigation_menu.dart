@@ -10,6 +10,7 @@ import 'package:moviewebapp/app/views/profile_screen/profile_screen.dart';
 import 'package:moviewebapp/app/providers/dashboard_provider.dart';
 import 'package:moviewebapp/app/core/utils/assets_path.dart';
 import 'package:provider/provider.dart';
+import 'package:moviewebapp/app/core/utils/colors.dart';
 
 class NavigationMenu extends StatefulWidget {
   const NavigationMenu({Key? key}) : super(key: key);
@@ -76,7 +77,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
                 preferredSize: const Size.fromHeight(60.0),
                 child: MovieAppBar(
                   defaultSelectedIndex: 0,
-                  backGroundColor: dashBoardProvider.appBarBackgroundColor,
+                  backGroundColor: tealishBlue, //dashBoardProvider.appBarBackgroundColor,
                   onChange: (value) {
                     setMovies(screenNo: value, showAppBar: false, showLeadingIcon: false);
                     _currentScreenNo.value = value;
@@ -85,7 +86,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
                 ),
               )
             : null,
-        extendBodyBehindAppBar: true,
+       // extendBodyBehindAppBar: true,
         body: Stack(
           children: [
             ValueListenableBuilder<int>(

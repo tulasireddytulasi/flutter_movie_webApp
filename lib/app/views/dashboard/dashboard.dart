@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/core/utils/constants.dart';
 import 'package:moviewebapp/app/views/all_movies_screen/movies_list.dart';
-import 'package:moviewebapp/app/views/dashboard/main_banner_widget/main_banner.dart';
+// import 'package:moviewebapp/app/views/dashboard/main_banner_widget/main_banner.dart';
 import 'package:moviewebapp/app/views/dashboard/widgets/movie_label.dart';
 import 'package:moviewebapp/app/views/dashboard/widgets/movies_list.dart';
 import 'package:moviewebapp/app/providers/dashboard_provider.dart';
 import 'package:moviewebapp/app/core/utils/colors.dart';
 import 'package:moviewebapp/app/core/utils/common_functions.dart';
 import 'package:provider/provider.dart';
+import 'main_banner_widget/movie_banner_card.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -61,7 +62,8 @@ class _DashboardState extends State<Dashboard> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const MainBanner(),
+             // const MainBanner(),
+              const MovieBannerCard(),
               ListView.builder(
                 itemCount: dashBoardProvider.moviesDataMapObject.length,
                 shrinkWrap: true,
