@@ -1,15 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:moviewebapp/app/models/movie_banner_model.dart';
+import 'package:moviewebapp/app/core/utils/navigation/navigation.dart';
+import 'package:moviewebapp/app/core/responses/api_constants.dart';
 
 /// Mobile View: Vertical Card UI
 class VerticalMovieCard extends StatelessWidget {
-  const VerticalMovieCard({Key? key}) : super(key: key);
+  const VerticalMovieCard({Key? key, this.movieInfo}) : super(key: key);
+  final MoviesList? movieInfo;
 
   @override
   Widget build(BuildContext context) {
-    // Vertical Card Image URL
-    const imageUrl = 'https://image.tmdb.org/t/p/w1280//r2J02Z2OpNTctfOSN1Ydgii51I3.jpg';
-    const titleImageUrl = 'https://image.tmdb.org/t/p/w500/kDdRAxIYPWwmhDqU8PgDPcwFEOt.png';
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool screenWidth600 = screenWidth >= 600;
+    final String posterSize = screenWidth600 ? ApiConstants.movieImageBaseUrlw1280 : ApiConstants.movieImageBaseUrlw500;
+    final String id = movieInfo?.id ?? "";
+    final List<String> genre = movieInfo?.genre ?? [];
+    final String logo = movieInfo?.logo ?? "";
+    final String youTubeVideoKey = movieInfo?.youTubeVideoKey ?? "";
+    final String description = movieInfo?.description ?? "";
+    final String posterUrl = screenWidth600 ? movieInfo?.backDrop ?? "" : movieInfo?.poster ?? "";
+    final String posterImageUrl = posterSize + posterUrl;
 
     return Container(
       decoration: BoxDecoration(
@@ -24,7 +35,7 @@ class VerticalMovieCard extends StatelessWidget {
           children: [
             // Background Image using cached_network_image ^4.0.4
             CachedNetworkImage(
-              imageUrl: imageUrl,
+              imageUrl: posterImageUrl,
               fit: BoxFit.cover,
               placeholder: (context, url) => const Center(
                 child: CircularProgressIndicator(color: Colors.white),
@@ -32,20 +43,20 @@ class VerticalMovieCard extends StatelessWidget {
               errorWidget: (context, url, error) => const Icon(Icons.error, color: Colors.white),
             ),
             // Gradient Overlay for readability
-            DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Colors.black.withValues(alpha: 0.2),
-                    Colors.black.withValues(alpha: 0.85),
-                  ],
-                  stops: const [0.4, 0.65, 1.0],
-                ),
-              ),
-            ),
+            // DecoratedBox(
+            //   decoration: BoxDecoration(
+            //     gradient: LinearGradient(
+            //       begin: Alignment.topCenter,
+            //       end: Alignment.bottomCenter,
+            //       colors: [
+            //         Colors.transparent,
+            //         Colors.black.withValues(alpha: 0.2),
+            //         Colors.black.withValues(alpha: 0.85),
+            //       ],
+            //       stops: const [0.4, 0.65, 1.0],
+            //     ),
+            //   ),
+            // ),
             // Card Content
             Padding(
               padding: const EdgeInsets.all(20.0),
@@ -55,7 +66,7 @@ class VerticalMovieCard extends StatelessWidget {
                 children: [
                   // Movie Title Logo Image
                   CachedNetworkImage(
-                    imageUrl: titleImageUrl,
+                    imageUrl: logo,
                     height: 80,
                     fit: BoxFit.contain,
                     placeholder: (context, url) => const SizedBox(height: 80),
@@ -63,14 +74,24 @@ class VerticalMovieCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 14),
                   // Genres
-                  const Text(
-                    'Film · Indian · Fan Favorite · Action & Adventure',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  RichText(
+                    softWrap: true,
+                    overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
+                    maxLines: 4,
+                    text: TextSpan(
+                      children: List.generate(
+                        genre.length,
+                            (index) => TextSpan(
+                          text: genre.length - 1 != index ? "${genre[index]} . " : genre[index],
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 18),
                   // Play Movie Button
@@ -78,7 +99,7 @@ class VerticalMovieCard extends StatelessWidget {
                     width: double.infinity,
                     height: 48,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () => Navigation().youTubeScreen(context: context, youTubeVideoKey: youTubeVideoKey),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: Colors.black,

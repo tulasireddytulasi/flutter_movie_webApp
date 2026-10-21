@@ -1,15 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:moviewebapp/app/core/utils/extensions.dart';
+import 'package:moviewebapp/app/core/utils/navigation/navigation.dart';
+import 'package:moviewebapp/app/models/movie_banner_model.dart';
+import 'package:moviewebapp/app/core/responses/api_constants.dart';
 
 /// Tablet & Desktop View: Horizontal Card UI
 class HorizontalMovieCard extends StatelessWidget {
-  const HorizontalMovieCard({Key? key}) : super(key: key);
+  const HorizontalMovieCard({Key? key, this.movieInfo}) : super(key: key);
+  final MoviesList? movieInfo;
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool screenWidth600 = screenWidth >= 600;
+    final String posterSize = screenWidth600 ? ApiConstants.movieImageBaseUrlw1280 : ApiConstants.movieImageBaseUrlw500;
     // Horizontal Card Image URL
     const imageUrl = 'https://image.tmdb.org/t/p/w1280//8CIgg0gCHIYz0jrx5IcZEOy047J.jpg';
     const titleImageUrl = 'https://image.tmdb.org/t/p/w500/kDdRAxIYPWwmhDqU8PgDPcwFEOt.png';
+
+    final String id = movieInfo?.id ?? "";
+    final List<String> genre = movieInfo?.genre ?? [];
+    List<String>? genreList = genre.capitalizeFirstLetter();
+    final String logo = movieInfo?.logo ?? "";
+    final String logoUrl = ApiConstants.movieImageBaseUrlw500 + logo;
+    final String youTubeVideoKey = movieInfo?.youTubeVideoKey ?? "";
+    final String description = movieInfo?.description ?? "";
+    final String posterUrl = screenWidth600 ? movieInfo?.backDrop ?? "" : movieInfo?.poster ?? "";
+    final String posterImageUrl = posterSize + posterUrl;
 
     return Container(
       decoration: BoxDecoration(
@@ -24,7 +42,7 @@ class HorizontalMovieCard extends StatelessWidget {
           children: [
             // Background Image using cached_network_image ^4.0.4
             CachedNetworkImage(
-              imageUrl: imageUrl,
+              imageUrl: posterImageUrl,
               fit: BoxFit.cover,
               placeholder: (context, url) => const Center(
                 child: CircularProgressIndicator(color: Colors.white),
@@ -54,28 +72,47 @@ class HorizontalMovieCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Movie Title Logo Image
-                  CachedNetworkImage(
-                    imageUrl: titleImageUrl,
+                  logo.isNotEmpty ? CachedNetworkImage(
+                    imageUrl: logoUrl,
                     height: 80,
                     fit: BoxFit.contain,
                     placeholder: (context, url) => const SizedBox(height: 80),
                     errorWidget: (context, url, error) => const Icon(Icons.broken_image, color: Colors.white54),
-                  ),
+                  ) : const SizedBox.shrink(),
                   const SizedBox(height: 14),
-                  const Text(
-                    'Film · Chilling · Scary · Supernatural Horror',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
+                  RichText(
+                    softWrap: true,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 4,
+                    text: TextSpan(
+                      children: List.generate(
+                        genreList.length,
+                        (index) => TextSpan(
+                          text: genreList.length - 1 != index ? "${genreList[index]} . " : genreList[index],
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          // style: const TextStyle(fontSize: 12, color: WHITE, fontWeight: FontWeight.normal),
+                        ),
+                      ),
                     ),
                   ),
+                  // const Text(
+                  //   'Film · Chilling · Scary · Supernatural Horror',
+                  //   style: TextStyle(
+                  //     color: Colors.white70,
+                  //     fontSize: 13,
+                  //     fontWeight: FontWeight.w500,
+                  //   ),
+                  // ),
                   const SizedBox(height: 24),
                   // Action Buttons Row
                   Row(
                     children: [
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () => Navigation().youTubeScreen(context: context, youTubeVideoKey: youTubeVideoKey),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
                           foregroundColor: Colors.black,
