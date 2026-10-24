@@ -11,7 +11,9 @@ class NetworkImageWithDynamicRatio extends StatefulWidget {
 }
 
 class NetworkImageWithDynamicRatioState extends State<NetworkImageWithDynamicRatio> {
-  double? _aspectRatio;
+  final ValueNotifier<double?> _aspectRatioNotifier = ValueNotifier<double?>(null);
+  ImageStream? _imageStream;
+  ImageStreamListener? _imageStreamListener;
 
   @override
   void initState() {
@@ -19,48 +21,62 @@ class NetworkImageWithDynamicRatioState extends State<NetworkImageWithDynamicRat
     _loadImageDimensions();
   }
 
+  @override
+  void dispose() {
+    if (_imageStream != null && _imageStreamListener != null) {
+      _imageStream!.removeListener(_imageStreamListener!);
+    }
+    _aspectRatioNotifier.dispose();
+    super.dispose();
+  }
+
   void _loadImageDimensions() {
-    final ImageStream stream = CachedNetworkImageProvider(widget.imageUrl).resolve(ImageConfiguration.empty);
-    stream.addListener(ImageStreamListener((ImageInfo info, bool synchronousCall) {
-      if (mounted) {
-        setState(() {
-          final int width = info.image.width;
-          final int height = info.image.height;
-          if (height > 0) {
-            _aspectRatio = width / height;
-          }
-        });
+    _imageStream = CachedNetworkImageProvider(widget.imageUrl).resolve(ImageConfiguration.empty);
+    _imageStreamListener = ImageStreamListener((ImageInfo info, bool synchronousCall) {
+      if (!mounted) {
+        return;
       }
-    }));
+
+      final int width = info.image.width;
+      final int height = info.image.height;
+      if (height > 0) {
+        _aspectRatioNotifier.value = width / height;
+      }
+    });
+    _imageStream!.addListener(_imageStreamListener!);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_aspectRatio == null) {
-      // Placeholder while dimensions are being fetched
-      return Container(
-        color: const Color(0xFF2F3336),
-        child: const Center(
-          child: SizedBox(
-            width: 24,
-            height: 24,
-            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white54),
-          ),
-        ),
-      );
-    }
+    return ValueListenableBuilder<double?>(
+      valueListenable: _aspectRatioNotifier,
+      builder: (context, aspectRatio, _) {
+        if (aspectRatio == null) {
+          return Container(
+            color: const Color(0xFF2F3336),
+            child: const Center(
+              child: SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white54),
+              ),
+            ),
+          );
+        }
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8.0),
-      child: AspectRatio(
-        aspectRatio: _aspectRatio!,
-        child: CachedNetworkImage(
-          imageUrl: widget.imageUrl,
-          fit: BoxFit.cover,
-          placeholder: (context, _) => Container(color: const Color(0xFF2F3336)),
-          errorWidget: (context, _, __) => Container(color: const Color(0xFF2F3336), child: const Icon(Icons.error)),
-        ),
-      ),
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(8.0),
+          child: AspectRatio(
+            aspectRatio: aspectRatio,
+            child: CachedNetworkImage(
+              imageUrl: widget.imageUrl,
+              fit: BoxFit.cover,
+              placeholder: (context, _) => Container(color: const Color(0xFF2F3336)),
+              errorWidget: (context, _, __) => Container(color: const Color(0xFF2F3336), child: const Icon(Icons.error)),
+            ),
+          ),
+        );
+      },
     );
   }
 }
