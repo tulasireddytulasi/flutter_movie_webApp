@@ -9,6 +9,7 @@ import 'package:moviewebapp/app/views/navigation_menu/movie_app_bar.dart';
 import 'package:moviewebapp/app/views/profile_screen/profile_screen.dart';
 import 'package:moviewebapp/app/providers/dashboard_provider.dart';
 import 'package:moviewebapp/app/core/utils/assets_path.dart';
+import 'package:moviewebapp/app/views/twitter_ui/twitter_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:moviewebapp/app/core/utils/colors.dart';
 
@@ -23,6 +24,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
   late ValueNotifier<int> _currentScreenNo;
   final _screens = [
     const Dashboard(),
+    const TwitterFeedScreen(),
     const MovieListScreen(
       withOriginalLanguage: "en",
       movieType: "popular",
@@ -36,8 +38,8 @@ class _NavigationMenuState extends State<NavigationMenu> {
     const ProfileScreen(),
   ];
   final List<String> appBarTitles = ["Home", "Movies", "People", "Blogs"];
-  final List<String> bottomBarTitles = ["Dashboard", "Movies", "People", "Blogs"]; // "Account"
-  final List<String> iconAssetPaths = [homeIcon, videoIcon, tvIcon, blogIcon]; // userIcon
+  final List<String> bottomBarTitles = ["Dashboard", "X-Pics", "Movies", "People", "Blogs"]; // "Account"
+  final List<String> iconAssetPaths = [homeIcon, videoIcon, videoIcon, tvIcon, blogIcon]; // userIcon
 
   @override
   void initState() {
@@ -48,6 +50,9 @@ class _NavigationMenuState extends State<NavigationMenu> {
   setMovies({required int screenNo, required bool showAppBar, required bool showLeadingIcon}) {
     switch (screenNo) {
       case 1:
+        _screens[screenNo] = const TwitterFeedScreen();
+        break;
+      case 2:
         _screens[screenNo] = MovieListScreen(
           withOriginalLanguage: "en",
           movieType: "popular",
@@ -57,10 +62,10 @@ class _NavigationMenuState extends State<NavigationMenu> {
           showLeadingIcon: showLeadingIcon,
         );
         break;
-      case 2:
+      case 3:
         _screens[screenNo] = AllActorsPage(showAppBar: showAppBar, showLeadingIcon: showLeadingIcon);
         break;
-      case 3:
+      case 4:
         _screens[screenNo] = BlogsScreen(showAppBar: showAppBar);
         break;
     }
