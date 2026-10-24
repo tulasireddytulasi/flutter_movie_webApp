@@ -1,28 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:moviewebapp/app/core/repository/json_objects/x_post_json.dart';
-import 'package:moviewebapp/app/core/utils/extensions.dart';
-import 'dart:convert';
-
 import 'package:moviewebapp/app/models/post_model.dart';
-// ==========================================
-// 1. DATA MODELS
-// ==========================================
-
-
-
-// ==========================================
-// 2. MOCK DATA (Using Provided CDN URLs)
-// ==========================================
+import 'widgets/action_item.dart';
+import 'widgets/network_image_with_dynamic_ratio.dart';
 
 // Assuming jsonString is your raw JSON string data:
-final List<PostModel> mockPosts = XPostJson.marvelMovies
-    .map((item) => PostModel.fromJson(item))
-    .toList();
-
-// ==========================================
-// 3. MAIN FEED SCREEN
-// ==========================================
+final List<PostModel> mockPosts = XPostJson.marvelMovies.map((item) => PostModel.fromJson(item)).toList();
 
 class TwitterFeedScreen extends StatelessWidget {
   const TwitterFeedScreen({Key? key}) : super(key: key);
@@ -145,23 +129,43 @@ class _PostCardWidgetState extends State<PostCardWidget> {
                     height: 1.35,
                   ),
                 ),
-                // Dynamic Media Grid (if images exist)
+                // Dynamic Media List (if images exist)
                 if (widget.post.imageUrls.isNotEmpty) ...[
                   const SizedBox(height: 12.0),
-                  DynamicMediaContainer(imageUrls: widget.post.imageUrls),
+                  widget.post.imageUrls.length == 1
+                      ? ConstrainedBox(
+                          constraints: const BoxConstraints(maxHeight: 380.0),
+                          child: NetworkImageWithDynamicRatio(imageUrl: widget.post.imageUrls[0]),
+                        )
+                      : SizedBox(
+                          height: 280.0,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            physics: const BouncingScrollPhysics(),
+                            clipBehavior: Clip.none,
+                            itemCount: widget.post.imageUrls.length,
+                            separatorBuilder: (context, index) => const SizedBox(width: 4.0),
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 4.0),
+                                child: NetworkImageWithDynamicRatio(imageUrl: widget.post.imageUrls[index]),
+                              );
+                            },
+                          ),
+                        ),
                 ],
                 const SizedBox(height: 12.0),
                 // Interaction Footer Bar
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _ActionItem(
+                    ActionItem(
                       icon: Icons.chat_bubble_outline_rounded,
                       count: widget.post.replyCount,
                       color: const Color(0xFF71767B),
                       onTap: () {},
                     ),
-                    _ActionItem(
+                    ActionItem(
                       icon: Icons.repeat_rounded,
                       count: widget.post.repostCount,
                       color: widget.post.isReposted ? const Color(0xFF00BA7C) : const Color(0xFF71767B),
@@ -173,7 +177,7 @@ class _PostCardWidgetState extends State<PostCardWidget> {
                         });
                       },
                     ),
-                    _ActionItem(
+                    ActionItem(
                       icon: widget.post.isLiked ? Icons.favorite_rounded : Icons.favorite_border_rounded,
                       count: widget.post.likeCount,
                       color: widget.post.isLiked ? const Color(0xFFF91880) : const Color(0xFF71767B),
@@ -185,7 +189,7 @@ class _PostCardWidgetState extends State<PostCardWidget> {
                         });
                       },
                     ),
-                    _ActionItem(
+                    ActionItem(
                       icon: Icons.bar_chart_rounded,
                       count: widget.post.viewCount,
                       color: const Color(0xFF71767B),
@@ -217,181 +221,6 @@ class _PostCardWidgetState extends State<PostCardWidget> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// ==========================================
-// 5. DYNAMIC MEDIA CONTAINER
-// ==========================================
-
-class DynamicMediaContainer extends StatelessWidget {
-  final List<String> imageUrls;
-
-  const DynamicMediaContainer({Key? key, required this.imageUrls}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16.0),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: const Color(0xFF2F3336), width: 1.0),
-          borderRadius: BorderRadius.circular(16.0),
-        ),
-        child: _buildLayout(context),
-      ),
-    );
-  }
-
-  Widget _buildLayout(BuildContext context) {
-    switch (imageUrls.length) {
-      case 1:
-        return _buildSingleImage(imageUrls[0]);
-      case 2:
-        return _buildTwoImages(imageUrls);
-      case 3:
-        return _buildThreeImages(imageUrls);
-      case 4:
-      default:
-        return _buildFourImages(imageUrls);
-    }
-  }
-
-  // 1 Photo: Natural Aspect Ratio with Maximum Height Constraint (380px)
-  Widget _buildSingleImage(String url) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxHeight: 380.0),
-      child: CachedNetworkImage(
-        imageUrl: url,
-        width: double.infinity,
-        fit: BoxFit.cover,
-        placeholder: (context, _) => Container(height: 250, color: const Color(0xFF2F3336)),
-        errorWidget: (context, _, __) => Container(height: 250, color: const Color(0xFF2F3336), child: const Icon(Icons.error)),
-      ),
-    );
-  }
-
-  // 2 Photos: Side-by-side equal columns with 2px gap
-  Widget _buildTwoImages(List<String> urls) {
-    return SizedBox(
-      height: 220.0,
-      child: Row(
-        children: [
-          Expanded(child: _networkImage(urls[0])),
-          const SizedBox(width: 2.0),
-          Expanded(child: _networkImage(urls[1])),
-        ],
-      ),
-    );
-  }
-
-  // 3 Photos: 1 Large Left + 2 Stacked Right with 2px gaps
-  Widget _buildThreeImages(List<String> urls) {
-    return SizedBox(
-      height: 260.0,
-      child: Row(
-        children: [
-          Expanded(child: _networkImage(urls[0])),
-          const SizedBox(width: 2.0),
-          Expanded(
-            child: Column(
-              children: [
-                Expanded(child: _networkImage(urls[1])),
-                const SizedBox(height: 2.0),
-                Expanded(child: _networkImage(urls[2])),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // 4 Photos: 2x2 Equal Grid with 2px gaps horizontally and vertically
-  Widget _buildFourImages(List<String> urls) {
-    return SizedBox(
-      height: 260.0,
-      child: Column(
-        children: [
-          Expanded(
-            child: Row(
-              children: [
-                Expanded(child: _networkImage(urls[0])),
-                const SizedBox(width: 2.0),
-                Expanded(child: _networkImage(urls[1])),
-              ],
-            ),
-          ),
-          const SizedBox(height: 2.0),
-          Expanded(
-            child: Row(
-              children: [
-                Expanded(child: _networkImage(urls[2])),
-                const SizedBox(width: 2.0),
-                Expanded(child: _networkImage(urls[3])),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _networkImage(String url) {
-    return CachedNetworkImage(
-      imageUrl: url,
-      fit: BoxFit.cover,
-      width: double.infinity,
-      height: double.infinity,
-      placeholder: (context, _) => Container(color: const Color(0xFF2F3336)),
-      errorWidget: (context, _, __) => Container(color: const Color(0xFF2F3336), child: const Icon(Icons.error)),
-    );
-  }
-}
-
-// ==========================================
-// 6. ACTION ITEM COMPONENT (Footer)
-// ==========================================
-
-class _ActionItem extends StatelessWidget {
-  final IconData icon;
-  final int count;
-  final Color color;
-  final bool isActive;
-  final VoidCallback onTap;
-
-  const _ActionItem({
-    Key? key,
-    required this.icon,
-    required this.count,
-    required this.color,
-    this.isActive = false,
-    required this.onTap,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(20.0),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 2.0),
-        child: Row(
-          children: [
-            Icon(icon, size: 16.0, color: color),
-            const SizedBox(width: 2.0),
-            Text(
-              count.toCompactCurrencyFormat(),
-              style: TextStyle(
-                color: color,
-                fontSize: 11.0,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

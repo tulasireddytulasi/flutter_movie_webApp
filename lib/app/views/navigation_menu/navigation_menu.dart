@@ -73,11 +73,11 @@ class _NavigationMenuState extends State<NavigationMenu> {
 
   @override
   Widget build(BuildContext context) {
-    final double _screenWidth = MediaQuery.of(context).size.width;
+    final double screenWidth = MediaQuery.of(context).size.width;
 
     return Consumer<DashBoardProvider>(builder: (context, dashBoardProvider, child) {
       return Scaffold(
-        appBar: _screenWidth >= 750
+        appBar: screenWidth >= 750
             ? PreferredSize(
                 preferredSize: const Size.fromHeight(60.0),
                 child: MovieAppBar(
@@ -105,7 +105,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
             ),
           ],
         ),
-        bottomNavigationBar: (_screenWidth <= 750)
+        bottomNavigationBar: (screenWidth <= 750)
             ? CustomBottomNavigationBar(
                 defaultSelectedIndex: 0,
                 onChange: (value) {
