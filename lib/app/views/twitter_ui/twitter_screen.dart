@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:moviewebapp/app/core/repository/json_objects/x_post_json.dart';
 import 'package:moviewebapp/app/models/post_model.dart';
-import 'widgets/action_item.dart';
+import 'widgets/footer_widget.dart';
 import 'widgets/network_image_with_dynamic_ratio.dart';
 
 // Assuming jsonString is your raw JSON string data:
@@ -155,68 +155,8 @@ class _PostCardWidgetState extends State<PostCardWidget> {
                         ),
                 ],
                 const SizedBox(height: 12.0),
-                // Interaction Footer Bar
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ActionItem(
-                      icon: Icons.chat_bubble_outline_rounded,
-                      count: widget.post.replyCount,
-                      color: const Color(0xFF71767B),
-                      onTap: () {},
-                    ),
-                    ActionItem(
-                      icon: Icons.repeat_rounded,
-                      count: widget.post.repostCount,
-                      color: widget.post.isReposted ? const Color(0xFF00BA7C) : const Color(0xFF71767B),
-                      isActive: widget.post.isReposted,
-                      onTap: () {
-                        setState(() {
-                          widget.post.isReposted = !widget.post.isReposted;
-                          widget.post.repostCount += widget.post.isReposted ? 1 : -1;
-                        });
-                      },
-                    ),
-                    ActionItem(
-                      icon: widget.post.isLiked ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                      count: widget.post.likeCount,
-                      color: widget.post.isLiked ? const Color(0xFFF91880) : const Color(0xFF71767B),
-                      isActive: widget.post.isLiked,
-                      onTap: () {
-                        setState(() {
-                          widget.post.isLiked = !widget.post.isLiked;
-                          widget.post.likeCount += widget.post.isLiked ? 1 : -1;
-                        });
-                      },
-                    ),
-                    ActionItem(
-                      icon: Icons.bar_chart_rounded,
-                      count: widget.post.viewCount,
-                      color: const Color(0xFF71767B),
-                      onTap: () {},
-                    ),
-                    Row(
-                      children: [
-                        IconButton(
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                          icon: Icon(
-                            widget.post.isBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-                            color: widget.post.isBookmarked ? const Color(0xFF1D9BF0) : const Color(0xFF71767B),
-                            size: 18.0,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              widget.post.isBookmarked = !widget.post.isBookmarked;
-                            });
-                          },
-                        ),
-                        const SizedBox(width: 8.0),
-                        const Icon(Icons.share_outlined, color: Color(0xFF71767B), size: 18.0),
-                      ],
-                    ),
-                  ],
-                ),
+
+                FooterWidget(post: widget.post),
               ],
             ),
           ),
