@@ -36,7 +36,9 @@ class _MovieBannerCardState extends State<MovieBannerCard> {
               constraints: BoxConstraints(
                 maxWidth: isDesktopOrTablet ? 1000 : 450,
               ),
-              child: isDesktopOrTablet ? HorizontalMovieCard(movieInfo: movieData) : VerticalMovieCard(),
+              child: isDesktopOrTablet
+                  ? HorizontalMovieCard(movieInfo: movieData)
+                  : VerticalMovieCard(movieInfo: movieData),
             );
           }),
         );

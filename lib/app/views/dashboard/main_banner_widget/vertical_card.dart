@@ -17,6 +17,7 @@ class VerticalMovieCard extends StatelessWidget {
     final String id = movieInfo?.id ?? "";
     final List<String> genre = movieInfo?.genre ?? [];
     final String logo = movieInfo?.logo ?? "";
+    final String logoUrl = ApiConstants.movieImageBaseUrlw500 + logo;
     final String youTubeVideoKey = movieInfo?.youTubeVideoKey ?? "";
     final String description = movieInfo?.description ?? "";
     final String posterUrl = screenWidth600 ? movieInfo?.backDrop ?? "" : movieInfo?.poster ?? "";
@@ -66,7 +67,7 @@ class VerticalMovieCard extends StatelessWidget {
                 children: [
                   // Movie Title Logo Image
                   CachedNetworkImage(
-                    imageUrl: logo,
+                    imageUrl: logoUrl,
                     height: 80,
                     fit: BoxFit.contain,
                     placeholder: (context, url) => const SizedBox(height: 80),
