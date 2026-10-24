@@ -12,7 +12,7 @@ class MainBanner extends StatefulWidget {
   const MainBanner({Key? key}) : super(key: key);
 
   @override
-  _MainBannerState createState() => _MainBannerState();
+  State<MainBanner> createState() => _MainBannerState();
 }
 
 class _MainBannerState extends State<MainBanner> with SingleTickerProviderStateMixin {

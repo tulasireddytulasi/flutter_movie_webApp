@@ -34,7 +34,7 @@ class MovieListScreen extends StatefulWidget {
   final bool showLeadingIcon;
 
   @override
-  _MovieListScreenState createState() => _MovieListScreenState();
+  State<MovieListScreen> createState() => _MovieListScreenState();
 }
 
 class _MovieListScreenState extends State<MovieListScreen> {

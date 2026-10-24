@@ -18,7 +18,7 @@ class MoviesCard extends StatefulWidget {
   final VoidCallback voidCallback;
 
   @override
-  _MoviesCardState createState() => _MoviesCardState();
+  State<MoviesCard> createState() => _MoviesCardState();
 }
 
 class _MoviesCardState extends State<MoviesCard> {

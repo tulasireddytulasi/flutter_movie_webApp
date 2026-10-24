@@ -12,7 +12,7 @@ class SimilarMovies extends StatefulWidget {
   final bool canNavigateToNewPage;
 
   @override
-  _SimilarMoviesState createState() => _SimilarMoviesState();
+  State<SimilarMovies> createState() => _SimilarMoviesState();
 }
 
 class _SimilarMoviesState extends State<SimilarMovies> {

@@ -5,7 +5,7 @@ class LogosWidget extends StatefulWidget {
   const LogosWidget({Key? key, required this.screenWidth}) : super(key: key);
   final double screenWidth;
   @override
-  _LogosWidgetState createState() => _LogosWidgetState();
+  State<LogosWidget> createState() => _LogosWidgetState();
 }
 
 class _LogosWidgetState extends State<LogosWidget> {

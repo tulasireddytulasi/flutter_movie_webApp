@@ -16,7 +16,7 @@ class NavigationMenu extends StatefulWidget {
   const NavigationMenu({Key? key}) : super(key: key);
 
   @override
-  _NavigationMenuState createState() => _NavigationMenuState();
+  State<NavigationMenu> createState() => _NavigationMenuState();
 }
 
 class _NavigationMenuState extends State<NavigationMenu> {

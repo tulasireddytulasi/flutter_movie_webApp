@@ -25,7 +25,7 @@ class MovieHomePage extends StatefulWidget {
   final String screenTitle;
 
   @override
-  _MovieHomePageState createState() => _MovieHomePageState();
+  State<MovieHomePage> createState() => _MovieHomePageState();
 }
 
 class _MovieHomePageState extends State<MovieHomePage> {

@@ -10,7 +10,7 @@ class BlogsScreen extends StatefulWidget {
   final bool showAppBar;
 
   @override
-  _BlogsScreenState createState() => _BlogsScreenState();
+  State<BlogsScreen> createState() => _BlogsScreenState();
 }
 
 class _BlogsScreenState extends State<BlogsScreen> {

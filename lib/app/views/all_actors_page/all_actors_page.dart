@@ -15,7 +15,7 @@ class AllActorsPage extends StatefulWidget {
   final bool showAppBar;
   final bool showLeadingIcon;
   @override
-  _AllActorsPageState createState() => _AllActorsPageState();
+  State<AllActorsPage> createState() => _AllActorsPageState();
 }
 
 class _AllActorsPageState extends State<AllActorsPage> {

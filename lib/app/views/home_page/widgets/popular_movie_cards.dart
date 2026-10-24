@@ -11,7 +11,7 @@ class PopularMovies extends StatefulWidget {
   ScrollController? scrollController;
 
   @override
-  _PopularMoviesState createState() => _PopularMoviesState();
+  State<PopularMovies> createState() => _PopularMoviesState();
 }
 
 class _PopularMoviesState extends State<PopularMovies> {

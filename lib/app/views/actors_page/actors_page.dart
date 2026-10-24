@@ -16,7 +16,7 @@ class ActorsPage extends StatefulWidget {
   const ActorsPage({Key? key, required this.actorId}) : super(key: key);
 
   @override
-  _ActorsPageState createState() => _ActorsPageState();
+  State<ActorsPage> createState() => _ActorsPageState();
 }
 
 class _ActorsPageState extends State<ActorsPage> {

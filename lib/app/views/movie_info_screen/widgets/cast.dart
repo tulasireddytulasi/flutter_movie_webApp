@@ -11,7 +11,7 @@ class Cast extends StatefulWidget {
   const Cast({Key? key}) : super(key: key);
 
   @override
-  _CastState createState() => _CastState();
+  State<Cast> createState() => _CastState();
 }
 
 class _CastState extends State<Cast> {

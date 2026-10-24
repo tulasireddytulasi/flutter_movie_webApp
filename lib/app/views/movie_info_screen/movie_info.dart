@@ -18,7 +18,7 @@ class MovieInfoScreen extends StatefulWidget {
   const MovieInfoScreen({Key? key, required this.movieId}) : super(key: key);
 
   @override
-  _MovieInfoScreenState createState() => _MovieInfoScreenState();
+  State<MovieInfoScreen> createState() => _MovieInfoScreenState();
 }
 
 class _MovieInfoScreenState extends State<MovieInfoScreen> {

@@ -5,7 +5,7 @@ class TrailerButtons extends StatefulWidget {
   const TrailerButtons({Key? key}) : super(key: key);
 
   @override
-  _TrailerButtonsState createState() => _TrailerButtonsState();
+  State<TrailerButtons> createState() => _TrailerButtonsState();
 }
 
 class _TrailerButtonsState extends State<TrailerButtons> {

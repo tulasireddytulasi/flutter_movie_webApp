@@ -10,7 +10,7 @@ class ActorsImages extends StatefulWidget {
   const ActorsImages({Key? key}) : super(key: key);
 
   @override
-  _ActorsImagesState createState() => _ActorsImagesState();
+  State<ActorsImages> createState() => _ActorsImagesState();
 }
 
 class _ActorsImagesState extends State<ActorsImages> {

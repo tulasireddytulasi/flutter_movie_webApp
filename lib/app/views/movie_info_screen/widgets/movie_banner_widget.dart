@@ -13,7 +13,7 @@ class MovieBannerWidget extends StatefulWidget {
   const MovieBannerWidget({Key? key, required this.movieBannerImage, required this.showBanner}) : super(key: key);
 
   @override
-  _MovieBannerWidgetState createState() => _MovieBannerWidgetState();
+  State<MovieBannerWidget> createState() => _MovieBannerWidgetState();
 }
 
 class _MovieBannerWidgetState extends State<MovieBannerWidget> {

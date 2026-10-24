@@ -18,7 +18,7 @@ class MovieAppBar extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _MovieAppBarState createState() => _MovieAppBarState();
+  State<MovieAppBar> createState() => _MovieAppBarState();
 }
 
 class _MovieAppBarState extends State<MovieAppBar> {
