@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 
 class NetworkImageWithDynamicRatio extends StatefulWidget {
   final String imageUrl;
+  final VoidCallback onTap;
 
-  const NetworkImageWithDynamicRatio({Key? key, required this.imageUrl}) : super(key: key);
+  const NetworkImageWithDynamicRatio({Key? key, required this.imageUrl, required this.onTap}) : super(key: key);
 
   @override
   State<NetworkImageWithDynamicRatio> createState() => NetworkImageWithDynamicRatioState();
@@ -64,15 +65,18 @@ class NetworkImageWithDynamicRatioState extends State<NetworkImageWithDynamicRat
           );
         }
 
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(8.0),
-          child: AspectRatio(
-            aspectRatio: aspectRatio,
-            child: CachedNetworkImage(
-              imageUrl: widget.imageUrl,
-              fit: BoxFit.cover,
-              placeholder: (context, _) => Container(color: const Color(0xFF2F3336)),
-              errorWidget: (context, _, __) => Container(color: const Color(0xFF2F3336), child: const Icon(Icons.error)),
+        return InkWell(
+          onTap: widget.onTap,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: AspectRatio(
+              aspectRatio: aspectRatio,
+              child: CachedNetworkImage(
+                imageUrl: widget.imageUrl,
+                fit: BoxFit.cover,
+                placeholder: (context, _) => Container(color: const Color(0xFF2F3336)),
+                errorWidget: (context, _, __) => Container(color: const Color(0xFF2F3336), child: const Icon(Icons.error)),
+              ),
             ),
           ),
         );

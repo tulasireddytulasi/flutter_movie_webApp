@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/models/post_model.dart';
+import 'package:moviewebapp/app/views/celeb_preview_screen/celeb_preview_screen.dart';
 import 'footer_widget.dart';
 import 'network_image_with_dynamic_ratio.dart';
 
@@ -18,6 +19,17 @@ class PostCardWidget extends StatefulWidget {
 }
 
 class _PostCardWidgetState extends State<PostCardWidget> {
+
+  Future<void> _openPreview({required String imageUrl}) async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (context) => ImmersivePostDetailScreen(
+          post: widget.post,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -122,7 +134,9 @@ class _PostCardWidgetState extends State<PostCardWidget> {
         padding: const EdgeInsets.only(left: 52.0),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxHeight: 380.0),
-          child: NetworkImageWithDynamicRatio(imageUrl: widget.post.imageUrls[0]),
+          child: NetworkImageWithDynamicRatio(imageUrl: widget.post.imageUrls[0],
+            onTap: () => _openPreview(imageUrl: widget.post.imageUrls[0]),
+          ),
         ),
       );
     }
@@ -140,6 +154,7 @@ class _PostCardWidgetState extends State<PostCardWidget> {
             child: NetworkImageWithDynamicRatio(
               key: ValueKey(widget.post.imageUrls[index]),
               imageUrl: widget.post.imageUrls[index],
+              onTap: () => _openPreview(imageUrl: widget.post.imageUrls[index]),
             ),
           );
         },
