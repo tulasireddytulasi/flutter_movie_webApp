@@ -2,9 +2,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:moviewebapp/app/models/post_model.dart';
-import 'package:moviewebapp/app/views/twitter_ui/widgets/twitter_like_button.dart';
-
-import 'widgets/card_2.dart';
 import 'widgets/preview_info_card.dart';
 
 class ImmersivePostDetailScreen extends StatefulWidget {
@@ -17,9 +14,12 @@ class ImmersivePostDetailScreen extends StatefulWidget {
 }
 
 class _ImmersivePostDetailScreenState extends State<ImmersivePostDetailScreen> {
-  bool _showUI = true;
   late final PageController _pageController;
-  int _currentIndex = 0;
+
+  // ValueNotifiers to isolate rebuilds and eliminate setState overhead
+  final ValueNotifier<bool> _showUINotifier = ValueNotifier<bool>(true);
+  final ValueNotifier<int> _currentIndexNotifier = ValueNotifier<int>(0);
+  final ValueNotifier<bool> _isZoomedNotifier = ValueNotifier<bool>(false);
 
   @override
   void initState() {
@@ -30,13 +30,14 @@ class _ImmersivePostDetailScreenState extends State<ImmersivePostDetailScreen> {
   @override
   void dispose() {
     _pageController.dispose();
+    _showUINotifier.dispose();
+    _currentIndexNotifier.dispose();
+    _isZoomedNotifier.dispose();
     super.dispose();
   }
 
   void _toggleUI() {
-    setState(() {
-      _showUI = !_showUI;
-    });
+    _showUINotifier.value = !_showUINotifier.value;
   }
 
   @override
@@ -49,77 +50,90 @@ class _ImmersivePostDetailScreenState extends State<ImmersivePostDetailScreen> {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            // 1. Full-Bleed Media Display with Carousel & Pinch-to-Zoom
-            _buildMediaViewer(),
+            // 1. Full-Bleed Media Display (Rebuilds only when zoom state changes)
+            ValueListenableBuilder<bool>(
+              valueListenable: _isZoomedNotifier,
+              builder: (context, isZoomed, child) {
+                return _buildMediaViewer(isZoomed);
+              },
+            ),
 
-            // 2. Overlay Metadata & Controls (Toggles on tap)
-            AnimatedOpacity(
-              opacity: _showUI ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 200),
-              child: IgnorePointer(
-                ignoring: !_showUI,
-                child: Stack(
-                  children: [
-                    // Top App Bar Controls (Back & Options)
-                    SafeArea(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _buildCircleButton(
-                              icon: Icons.arrow_back,
-                              onTap: () => Navigator.of(context).pop(),
-                            ),
-                            _buildCircleButton(
-                              icon: Icons.more_vert,
-                              onTap: () {},
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    // Bottom Floating Glassmorphism Container & Pagination Dots
-                    Positioned(
-                      left: 16.0,
-                      right: 16.0,
-                      bottom: 24.0,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Pagination Dots Indicator (if multiple images)
-                          if (widget.post.imageUrls.length > 1) ...[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: List.generate(
-                                widget.post.imageUrls.length,
-                                    (index) => AnimatedContainer(
-                                  duration: const Duration(milliseconds: 250),
-                                  margin: const EdgeInsets.symmetric(horizontal: 3.0),
-                                  width: _currentIndex == index ? 8.0 : 6.0,
-                                  height: _currentIndex == index ? 8.0 : 6.0,
-                                  decoration: BoxDecoration(
-                                    color: _currentIndex == index
-                                        ? const Color(0xFFFFFFFF)
-                                        : const Color(0xFFFFFFFF).withValues(alpha: 0.4),
-                                    shape: BoxShape.circle,
-                                  ),
+            // 2. Overlay Metadata & Controls (Rebuilds only when UI visibility toggles)
+            ValueListenableBuilder<bool>(
+              valueListenable: _showUINotifier,
+              builder: (context, showUI, child) {
+                return AnimatedOpacity(
+                  opacity: showUI ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 200),
+                  child: IgnorePointer(
+                    ignoring: !showUI,
+                    child: Stack(
+                      children: [
+                        // Top App Bar Controls (Back & Options)
+                        SafeArea(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _buildCircleButton(
+                                  icon: Icons.arrow_back,
+                                  onTap: () => Navigator.of(context).pop(),
                                 ),
-                              ),
+                                _buildCircleButton(
+                                  icon: Icons.more_vert,
+                                  onTap: () {},
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 12.0),
-                          ],
+                          ),
+                        ),
 
-                          PreviewInfoCard(post: widget.post),
+                        // Bottom Floating Glassmorphism Container & Pagination Dots
+                        Positioned(
+                          left: 16.0,
+                          right: 16.0,
+                          bottom: 24.0,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // Pagination Dots Indicator (Rebuilds only on index change)
+                              if (widget.post.imageUrls.length > 1) ...[
+                                ValueListenableBuilder<int>(
+                                  valueListenable: _currentIndexNotifier,
+                                  builder: (context, currentIndex, child) {
+                                    return Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: List.generate(
+                                        widget.post.imageUrls.length,
+                                            (index) => AnimatedContainer(
+                                          duration: const Duration(milliseconds: 250),
+                                          margin: const EdgeInsets.symmetric(horizontal: 3.0),
+                                          width: currentIndex == index ? 8.0 : 6.0,
+                                          height: currentIndex == index ? 8.0 : 6.0,
+                                          decoration: BoxDecoration(
+                                            color: currentIndex == index
+                                                ? const Color(0xFFFFFFFF)
+                                                : const Color(0xFFFFFFFF).withValues(alpha: 0.4),
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                                const SizedBox(height: 12.0),
+                              ],
 
-                          // Card2(post: widget.post),
-                        ],
-                      ),
+                              PreviewInfoCard(post: widget.post),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              },
             ),
           ],
         ),
@@ -127,21 +141,27 @@ class _ImmersivePostDetailScreenState extends State<ImmersivePostDetailScreen> {
     );
   }
 
-  Widget _buildMediaViewer() {
+  Widget _buildMediaViewer(bool isZoomed) {
     final images = widget.post.imageUrls.isNotEmpty ? widget.post.imageUrls : [widget.post.avatarUrl];
 
     return PageView.builder(
       controller: _pageController,
       itemCount: images.length,
+      physics: isZoomed ? const NeverScrollableScrollPhysics() : const BouncingScrollPhysics(),
       onPageChanged: (index) {
-        setState(() {
-          _currentIndex = index;
-        });
+        _currentIndexNotifier.value = index;
+        _isZoomedNotifier.value = false;
       },
       itemBuilder: (context, index) {
         return InteractiveViewer(
           minScale: 1.0,
           maxScale: 4.0,
+          onInteractionUpdate: (details) {
+            final bool currentlyZoomed = details.scale > 1.0;
+            if (_isZoomedNotifier.value != currentlyZoomed) {
+              _isZoomedNotifier.value = currentlyZoomed;
+            }
+          },
           child: Center(
             child: CachedNetworkImage(
               imageUrl: images[index],
@@ -181,6 +201,4 @@ class _ImmersivePostDetailScreenState extends State<ImmersivePostDetailScreen> {
       ),
     );
   }
-
-
 }
