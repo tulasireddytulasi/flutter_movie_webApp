@@ -16,10 +16,14 @@ class ImmersivePostDetailScreen extends StatefulWidget {
 class _ImmersivePostDetailScreenState extends State<ImmersivePostDetailScreen> {
   late final PageController _pageController;
 
-  // ValueNotifiers to isolate rebuilds and eliminate setState overhead
   final ValueNotifier<bool> _showUINotifier = ValueNotifier<bool>(true);
   final ValueNotifier<int> _currentIndexNotifier = ValueNotifier<int>(0);
-  final ValueNotifier<bool> _isZoomedNotifier = ValueNotifier<bool>(false);
+
+  // Controls PageView scroll physics based on touch pointer count & zoom state
+  final ValueNotifier<bool> _isSwipeLockedNotifier = ValueNotifier<bool>(false);
+
+  // Track transformation state to check zoom accurately
+  final TransformationController _transformationController = TransformationController();
 
   @override
   void initState() {
@@ -29,10 +33,11 @@ class _ImmersivePostDetailScreenState extends State<ImmersivePostDetailScreen> {
 
   @override
   void dispose() {
+    _transformationController.dispose();
     _pageController.dispose();
     _showUINotifier.dispose();
     _currentIndexNotifier.dispose();
-    _isZoomedNotifier.dispose();
+    _isSwipeLockedNotifier.dispose();
     super.dispose();
   }
 
@@ -50,15 +55,15 @@ class _ImmersivePostDetailScreenState extends State<ImmersivePostDetailScreen> {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            // 1. Full-Bleed Media Display (Rebuilds only when zoom state changes)
+            // 1. Full-Bleed Media Display
             ValueListenableBuilder<bool>(
-              valueListenable: _isZoomedNotifier,
-              builder: (context, isZoomed, child) {
-                return _buildMediaViewer(isZoomed);
+              valueListenable: _isSwipeLockedNotifier,
+              builder: (context, isSwipeLocked, child) {
+                return _buildMediaViewer(isSwipeLocked);
               },
             ),
 
-            // 2. Overlay Metadata & Controls (Rebuilds only when UI visibility toggles)
+            // 2. Overlay Metadata & Controls
             ValueListenableBuilder<bool>(
               valueListenable: _showUINotifier,
               builder: (context, showUI, child) {
@@ -69,7 +74,7 @@ class _ImmersivePostDetailScreenState extends State<ImmersivePostDetailScreen> {
                     ignoring: !showUI,
                     child: Stack(
                       children: [
-                        // Top App Bar Controls (Back & Options)
+                        // Top App Bar Controls
                         SafeArea(
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -89,7 +94,7 @@ class _ImmersivePostDetailScreenState extends State<ImmersivePostDetailScreen> {
                           ),
                         ),
 
-                        // Bottom Floating Glassmorphism Container & Pagination Dots
+                        // Bottom Floating Container & Pagination Dots
                         Positioned(
                           left: 16.0,
                           right: 16.0,
@@ -97,7 +102,6 @@ class _ImmersivePostDetailScreenState extends State<ImmersivePostDetailScreen> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              // Pagination Dots Indicator (Rebuilds only on index change)
                               if (widget.post.imageUrls.length > 1) ...[
                                 ValueListenableBuilder<int>(
                                   valueListenable: _currentIndexNotifier,
@@ -141,41 +145,68 @@ class _ImmersivePostDetailScreenState extends State<ImmersivePostDetailScreen> {
     );
   }
 
-  Widget _buildMediaViewer(bool isZoomed) {
+  Widget _buildMediaViewer(bool isSwipeLocked) {
     final images = widget.post.imageUrls.isNotEmpty ? widget.post.imageUrls : [widget.post.avatarUrl];
 
     return PageView.builder(
       controller: _pageController,
       itemCount: images.length,
-      physics: isZoomed ? const NeverScrollableScrollPhysics() : const BouncingScrollPhysics(),
+      // Keep standard physics, we block gestures upstream using AbsorbPointer
+      physics: const BouncingScrollPhysics(),
       onPageChanged: (index) {
         _currentIndexNotifier.value = index;
-        _isZoomedNotifier.value = false;
+        _transformationController.value = Matrix4.identity(); // Reset zoom on page change
+        _isSwipeLockedNotifier.value = false;
       },
       itemBuilder: (context, index) {
-        return InteractiveViewer(
-          minScale: 1.0,
-          maxScale: 4.0,
-          onInteractionUpdate: (details) {
-            final bool currentlyZoomed = details.scale > 1.0;
-            if (_isZoomedNotifier.value != currentlyZoomed) {
-              _isZoomedNotifier.value = currentlyZoomed;
-            }
+        return ValueListenableBuilder<bool>(
+          valueListenable: _isSwipeLockedNotifier,
+          builder: (context, isLocked, child) {
+            // AbsorbPointer completely blocks PageView from receiving touch events when locked/zoomed
+            return AbsorbPointer(
+              absorbing: isLocked,
+              child: InteractiveViewer(
+                transformationController: _transformationController,
+                minScale: 1.0,
+                maxScale: 4.0,
+                onInteractionStart: (details) {
+                  // If 2 fingers touch or already zoomed, instantly lock swiping
+                  if (details.pointerCount >= 2 || _transformationController.value.getMaxScaleOnAxis() > 1.0) {
+                    _isSwipeLockedNotifier.value = true;
+                  }
+                },
+                onInteractionUpdate: (details) {
+                  final double currentScale = _transformationController.value.getMaxScaleOnAxis();
+                  // Lock if zooming/pinching with 2+ fingers OR if current image is scaled in (> 1.0)
+                  final bool shouldLock = details.pointerCount >= 2 || currentScale > 1.0;
+                  if (_isSwipeLockedNotifier.value != shouldLock) {
+                    _isSwipeLockedNotifier.value = shouldLock;
+                  }
+                },
+                onInteractionEnd: (details) {
+                  final double currentScale = _transformationController.value.getMaxScaleOnAxis();
+                  // Only unlock page swiping if scale snaps completely back to 1.0 and fingers are lifted
+                  if (currentScale <= 1.001) {
+                    _isSwipeLockedNotifier.value = false;
+                  }
+                },
+                child: Center(
+                  child: CachedNetworkImage(
+                    imageUrl: images[index],
+                    fit: BoxFit.contain,
+                    width: double.infinity,
+                    height: double.infinity,
+                    placeholder: (context, url) => const Center(
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white54),
+                    ),
+                    errorWidget: (context, url, error) => const Center(
+                      child: Icon(Icons.error, color: Colors.white54, size: 32),
+                    ),
+                  ),
+                ),
+              ),
+            );
           },
-          child: Center(
-            child: CachedNetworkImage(
-              imageUrl: images[index],
-              fit: BoxFit.contain,
-              width: double.infinity,
-              height: double.infinity,
-              placeholder: (context, url) => const Center(
-                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white54),
-              ),
-              errorWidget: (context, url, error) => const Center(
-                child: Icon(Icons.error, color: Colors.white54, size: 32),
-              ),
-            ),
-          ),
         );
       },
     );
