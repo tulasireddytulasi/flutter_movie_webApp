@@ -5,10 +5,49 @@ import 'package:moviewebapp/app/core/utils/navigation/navigation.dart';
 import 'package:moviewebapp/app/models/movie_banner_model.dart';
 import 'package:moviewebapp/app/core/responses/api_constants.dart';
 
+import 'animated_logo_widget.dart';
+
 /// Tablet & Desktop View: Horizontal Card UI
-class HorizontalMovieCard extends StatelessWidget {
+class HorizontalMovieCard extends StatefulWidget {
   const HorizontalMovieCard({Key? key, this.movieInfo}) : super(key: key);
   final MoviesList? movieInfo;
+
+  @override
+  State<HorizontalMovieCard> createState() => _HorizontalMovieCardState();
+}
+
+class _HorizontalMovieCardState extends State<HorizontalMovieCard> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  bool _onHoverAnimationActive = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    /// Create an animation controller
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+
+    /// Create a Tween for the scale animation
+    _scaleAnimation = Tween<double>(
+      begin: 2,
+      end: 1.0,
+    ).animate(_controller);
+    _startAnimation();
+  }
+
+  Future<void> _startAnimation() async {
+    await Future.delayed(const Duration(seconds: 4));
+    if (_controller.status == AnimationStatus.completed) {
+      _controller.reverse();
+    } else {
+      _controller.forward();
+    }
+    _onHoverAnimationActive = true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,14 +57,14 @@ class HorizontalMovieCard extends StatelessWidget {
     final bool screenWidth1000 = screenWidth <= 1000;
     final String posterSize = screenWidth600 ? ApiConstants.movieImageBaseUrlw1280 : ApiConstants.movieImageBaseUrlw500;
 
-    final String id = movieInfo?.id ?? "";
-    final List<String> genre = movieInfo?.genre ?? [];
+    final String id = widget.movieInfo?.id ?? "";
+    final List<String> genre = widget.movieInfo?.genre ?? [];
     List<String>? genreList = genre.capitalizeFirstLetter();
-    final String logo = movieInfo?.logo ?? "";
+    final String logo = widget.movieInfo?.logo ?? "";
     final String logoUrl = ApiConstants.movieImageBaseUrlw500 + logo;
-    final String youTubeVideoKey = movieInfo?.youTubeVideoKey ?? "";
-    final String description = movieInfo?.description ?? "";
-    final String posterUrl = screenWidth600 ? movieInfo?.backDrop ?? "" : movieInfo?.poster ?? "";
+    final String youTubeVideoKey = widget.movieInfo?.youTubeVideoKey ?? "";
+    final String description = widget.movieInfo?.description ?? "";
+    final String posterUrl = screenWidth600 ? widget.movieInfo?.backDrop ?? "" : widget.movieInfo?.poster ?? "";
     final String posterImageUrl = posterSize + posterUrl;
 
     return Container(
@@ -62,14 +101,38 @@ class HorizontalMovieCard extends StatelessWidget {
                 children: [
                   // Movie Title Logo Image
                   logo.isNotEmpty
-                      ? CachedNetworkImage(
-                          imageUrl: logoUrl,
-                          height: 80,
-                          fit: BoxFit.contain,
-                          placeholder: (context, url) => const SizedBox(height: 80),
-                          errorWidget: (context, url, error) =>
-                              Icon(Icons.broken_image, color: theme.colorScheme.onSurface.withValues(alpha: 0.54)),
+                      ? InkWell(
+                          onTap: () {},
+                          onHover: (onHover) {
+                            if (_onHoverAnimationActive) {
+                              if (onHover) {
+                                if (_controller.status == AnimationStatus.completed) {
+                                  _controller.reverse();
+                                }
+                              } else {
+                                _controller.forward();
+                              }
+                            }
+                          },
+                          child: ScaleTransition(
+                            scale: _scaleAnimation,
+                            alignment: Alignment.bottomLeft,
+                            child: Image.network(
+                              logoUrl,
+                              width: 200,
+                              fit: BoxFit.fitWidth,
+                            ),
+                          ),
                         )
+
+                      // CachedNetworkImage(
+                      //         imageUrl: logoUrl,
+                      //         height: 80,
+                      //         fit: BoxFit.contain,
+                      //         placeholder: (context, url) => const SizedBox(height: 80),
+                      //         errorWidget: (context, url, error) =>
+                      //             Icon(Icons.broken_image, color: theme.colorScheme.onSurface.withValues(alpha: 0.54)),
+                      //       )
                       : const SizedBox.shrink(),
                   const SizedBox(height: 14),
                   RichText(
