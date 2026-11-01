@@ -40,17 +40,19 @@ class HorizontalMovieCard extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             // Background Image
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: CachedNetworkImage(
-                imageUrl: posterImageUrl,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Center(
-                  child: CircularProgressIndicator(color: theme.colorScheme.primary),
-                ),
-                errorWidget: (context, url, error) => Icon(Icons.error, color: theme.colorScheme.error),
-              ),
-            ),
+            posterUrl.isEmpty
+                ? Center(child: CircularProgressIndicator(color: theme.colorScheme.primary))
+                : ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: CachedNetworkImage(
+                      imageUrl: posterImageUrl,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Center(
+                        child: CircularProgressIndicator(color: theme.colorScheme.primary),
+                      ),
+                      errorWidget: (context, url, error) => Icon(Icons.error, color: theme.colorScheme.error),
+                    ),
+                  ),
             // Content
             Padding(
               padding: const EdgeInsets.all(36.0),
@@ -59,13 +61,16 @@ class HorizontalMovieCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Movie Title Logo Image
-                  logo.isNotEmpty ? CachedNetworkImage(
-                    imageUrl: logoUrl,
-                    height: 80,
-                    fit: BoxFit.contain,
-                    placeholder: (context, url) => const SizedBox(height: 80),
-                    errorWidget: (context, url, error) => Icon(Icons.broken_image, color: theme.colorScheme.onSurface.withValues(alpha: 0.54)),
-                  ) : const SizedBox.shrink(),
+                  logo.isNotEmpty
+                      ? CachedNetworkImage(
+                          imageUrl: logoUrl,
+                          height: 80,
+                          fit: BoxFit.contain,
+                          placeholder: (context, url) => const SizedBox(height: 80),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.broken_image, color: theme.colorScheme.onSurface.withValues(alpha: 0.54)),
+                        )
+                      : const SizedBox.shrink(),
                   const SizedBox(height: 14),
                   RichText(
                     softWrap: true,
