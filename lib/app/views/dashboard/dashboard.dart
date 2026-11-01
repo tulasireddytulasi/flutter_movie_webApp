@@ -47,12 +47,20 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
+  // Todo: Will remove later
+  void showAlert() {
+    showCustomSnackBar(
+      context: context,
+      message: 'Opps!, This is not available!',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: black1,
-      appBar: AppBar(
+      appBar: screenWidth < 750 ? AppBar(
         backgroundColor: dashBoardProvider.appBarBackgroundColor,
         elevation: dashBoardProvider.appBarElevation,
         title: const Text(
@@ -61,21 +69,21 @@ class _DashboardState extends State<Dashboard> {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () => showAlert(),
             icon: const Icon(
               Icons.notifications,
               color: Colors.white,
             ),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () => showAlert(),
             icon: const Icon(
               Icons.person,
               color: Colors.white,
             ),
           ),
         ],
-      ),
+      ) : null,
       body: NotificationListener<ScrollNotification>(
         onNotification: (scrollNotification) {
           return true;
