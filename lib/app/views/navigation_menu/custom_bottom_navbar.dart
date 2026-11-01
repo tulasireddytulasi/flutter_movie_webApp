@@ -54,7 +54,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         child: Container(
           padding: const EdgeInsets.all(2),
           width: _screenWidth >= 600 ? 500 : null,
-          color: Colors.white.withOpacity(0.3127763439360118),
+          color: Colors.white.withValues(alpha: 0.3127763439360118),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: _navBarItemList,

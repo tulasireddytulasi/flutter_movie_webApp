@@ -63,7 +63,7 @@ class _MainPageState extends State<MainPage> {
                   sigmaX: blurImage,
                   sigmaY: blurImage,
                 ),
-                child: Container(color: Colors.black.withOpacity(0.2)),
+                child: Container(color: Colors.black.withValues(alpha: 0.2)),
               ),
             ),
           ],
@@ -87,7 +87,7 @@ class _MainPageState extends State<MainPage> {
                   borderRadius: BorderRadius.circular(20),
                   child: Container(
                     padding: const EdgeInsets.all(24),
-                    color: Colors.white.withOpacity(blurBox),
+                    color: Colors.white.withValues(alpha: blurBox),
                     child: const Text(
                       'This is text is blurred',
                       style: TextStyle(

@@ -21,7 +21,7 @@ class BlogCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(8),
       margin: const EdgeInsets.all(10),
-      decoration: BoxDecoration(color: BLACK.withOpacity(0.2)),
+      decoration: BoxDecoration(color: BLACK.withValues(alpha: 0.2)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -49,7 +49,7 @@ class BlogCard extends StatelessWidget {
                       text: " . ",
                       style: TextStyle(
                           fontSize: 33,
-                          color: GREY.withOpacity(0.5),
+                          color: GREY.withValues(alpha: 0.5),
                           fontFamily: montserratSemiBold),
                     ),
                     TextSpan(
@@ -58,7 +58,7 @@ class BlogCard extends StatelessWidget {
                   ],
                   style: TextStyle(
                       fontSize: 13,
-                      color: GREY.withOpacity(0.5),
+                      color: GREY.withValues(alpha: 0.5),
                       fontFamily: montserratSemiBold),
                 ),
               ),
@@ -70,7 +70,7 @@ class BlogCard extends StatelessWidget {
                     "...",
                     style: TextStyle(
                         fontSize: 34,
-                        color: GREY.withOpacity(0.5),
+                        color: GREY.withValues(alpha: 0.5),
                         fontFamily: montserratSemiBold),
                   ),
                 ),

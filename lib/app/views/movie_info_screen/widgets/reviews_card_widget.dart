@@ -21,7 +21,7 @@ class ReviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: WHITE.withOpacity(0.5), width: 1),
+        border: Border.all(color: WHITE.withValues(alpha: 0.5), width: 1),
         borderRadius: const BorderRadius.all(Radius.circular(8)),
       ),
       margin: const EdgeInsets.all(10),
@@ -70,7 +70,7 @@ class ReviewCard extends StatelessWidget {
                     reviewDate,
                     style: TextStyle(
                       fontSize: 12,
-                      color: WHITE.withOpacity(0.5),
+                      color: WHITE.withValues(alpha: 0.5),
                     ),
                   ),
                 ],

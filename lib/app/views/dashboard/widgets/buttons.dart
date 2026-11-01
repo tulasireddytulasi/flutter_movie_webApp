@@ -63,7 +63,7 @@ class Buttons extends StatelessWidget {
             ],
           ),
           buttonWidth: 120,
-          color: WHITE.withOpacity(0.1),
+          color: WHITE.withValues(alpha: 0.1),
           borderRadius: 4,
           callingAPI: () {
             Navigation().navigateToMoviesInfoPage(

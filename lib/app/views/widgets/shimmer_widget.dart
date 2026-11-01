@@ -19,7 +19,7 @@ class _ShimmerWidgetState extends State<ShimmerWidget> {
         //height: getSimilarMoviesSectionHeight(screenSize: _screenWidth),
         child: Shimmer.fromColors(
           baseColor: Colors.white,
-          highlightColor: Colors.grey.withOpacity(0.6),
+          highlightColor: Colors.grey.withValues(alpha: 0.6),
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
@@ -33,7 +33,7 @@ class _ShimmerWidgetState extends State<ShimmerWidget> {
                   width: getSimilarMoviesImageWidth(screenSize: _screenWidth),
                   height: getSimilarMoviesImageHeight(screenSize: _screenWidth),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.4),
+                    color: Colors.white.withValues(alpha: 0.4),
                     borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                   ),
                 ),

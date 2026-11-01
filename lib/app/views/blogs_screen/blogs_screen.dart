@@ -18,7 +18,7 @@ class _BlogsScreenState extends State<BlogsScreen> {
   Widget build(BuildContext context) {
     final double _screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: tealishBlue,
+      backgroundColor: black1,
       appBar: widget.showAppBar
           ? AppBar(
               backgroundColor: tealishBlue,

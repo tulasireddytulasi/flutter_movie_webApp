@@ -128,7 +128,7 @@ class _PopularMovieCardState extends State<PopularMovieCard> {
                       child: Container(
                         alignment: Alignment.topLeft,
                         padding: EdgeInsets.all(screenWidth > 650 ? 20 : 10),
-                        color: Colors.white.withOpacity(0.5449371339389631),
+                        color: Colors.white.withValues(alpha: 0.5449371339389631),
                         //  width: 300,
                         child: Text(
                           widget.actorName,

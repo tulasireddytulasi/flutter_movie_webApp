@@ -237,7 +237,7 @@ class _ActorsPageState extends State<ActorsPage> {
                     ),
                     Divider(
                       height: 1,
-                      color: GREY.withOpacity(0.5),
+                      color: GREY.withValues(alpha: 0.5),
                       thickness: 1,
                     ),
                     Container(
@@ -281,7 +281,7 @@ class _ActorsPageState extends State<ActorsPage> {
                       width: _pageWidth / 1,
                       decoration: BoxDecoration(
                         // border: Border.all(color: WHITE, width: 1),
-                        color: GREY.withOpacity(0.1),
+                        color: GREY.withValues(alpha: 0.1),
                       ),
                       padding: const EdgeInsets.only(left: 20, top: 20, right: 10, bottom: 15),
                       child: ExpandableText(

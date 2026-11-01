@@ -24,7 +24,7 @@ class MovieCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<MoviesProvider>(builder: (context, movieProvider, child) {
       return Card(
-        color: tealishBlue,
+        color: black1,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,7 +41,10 @@ class MovieCard extends StatelessWidget {
                       children: [
                         Image.asset(movieThumbnail, fit: BoxFit.cover),
                         const SizedBox(height: 10),
-                        Text('Error: $error', style: const TextStyle(fontSize: 14, color: WHITE),),
+                        Text(
+                          'Error: $error',
+                          style: const TextStyle(fontSize: 14, color: WHITE),
+                        ),
                       ],
                     ),
                   );
@@ -57,8 +60,7 @@ class MovieCard extends StatelessWidget {
                 child: Text(
                   movieName,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                      color: WHITE, fontSize: 12, fontFamily: montserratMedium),
+                  style: const TextStyle(color: WHITE, fontSize: 12, fontFamily: montserratMedium),
                 ),
               ),
             ),
@@ -70,8 +72,7 @@ class MovieCard extends StatelessWidget {
                 child: Text(
                   movieReleaseDate,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                      color: WHITE, fontSize: 12, fontFamily: montserratMedium),
+                  style: const TextStyle(color: WHITE, fontSize: 10, fontFamily: montserratMedium),
                 ),
               ),
             ),

@@ -78,7 +78,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
               const SizedBox(height: 10),
               CircleAvatar(
                 radius: 20,
-                backgroundColor: index == _selectedIndex ? LIGHTWHITE : tealishBlue.withOpacity(0.5),
+                backgroundColor: index == _selectedIndex ? LIGHTWHITE : tealishBlue.withValues(alpha: 0.5),
                 child: Image.asset(
                   imgUrl,
                   width: 22,

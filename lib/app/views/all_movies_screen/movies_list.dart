@@ -86,18 +86,17 @@ class _MovieListScreenState extends State<MovieListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final double _screenWidth = MediaQuery.of(context).size.width;
-    final bool _screenWidth600 = _screenWidth >= 600;
-    layoutData = getMovieCardWidth(screenWidth: _screenWidth);
+    final double screenWidth = MediaQuery.of(context).size.width;
+    layoutData = getMovieCardWidth(screenWidth: screenWidth);
     columns = layoutData["columns"];
     isMovieTitleVisible = layoutData["isMovieTitleVisible"];
 
     return Consumer<MoviesProvider>(builder: (context, movieProvider, child) {
       return Scaffold(
-        backgroundColor: tealishBlue,
+        backgroundColor: black1,
         appBar: widget.showAppBar
             ? AppBar(
-                backgroundColor: tealishBlue,
+                backgroundColor: black1,
                 leading: widget.showLeadingIcon
                     ? IconButton(
                         onPressed: () => Navigator.of(context).pop(),
@@ -120,7 +119,7 @@ class _MovieListScreenState extends State<MovieListScreen> {
             showNoMoreItemsIndicatorAsGridChild: false,
             pagingController: _pagingController,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              childAspectRatio: _screenWidth >= 900 ? 0.56666 : 0.66666,
+              childAspectRatio: screenWidth >= 900 ? 0.56666 : 0.66666,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
               crossAxisCount: columns,
@@ -131,7 +130,7 @@ class _MovieListScreenState extends State<MovieListScreen> {
                   Navigation().navigateToMoviesInfoPage(
                     context: context,
                     movieId: item.id.toString(),
-                    screenWidth: _screenWidth,
+                    screenWidth: screenWidth,
                   );
                 },
                 child: MovieCard(

@@ -36,11 +36,11 @@ class BlogViewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double _screenWidth = MediaQuery.of(context).size.width;
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: tealishBlue,
+      backgroundColor: black1,
       appBar: AppBar(
-        backgroundColor: tealishBlue,
+        backgroundColor: black1,
         title: const Text(
           "Blog",
           style: TextStyle(fontSize: 22, color: WHITE),
@@ -74,7 +74,7 @@ class BlogViewScreen extends StatelessWidget {
             alignment: Alignment.center,
             child: Text(
               "1.2K",
-              style: TextStyle(fontSize: 12, color: WHITE.withOpacity(0.6)),
+              style: TextStyle(fontSize: 12, color: WHITE.withValues(alpha: 0.6)),
             ),
           ),
           InkWell(
@@ -98,7 +98,7 @@ class BlogViewScreen extends StatelessWidget {
             child: Container(
               margin: const EdgeInsets.all(10),
               alignment: Alignment.center,
-              width: _screenWidth >= 750 ? 800 : double.infinity,
+              width: screenWidth >= 750 ? 800 : double.infinity,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -113,7 +113,7 @@ class BlogViewScreen extends StatelessWidget {
                           text: "  .  ",
                           style: TextStyle(
                               fontSize: 33,
-                              color: GREY.withOpacity(0.5),
+                              color: GREY.withValues(alpha: 0.5),
                               fontFamily: montserratSemiBold),
                         ),
                         const TextSpan(
@@ -122,7 +122,7 @@ class BlogViewScreen extends StatelessWidget {
                       ],
                       style: TextStyle(
                           fontSize: 13,
-                          color: GREY.withOpacity(0.5),
+                          color: GREY.withValues(alpha: 0.5),
                           fontFamily: montserratSemiBold),
                     ),
                   ),
@@ -131,7 +131,7 @@ class BlogViewScreen extends StatelessWidget {
                     BlogConstants.doctorStrange,
                     style: TextStyle(
                         fontSize: 20,
-                        color: WHITE.withOpacity(0.8),
+                        color: WHITE.withValues(alpha: 0.8),
                         fontFamily: montserratMedium),
                   ),
                   const SizedBox(height: 20),
@@ -169,7 +169,7 @@ class BlogViewScreen extends StatelessWidget {
                     BlogConstants.doctorStrangeTitle2,
                     style: TextStyle(
                         fontSize: 20,
-                        color: WHITE.withOpacity(0.8),
+                        color: WHITE.withValues(alpha: 0.8),
                         fontFamily: montserratMedium),
                   ),
                   const SizedBox(height: 20),
@@ -192,7 +192,7 @@ class BlogViewScreen extends StatelessWidget {
                       BlogConstants.doctorStrangeSubTitle2,
                       style: TextStyle(
                           fontSize: 18,
-                          color: WHITE.withOpacity(0.8),
+                          color: WHITE.withValues(alpha: 0.8),
                           fontFamily: montserratMedium),
                     ),
                   ),

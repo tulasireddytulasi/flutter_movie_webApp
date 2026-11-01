@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:moviewebapp/app/models/popular_actors_model.dart';
-
 import 'package:moviewebapp/app/core/responses/movie_apis.dart';
 import 'package:moviewebapp/app/core/utils/colors.dart';
 import 'package:moviewebapp/app/core/utils/screen_sizes.dart';
@@ -54,17 +53,17 @@ class _AllActorsPageState extends State<AllActorsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final _screenWidth = MediaQuery.of(context).size.width;
-    final bool _screenWidth600 = _screenWidth >= 600;
-    layoutData = getActorCircularWidgetWidth(screenWidth: _screenWidth);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final bool screenWidth600 = screenWidth >= 600;
+    layoutData = getActorCircularWidgetWidth(screenWidth: screenWidth);
     columns = layoutData["columns"].toInt();
     ratio = layoutData["ratio"];
 
     return Scaffold(
-      backgroundColor: tealishBlue,
+      backgroundColor: black1,
       appBar: widget.showAppBar
           ? AppBar(
-              backgroundColor: tealishBlue,
+              backgroundColor: black1,
               leading: widget.showLeadingIcon
                   ? IconButton(
                       onPressed: () {},
@@ -86,7 +85,7 @@ class _AllActorsPageState extends State<AllActorsPage> {
             padding: const EdgeInsets.all(10.0),
             width: 1200,
             alignment: Alignment.topCenter,
-            child: _screenWidth600 ? PagedGridView<int, Actors>(
+            child: screenWidth600 ? PagedGridView<int, Actors>(
               showNewPageProgressIndicatorAsGridChild: false,
               showNewPageErrorIndicatorAsGridChild: false,
               showNoMoreItemsIndicatorAsGridChild: false,
