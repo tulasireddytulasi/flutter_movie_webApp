@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:html' as html;
-import 'dart:ui' as ui;
+import 'dart:ui_web' as ui;
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class YouTubePlayerHTML extends StatefulWidget {
@@ -12,35 +12,49 @@ class YouTubePlayerHTML extends StatefulWidget {
 }
 
 class _YouTubePlayerHTMLState extends State<YouTubePlayerHTML> {
+  static int _nextViewId = 0;
+  late final String _viewType;
+  late final html.IFrameElement _iframeElement;
+
   @override
-  Widget build(BuildContext context) {
-    final iframeElement = html.IFrameElement()
+  void initState() {
+    super.initState();
+    _viewType = 'youtube-player-${_nextViewId++}';
+    _iframeElement = html.IFrameElement()
       ..width = '100%'
       ..height = '100%'
       ..src = 'https://www.youtube.com/embed/${widget.videoId}'
       ..style.border = 'none';
-    // ignore: undefined_prefixed_name
     ui.platformViewRegistry.registerViewFactory(
-      widget.videoId,
-      (int viewId) => iframeElement,
+      _viewType,
+      (int viewId) => _iframeElement,
     );
+  }
 
+  @override
+  void didUpdateWidget(covariant YouTubePlayerHTML oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.videoId != widget.videoId) {
+      _iframeElement.src = 'https://www.youtube.com/embed/${widget.videoId}';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final _width = MediaQuery.of(context).size.width;
     final _height = MediaQuery.of(context).size.height;
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1B2230),
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(
             Icons.arrow_back,
-            color: Colors.white,
           ),
         ),
-        title: const Text(
+        title: Text(
           "YouTube player",
-          style: TextStyle(fontSize: 18, color: Colors.white),
+          style: Theme.of(context).appBarTheme.titleTextStyle,
         ),
       ),
       body: kIsWeb
@@ -49,7 +63,7 @@ class _YouTubePlayerHTMLState extends State<YouTubePlayerHTML> {
                 width: _width,
                 height: _height,
                 child: HtmlElementView(
-                  viewType: widget.videoId,
+                  viewType: _viewType,
                 ),
               ),
             )

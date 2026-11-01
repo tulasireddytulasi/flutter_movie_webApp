@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 
 AppBar customAppBar({required BuildContext context, required VoidCallback voidCallback}) {
   final textTheme = Theme.of(context).textTheme;
   return AppBar(
-    backgroundColor: tealishBlue,
     elevation: 1,
     leading: InkWell(
       onTap: () => Navigator.of(context).pop(),
@@ -13,7 +11,6 @@ AppBar customAppBar({required BuildContext context, required VoidCallback voidCa
         margin: const EdgeInsets.all(10),
         child: const Icon(
           Icons.arrow_back,
-          color: WHITE,
         ),
       ),
     ),
@@ -25,7 +22,6 @@ AppBar customAppBar({required BuildContext context, required VoidCallback voidCa
           margin: const EdgeInsets.all(10),
           child: const Icon(
             Icons.share,
-            color: WHITE,
           ),
         ),
       ),
@@ -39,7 +35,7 @@ AppBar customAppBar({required BuildContext context, required VoidCallback voidCa
             // Perform some other action
           }
         },
-        color: WHITE,
+        color: Theme.of(context).colorScheme.surfaceContainer,
         elevation: 4,
         itemBuilder: (BuildContext context) {
           return [
@@ -69,12 +65,12 @@ AppBar customAppBar({required BuildContext context, required VoidCallback voidCa
             ),
           ];
         },
-        icon: const Icon(Icons.more_vert_outlined, color: WHITE),
+        icon: const Icon(Icons.more_vert_outlined),
       ),
     ],
-    title: const Text(
+    title: Text(
       "Image Preview",
-      style: TextStyle(fontSize: 18, color: WHITE),
+      style: Theme.of(context).appBarTheme.titleTextStyle,
     ),
   );
 }

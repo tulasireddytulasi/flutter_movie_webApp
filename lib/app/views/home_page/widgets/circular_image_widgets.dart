@@ -4,7 +4,6 @@ import 'package:moviewebapp/app/views/bottom_sheet/bottom_sheet_widget.dart';
 import 'package:moviewebapp/app/providers/navigation_provider.dart';
 import 'package:moviewebapp/app/core/responses/api_constants.dart';
 import 'package:moviewebapp/app/core/utils/assets_path.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 import 'package:provider/provider.dart';
 
 class ActorCircularCard extends StatefulWidget {
@@ -13,16 +12,12 @@ class ActorCircularCard extends StatefulWidget {
     required this.castImage,
     required this.actorName,
     required this.actorId,
-    this.textColor = GREY,
-    this.textSize = 14,
     required this.ratio,
   }) : super(key: key);
 
   final String actorId;
   final String castImage;
   final String actorName;
-  final Color textColor;
-  final double textSize;
   final double ratio;
 
   @override
@@ -35,7 +30,8 @@ class _ActorCircularCardState extends State<ActorCircularCard> {
     final double _screenWidth = MediaQuery.of(context).size.width;
     return Column(
       children: [
-        Consumer<NavigationProvider>(builder: (context, navigationProvider, child) {
+        Consumer<NavigationProvider>(
+            builder: (context, navigationProvider, child) {
           return InkWell(
             onTap: () {
               if (_screenWidth <= 786) {
@@ -54,12 +50,17 @@ class _ActorCircularCardState extends State<ActorCircularCard> {
                       minWidth: 900,
                       minHeight: 300,
                     ),
-                    backgroundColor: Colors.transparent,
+                    backgroundColor: Theme.of(context)
+                        .colorScheme
+                        .surface
+                        .withValues(alpha: 0),
                     isScrollControlled: true,
                     isDismissible: true,
                     enableDrag: false,
                     elevation: 0,
-                    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(50))),
+                    shape: const RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(50))),
                     builder: (context) {
                       return Container(
                         constraints: const BoxConstraints(
@@ -71,7 +72,8 @@ class _ActorCircularCardState extends State<ActorCircularCard> {
                     });
               }
             },
-            hoverColor: Colors.transparent,
+            hoverColor:
+                Theme.of(context).colorScheme.surface.withValues(alpha: 0),
             onHover: (val) {
               if (val) {
                 navigationProvider.setOnHover(actorID: widget.actorId);
@@ -83,8 +85,11 @@ class _ActorCircularCardState extends State<ActorCircularCard> {
               decoration: BoxDecoration(
                 border: Border.all(
                   color: widget.actorId == navigationProvider.actorID
-                      ? navigationProvider.borderColor
-                      : Colors.transparent,
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context)
+                          .colorScheme
+                          .surface
+                          .withValues(alpha: 0),
                   width: 5,
                 ),
                 borderRadius: const BorderRadius.all(Radius.circular(100)),
@@ -92,7 +97,9 @@ class _ActorCircularCardState extends State<ActorCircularCard> {
               child: widget.castImage.isNotEmpty
                   ? CircleAvatar(
                       radius: widget.ratio,
-                      backgroundImage: NetworkImage(ApiConstants.movieImageBaseUrlw500 + widget.castImage),
+                      backgroundImage: NetworkImage(
+                          ApiConstants.movieImageBaseUrlw500 +
+                              widget.castImage),
                     )
                   : CircleAvatar(
                       radius: widget.ratio,
@@ -109,10 +116,7 @@ class _ActorCircularCardState extends State<ActorCircularCard> {
             width: 100,
             child: Text(
               widget.actorName,
-              style: TextStyle(
-                fontSize: widget.textSize,
-                color: widget.textColor,
-              ),
+              style: Theme.of(context).textTheme.bodySmall,
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
               textAlign: TextAlign.center,

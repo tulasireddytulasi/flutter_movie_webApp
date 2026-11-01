@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
-import 'package:moviewebapp/app/core/utils/constants.dart';
 
 class BlogCard extends StatelessWidget {
   const BlogCard({
@@ -21,7 +19,11 @@ class BlogCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(8),
       margin: const EdgeInsets.all(10),
-      decoration: BoxDecoration(color: BLACK.withValues(alpha: 0.2)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -32,8 +34,7 @@ class BlogCard extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             blogTitle,
-            style: const TextStyle(
-                fontSize: 14, color: GREY, fontFamily: montserratMedium),
+            style: Theme.of(context).textTheme.titleMedium,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -47,19 +48,13 @@ class BlogCard extends StatelessWidget {
                     ),
                     TextSpan(
                       text: " . ",
-                      style: TextStyle(
-                          fontSize: 33,
-                          color: GREY.withValues(alpha: 0.5),
-                          fontFamily: montserratSemiBold),
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
                     TextSpan(
                       text: blogReadTime,
                     ),
                   ],
-                  style: TextStyle(
-                      fontSize: 13,
-                      color: GREY.withValues(alpha: 0.5),
-                      fontFamily: montserratSemiBold),
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
               ),
               InkWell(
@@ -68,10 +63,7 @@ class BlogCard extends StatelessWidget {
                   padding: const EdgeInsets.all(0.0),
                   child: Text(
                     "...",
-                    style: TextStyle(
-                        fontSize: 34,
-                        color: GREY.withValues(alpha: 0.5),
-                        fontFamily: montserratSemiBold),
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
               ),

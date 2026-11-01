@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:moviewebapp/app/core/animations/ripple_animation.dart';
 import 'package:moviewebapp/app/models/get_movies_model.dart';
 import 'package:moviewebapp/app/views/all_movies_screen/widgets/movie_card.dart';
 import 'package:moviewebapp/app/providers/movies_provider.dart';
 import 'package:moviewebapp/app/core/responses/movie_apis.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 import 'package:moviewebapp/app/core/utils/common_functions.dart';
 import 'package:moviewebapp/app/core/utils/constants.dart';
 import 'package:moviewebapp/app/core/utils/navigation/navigation.dart';
@@ -61,9 +59,11 @@ class _MovieHomePageState extends State<MovieHomePage> {
       _title.add(element.title ?? "");
       _img.add(element.posterPath ?? "");
       _movieId.add(element.id.toString());
-      final String movieReleaseDate = element.releaseDate?.toIso8601String() ?? Constants.time00;
+      final String movieReleaseDate =
+          element.releaseDate?.toIso8601String() ?? Constants.time00;
       if (movieReleaseDate.isNotEmpty && movieReleaseDate != Constants.time00) {
-        String movieReleaseDateValue = DateFormat("yyyy-MM-dd").format(element.releaseDate!).toString();
+        String movieReleaseDateValue =
+            DateFormat("yyyy-MM-dd").format(element.releaseDate!).toString();
         _date.add(movieReleaseDateValue);
       } else {
         _date.add(Constants.time00);
@@ -86,10 +86,7 @@ class _MovieHomePageState extends State<MovieHomePage> {
     return Center(
       child: Text(
         text,
-        style: const TextStyle(
-          fontSize: 14,
-          color: BLACK,
-        ),
+        style: Theme.of(context).textTheme.bodyMedium,
       ),
     );
   }
@@ -110,28 +107,26 @@ class _MovieHomePageState extends State<MovieHomePage> {
 
     return Consumer<MoviesProvider>(builder: (context, movieProvider, child) {
       return Scaffold(
-        backgroundColor: tealishBlue,
         appBar: _screenWidth600
             ? null
             : AppBar(
-                backgroundColor: tealishBlue,
                 leading: IconButton(
                   onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(
                     Icons.arrow_back,
-                    color: WHITE,
                   ),
                 ),
                 title: Text(
                   widget.screenTitle,
-                  style: const TextStyle(fontSize: 18, color: WHITE),
+                  style: Theme.of(context).appBarTheme.titleTextStyle,
                 ),
               ),
         body: FutureBuilder(
             future: _moviesData,
-            builder: (BuildContext context, AsyncSnapshot<MoviesModel> snapshot) {
+            builder:
+                (BuildContext context, AsyncSnapshot<MoviesModel> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const RipplesAnimation();
+                return const Center(child: CircularProgressIndicator());
               } else if (snapshot.connectionState == ConnectionState.done) {
                 if (snapshot.hasError) {
                   return messageText(text: "Error");
@@ -139,8 +134,8 @@ class _MovieHomePageState extends State<MovieHomePage> {
                   clearData();
                   processData(moviesModel: snapshot.data!);
                   return Container(
-                    // decoration: BoxDecoration(border: Border.all(color: RED, width: 1)),
-                    padding: EdgeInsets.only(left: leftPadding, right: rightPadding),
+                    padding:
+                        EdgeInsets.only(left: leftPadding, right: rightPadding),
                     child: GridView.builder(
                         scrollDirection: Axis.vertical,
                         physics: const ScrollPhysics(),

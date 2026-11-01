@@ -42,14 +42,13 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: customAppBar(
         context: context,
         voidCallback: () async {
           if (widget.actorsImages.isEmpty || widget.actorNames.isEmpty) return;
-          final String nameVal = widget.actorNames.length == 1 ? widget.actorNames.first : widget.actorNames[currentIndex];
+          final String nameVal =
+              widget.actorNames.length == 1 ? widget.actorNames.first : widget.actorNames[currentIndex];
           final String name = "Actor Name: $nameVal";
           await universalProvider.shareImage(
             baseUrl: ApiConstants.movieImageBaseUrlw500,

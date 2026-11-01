@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviewebapp/app/core/utils/assets_path.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 
 class MovieAppBar extends StatefulWidget {
   final int defaultSelectedIndex;
@@ -56,7 +55,7 @@ class _MovieAppBarState extends State<MovieAppBar> {
             boxShadow: selectedIndex == 0
                 ? [
                     BoxShadow(
-                      color: PURE_BLACK.withValues(alpha: 0.4),
+                      color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.4),
                       offset: const Offset(0, -4),
                       blurRadius: 10,
                     ),
@@ -90,7 +89,12 @@ class _MovieAppBarState extends State<MovieAppBar> {
                   padding: const EdgeInsets.only(left: 14, right: 14),
                   child: SvgPicture.asset(
                     searchIcon,
-                    colorFilter: ColorFilter.mode(selectedIndex == 1 ? WHITE : GREY, BlendMode.srcIn),
+                    colorFilter: ColorFilter.mode(
+                      selectedIndex == 1
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
+                      BlendMode.srcIn,
+                    ),
                     semanticsLabel: 'A movie search icon',
                     width: 38,
                     height: 38,
@@ -114,11 +118,11 @@ class _MovieAppBarState extends State<MovieAppBar> {
         margin: const EdgeInsets.only(right: 20),
         child: Text(
           title,
-          style: TextStyle(
-            fontSize: 18,
-            fontFamily: "d",
-            color: index == selectedIndex ? WHITE : GREY,
-          ),
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: index == selectedIndex
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
         ),
       ),
     );

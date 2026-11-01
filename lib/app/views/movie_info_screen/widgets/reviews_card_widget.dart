@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 
 class ReviewCard extends StatelessWidget {
   const ReviewCard({
@@ -21,7 +20,8 @@ class ReviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: WHITE.withValues(alpha: 0.5), width: 1),
+        color: Theme.of(context).cardColor,
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant, width: 1),
         borderRadius: const BorderRadius.all(Radius.circular(8)),
       ),
       margin: const EdgeInsets.all(10),
@@ -44,13 +44,12 @@ class ReviewCard extends StatelessWidget {
               if (avatarImg.isEmpty)
                 CircleAvatar(
                   radius: 20,
-                  backgroundColor: WHITE,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   child: Text(
                     authorName.isNotEmpty ? authorName[0] : "U",
-                    style: const TextStyle(
-                        fontSize: 18,
-                        color: BLACK,
-                        fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
                   ),
                 ),
               const SizedBox(width: 10),
@@ -60,18 +59,12 @@ class ReviewCard extends StatelessWidget {
                 children: [
                   Text(
                     authorName,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: WHITE,
-                    ),
+                    style: Theme.of(context).textTheme.titleSmall,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     reviewDate,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: WHITE.withValues(alpha: 0.5),
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
               ),
@@ -80,10 +73,7 @@ class ReviewCard extends StatelessWidget {
                 selected: false,
                 label: Text(
                   reviewerRating,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: BLACK,
-                  ),
+                  style: Theme.of(context).textTheme.labelLarge,
                 ),
                 avatar: const Icon(Icons.star, size: 20),
                 padding: const EdgeInsets.all(4),
@@ -98,10 +88,7 @@ class ReviewCard extends StatelessWidget {
               reviewContent,
               maxLines: 5,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 14,
-                color: WHITE,
-              ),
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
         ],

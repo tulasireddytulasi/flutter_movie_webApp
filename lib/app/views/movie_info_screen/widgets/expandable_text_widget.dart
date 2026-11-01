@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 
 class ExpandableText extends StatefulWidget {
   final String text;
-  final TextStyle textStyle;
+  final TextStyle? textStyle;
   final int maxLines;
 
   const ExpandableText({
     Key? key,
     required this.text,
-    required this.textStyle,
+    this.textStyle,
     required this.maxLines,
   }) : super(key: key);
 
@@ -24,6 +23,12 @@ class _ExpandableTextState extends State<ExpandableText> {
   void initState() {
     super.initState();
     _isExpanded = ValueNotifier<bool>(false);
+  }
+
+  @override
+  void dispose() {
+    _isExpanded.dispose();
+    super.dispose();
   }
 
   @override
@@ -47,14 +52,14 @@ class _ExpandableTextState extends State<ExpandableText> {
                 widget.text,
                 showCursor: true,
                 scrollPhysics: const NeverScrollableScrollPhysics(),
-                cursorColor: BLUE,
-                maxLines:
-                    _isExpanded.value ? null : widget.maxLines, // Change the number of lines in the collapsed state
+                cursorColor: Theme.of(context).colorScheme.primary,
+                maxLines: _isExpanded.value ? null : widget.maxLines,
+                // Change the number of lines in the collapsed state
                 onTap: () {
                   _isExpanded.value = _isExpanded.value ? false : true;
                   print("_isExpanded: ${_isExpanded.value}");
                 },
-                style: widget.textStyle,
+                style: widget.textStyle ?? Theme.of(context).textTheme.bodyMedium,
               ),
             ),
           ),

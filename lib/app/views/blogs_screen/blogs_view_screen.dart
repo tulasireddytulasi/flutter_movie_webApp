@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/core/utils/assets_path.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
-import 'package:moviewebapp/app/core/utils/constants.dart';
 import 'package:moviewebapp/app/core/utils/constants/constants.dart';
 
 class BlogViewScreen extends StatelessWidget {
@@ -38,12 +36,10 @@ class BlogViewScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: black1,
       appBar: AppBar(
-        backgroundColor: black1,
-        title: const Text(
+        title: Text(
           "Blog",
-          style: TextStyle(fontSize: 22, color: WHITE),
+          style: Theme.of(context).appBarTheme.titleTextStyle,
         ),
         leading: InkWell(
           onTap: () {
@@ -54,7 +50,6 @@ class BlogViewScreen extends StatelessWidget {
             margin: const EdgeInsets.all(10),
             child: const Icon(
               Icons.arrow_back,
-              color: WHITE,
             ),
           ),
         ),
@@ -66,7 +61,6 @@ class BlogViewScreen extends StatelessWidget {
               margin: const EdgeInsets.only(top: 10, bottom: 10, right: 2),
               child: const Icon(
                 Icons.heart_broken,
-                color: WHITE,
               ),
             ),
           ),
@@ -74,7 +68,7 @@ class BlogViewScreen extends StatelessWidget {
             alignment: Alignment.center,
             child: Text(
               "1.2K",
-              style: TextStyle(fontSize: 12, color: WHITE.withValues(alpha: 0.6)),
+              style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
           InkWell(
@@ -84,7 +78,6 @@ class BlogViewScreen extends StatelessWidget {
               margin: const EdgeInsets.all(10),
               child: const Icon(
                 Icons.share,
-                color: WHITE,
               ),
             ),
           ),
@@ -111,45 +104,29 @@ class BlogViewScreen extends StatelessWidget {
                         ),
                         TextSpan(
                           text: "  .  ",
-                          style: TextStyle(
-                              fontSize: 33,
-                              color: GREY.withValues(alpha: 0.5),
-                              fontFamily: montserratSemiBold),
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
                         const TextSpan(
                           text: "10 Mins read",
                         ),
                       ],
-                      style: TextStyle(
-                          fontSize: 13,
-                          color: GREY.withValues(alpha: 0.5),
-                          fontFamily: montserratSemiBold),
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),
                   const SizedBox(height: 20),
                   Text(
                     BlogConstants.doctorStrange,
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: WHITE.withValues(alpha: 0.8),
-                        fontFamily: montserratMedium),
+                    style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     BlogConstants.doctorStrangeSubTitle,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: GREY,
-                      fontFamily: montserratMedium,
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     "BY MARVEL",
-                    style: TextStyle(
-                        fontSize: 14,
-                        color: WHITE,
-                        fontFamily: montserratMedium),
+                    style: Theme.of(context).textTheme.labelLarge,
                   ),
                   const SizedBox(height: 20),
                   Container(
@@ -157,29 +134,19 @@ class BlogViewScreen extends StatelessWidget {
                     child: Image.asset(doctorStrange3BlogPoster),
                   ),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     BlogConstants.doctorStrangeMainContent,
-                    style: TextStyle(
-                        fontSize: 14,
-                        color: GREY,
-                        fontFamily: montserratMedium),
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 20),
                   Text(
                     BlogConstants.doctorStrangeTitle2,
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: WHITE.withValues(alpha: 0.8),
-                        fontFamily: montserratMedium),
+                    style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     BlogConstants.doctorStrangePara1,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: GREY,
-                      fontFamily: montserratMedium,
-                    ),
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 20),
                   Container(
@@ -190,20 +157,14 @@ class BlogViewScreen extends StatelessWidget {
                     margin: const EdgeInsets.only(top: 20),
                     child: Text(
                       BlogConstants.doctorStrangeSubTitle2,
-                      style: TextStyle(
-                          fontSize: 18,
-                          color: WHITE.withValues(alpha: 0.8),
-                          fontFamily: montserratMedium),
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
                   Container(
                     margin: const EdgeInsets.only(top: 20),
-                    child: const Text(
+                    child: Text(
                       BlogConstants.doctorStrangePara2,
-                      style: TextStyle(
-                          fontSize: 14,
-                          color: GREY,
-                          fontFamily: montserratMedium),
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ),
                   const SizedBox(height: 100),

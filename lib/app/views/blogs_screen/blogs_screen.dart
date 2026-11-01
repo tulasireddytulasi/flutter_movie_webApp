@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/views/blogs_screen/blogs_view_screen.dart';
 import 'package:moviewebapp/app/views/blogs_screen/dummy_data.dart';
 import 'package:moviewebapp/app/views/blogs_screen/widgets/blod_card.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
-import 'package:moviewebapp/app/core/utils/styles.dart';
 
 class BlogsScreen extends StatefulWidget {
   const BlogsScreen({Key? key, required this.showAppBar}) : super(key: key);
@@ -16,15 +14,13 @@ class BlogsScreen extends StatefulWidget {
 class _BlogsScreenState extends State<BlogsScreen> {
   @override
   Widget build(BuildContext context) {
-    final double _screenWidth = MediaQuery.of(context).size.width;
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: black1,
       appBar: widget.showAppBar
           ? AppBar(
-              backgroundColor: tealishBlue,
-              title: const Text(
+              title: Text(
                 "Marvel Blogs",
-                style: semiBoldGrey30,
+                style: Theme.of(context).appBarTheme.titleTextStyle,
               ),
             )
           : null,
@@ -36,7 +32,7 @@ class _BlogsScreenState extends State<BlogsScreen> {
             child: Container(
               margin: const EdgeInsets.all(10),
               alignment: Alignment.center,
-              width: _screenWidth >= 750 ? 800 : double.infinity,
+              width: screenWidth >= 750 ? 800 : double.infinity,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,

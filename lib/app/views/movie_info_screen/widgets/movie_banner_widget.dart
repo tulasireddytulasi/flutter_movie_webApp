@@ -3,13 +3,13 @@ import 'package:moviewebapp/app/providers/movie_info_provider.dart';
 import 'package:moviewebapp/app/providers/movies_provider.dart';
 import 'package:moviewebapp/app/core/responses/api_constants.dart';
 import 'package:moviewebapp/app/core/utils/assets_path.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 import 'package:moviewebapp/app/core/utils/common_functions.dart';
 import 'package:provider/provider.dart';
 
 class MovieBannerWidget extends StatefulWidget {
   final String movieBannerImage;
   final bool showBanner;
+
   const MovieBannerWidget({Key? key, required this.movieBannerImage, required this.showBanner}) : super(key: key);
 
   @override
@@ -28,10 +28,14 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
             margin: const EdgeInsets.all(0),
             child: ShaderMask(
               shaderCallback: (rect) {
-                return const LinearGradient(
+                return LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [pickledBlueWood, pickledBlueWood, Colors.transparent],
+                  colors: [
+                    Theme.of(context).colorScheme.surface,
+                    Theme.of(context).colorScheme.surface,
+                    Theme.of(context).colorScheme.surface.withValues(alpha: 0),
+                  ],
                 ).createShader(
                   Rect.fromLTRB(0, 1, rect.width, rect.height),
                 );
@@ -49,13 +53,13 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
                           ApiConstants.movieImageBaseUrlw1280 + widget.movieBannerImage,
                           width: getBottomSheetWidth(screenWidth: screenWidth) + 30,
                           fit: BoxFit.cover,
-                          key: UniqueKey(),
+                          key: ValueKey(widget.movieBannerImage),
                         )
                       : Image.asset(
                           movieBackDrop2,
                           width: getBottomSheetWidth(screenWidth: screenWidth) + 30,
                           fit: BoxFit.cover,
-                          key: UniqueKey(),
+                          key: const ValueKey('fallback-banner'),
                         ),
                 ),
               ),
@@ -71,13 +75,16 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
                 Navigator.of(context).pop();
               },
               child: Container(
-                decoration:
-                    BoxDecoration(border: Border.all(color: BLACK, width: 2), shape: BoxShape.circle, color: BLACK),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Theme.of(context).colorScheme.outlineVariant, width: 2),
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                ),
                 padding: const EdgeInsets.all(2),
                 margin: const EdgeInsets.all(10),
-                child: const Icon(
+                child: Icon(
                   Icons.clear,
-                  color: WHITE,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ),
@@ -103,11 +110,15 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
                 }
               },
               child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  shape: BoxShape.circle,
+                ),
                 padding: const EdgeInsets.all(2),
                 margin: const EdgeInsets.all(10),
-                child: const Icon(
+                child: Icon(
                   Icons.arrow_back,
-                  color: WHITE,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ),
@@ -123,6 +134,7 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
 class ImageViewWidget extends StatelessWidget {
   final String url;
   final double width;
+
   const ImageViewWidget({Key? key, required this.url, required this.width}) : super(key: key);
 
   @override

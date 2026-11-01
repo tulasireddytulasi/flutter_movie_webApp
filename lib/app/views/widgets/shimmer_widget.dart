@@ -18,8 +18,8 @@ class _ShimmerWidgetState extends State<ShimmerWidget> {
       child: SizedBox(
         //height: getSimilarMoviesSectionHeight(screenSize: _screenWidth),
         child: Shimmer.fromColors(
-          baseColor: Colors.white,
-          highlightColor: Colors.grey.withValues(alpha: 0.6),
+          baseColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+          highlightColor: Theme.of(context).colorScheme.surfaceContainerLow,
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
@@ -28,12 +28,12 @@ class _ShimmerWidgetState extends State<ShimmerWidget> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: List.generate(
                 6,
-                    (index) => Container(
+                (index) => Container(
                   margin: const EdgeInsets.only(left: 8.0, right: 8.0),
                   width: getSimilarMoviesImageWidth(screenSize: _screenWidth),
                   height: getSimilarMoviesImageHeight(screenSize: _screenWidth),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.4),
+                    color: Theme.of(context).colorScheme.onSurface,
                     borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                   ),
                 ),

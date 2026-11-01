@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/views/widgets/similar_movie_card_widget.dart';
 import 'package:moviewebapp/app/providers/movies_provider.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 import 'package:provider/provider.dart';
 
 class SimilarMovies extends StatefulWidget {
-  const SimilarMovies(
-      {Key? key, this.scrollController, this.canNavigateToNewPage = false})
-      : super(key: key);
+  const SimilarMovies({Key? key, this.scrollController, this.canNavigateToNewPage = false}) : super(key: key);
   final ScrollController? scrollController;
   final bool canNavigateToNewPage;
 
@@ -27,8 +24,7 @@ class _SimilarMoviesState extends State<SimilarMovies> {
               itemBuilder: (BuildContext context, int index) {
                 return SimilarMovieCard(
                   actorName: movieProvider.similarMovieTitle[index].toString(),
-                  castImage:
-                      movieProvider.similarMoviePosters[index].toString(),
+                  castImage: movieProvider.similarMoviePosters[index].toString(),
                   movieId: movieProvider.similarMovieId[index].toString(),
                   scrollController: widget.scrollController,
                   canNavigateToNewPage: widget.canNavigateToNewPage,
@@ -37,9 +33,9 @@ class _SimilarMoviesState extends State<SimilarMovies> {
           : Container(
               width: double.infinity,
               alignment: Alignment.center,
-              child: const Text(
+              child: Text(
                 "No Similar Movies",
-                style: TextStyle(fontSize: 18, color: GREY),
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
             );
     });

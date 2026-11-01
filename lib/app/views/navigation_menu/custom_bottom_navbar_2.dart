@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   final int defaultSelectedIndex;
@@ -42,11 +41,11 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     }
 
     return Container(
-      decoration: const BoxDecoration(
-        color: tealishBlue,
+      decoration: BoxDecoration(
+        color: Theme.of(context).bottomNavigationBarTheme.backgroundColor,
         border: Border(
           top: BorderSide(
-            color: BLACK,
+            color: Theme.of(context).colorScheme.outlineVariant,
             width: 1.0,
           ),
         ),
@@ -78,16 +77,25 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
               const SizedBox(height: 10),
               CircleAvatar(
                 radius: 20,
-                backgroundColor: index == _selectedIndex ? LIGHTWHITE : tealishBlue.withValues(alpha: 0.5),
+                backgroundColor: index == _selectedIndex
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.surfaceContainerHighest,
                 child: Image.asset(
                   imgUrl,
                   width: 22,
                   height: 22,
-                  color: index == _selectedIndex ? BLACK : WHITE,
+                  color: index == _selectedIndex
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: 2),
-              Text(title, style: const TextStyle(fontSize: 10, color: WHITE)),
+              Text(title,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: index == _selectedIndex
+                            ? Theme.of(context).bottomNavigationBarTheme.selectedItemColor
+                            : Theme.of(context).bottomNavigationBarTheme.unselectedItemColor,
+                      )),
             ],
           ),
         ),

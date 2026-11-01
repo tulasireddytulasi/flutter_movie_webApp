@@ -3,7 +3,6 @@ import 'package:moviewebapp/app/views/actors_page/actors_page.dart';
 import 'package:moviewebapp/app/providers/movie_info_provider.dart';
 import 'package:moviewebapp/app/providers/navigation_provider.dart';
 import 'package:moviewebapp/app/core/responses/api_constants.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 import 'package:moviewebapp/app/core/utils/common_functions.dart';
 import 'package:provider/provider.dart';
 
@@ -17,8 +16,7 @@ class Cast extends StatefulWidget {
 class _CastState extends State<Cast> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<MovieInfoProvider>(
-        builder: (context, movieInfoProvider, child) {
+    return Consumer<MovieInfoProvider>(builder: (context, movieInfoProvider, child) {
       return ListView.builder(
           itemCount: movieInfoProvider.actorImageUrl.length,
           scrollDirection: Axis.horizontal,
@@ -35,12 +33,7 @@ class _CastState extends State<Cast> {
 }
 
 class CastCard extends StatefulWidget {
-  const CastCard(
-      {Key? key,
-      required this.castImage,
-      required this.actorName,
-      required this.actorId})
-      : super(key: key);
+  const CastCard({Key? key, required this.castImage, required this.actorName, required this.actorId}) : super(key: key);
 
   final String actorId;
   final String castImage;
@@ -56,8 +49,7 @@ class _CastCardState extends State<CastCard> {
     final double _screenWidth = MediaQuery.of(context).size.width;
     return Column(
       children: [
-        Consumer<NavigationProvider>(
-            builder: (context, navigationProvider, child) {
+        Consumer<NavigationProvider>(builder: (context, navigationProvider, child) {
           return InkWell(
             onTap: () {
               if (_screenWidth >= 600) {
@@ -66,23 +58,20 @@ class _CastCardState extends State<CastCard> {
               } else {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ActorsPage(actorId: widget.actorId)),
+                  MaterialPageRoute(builder: (context) => ActorsPage(actorId: widget.actorId)),
                 );
               }
             },
             child: Container(
               padding: const EdgeInsets.only(left: 10),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(
-                    getActorImageRadius(screenSize: _screenWidth)),
+                borderRadius: BorderRadius.circular(getActorImageRadius(screenSize: _screenWidth)),
                 child: Image.network(
                   ApiConstants.movieImageBaseUrlw500 + widget.castImage,
                   height: getActorImageSize(screenSize: _screenWidth),
                   width: getActorImageSize(screenSize: _screenWidth),
                   fit: BoxFit.cover,
-                  color: Colors.grey,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   colorBlendMode: BlendMode.saturation,
                 ),
               ),
@@ -95,7 +84,7 @@ class _CastCardState extends State<CastCard> {
           width: 100,
           child: Text(
             widget.actorName,
-            style: const TextStyle(fontSize: 12, color: GREY),
+            style: Theme.of(context).textTheme.bodySmall,
             maxLines: 2,
             textAlign: TextAlign.center,
           ),

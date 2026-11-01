@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class MobileYouTubePlayer extends StatefulWidget {
@@ -45,20 +44,17 @@ class _MobileYouTubePlayerState extends State<MobileYouTubePlayer> {
       aspectRatio: 16 / 9,
       builder: (context, player) {
         return Scaffold(
-          backgroundColor: PURE_BLACK,
           appBar: screenOrientation == Orientation.portrait
               ? AppBar(
-                  backgroundColor: tealishBlue,
                   leading: IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(
                       Icons.arrow_back,
-                      color: Colors.white,
                     ),
                   ),
-                  title: const Text(
+                  title: Text(
                     "YouTube player",
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+                    style: Theme.of(context).appBarTheme.titleTextStyle,
                   ),
                 )
               : null,

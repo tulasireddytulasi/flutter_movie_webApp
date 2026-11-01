@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/core/responses/api_constants.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 import 'package:moviewebapp/app/core/utils/common_functions.dart';
 import 'package:moviewebapp/app/core/utils/navigation/navigation.dart';
 
@@ -53,7 +52,7 @@ class SimilarMovieCard extends StatelessWidget {
           width: 100,
           child: Text(
             actorName,
-            style: const TextStyle(fontSize: 12, color: GREY),
+            style: Theme.of(context).textTheme.bodySmall,
             maxLines: 2,
             textAlign: TextAlign.start,
           ),

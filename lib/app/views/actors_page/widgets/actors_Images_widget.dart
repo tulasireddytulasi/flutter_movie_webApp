@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/providers/actors_info_provider.dart';
 import 'package:moviewebapp/app/core/responses/api_constants.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 import 'package:moviewebapp/app/core/utils/common_functions.dart';
 import 'package:moviewebapp/app/views/image_preview_screen/image_preview_screen.dart';
 import 'package:provider/provider.dart';
@@ -42,9 +41,9 @@ class _ActorsImagesState extends State<ActorsImages> {
           : Container(
               width: double.infinity,
               alignment: Alignment.center,
-              child: const Text(
+              child: Text(
                 "No Actor Images",
-                style: TextStyle(fontSize: 18, color: GREY),
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
             );
     });

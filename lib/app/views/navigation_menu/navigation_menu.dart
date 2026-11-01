@@ -9,9 +9,9 @@ import 'package:moviewebapp/app/views/navigation_menu/movie_app_bar.dart';
 import 'package:moviewebapp/app/views/profile_screen/profile_screen.dart';
 import 'package:moviewebapp/app/providers/dashboard_provider.dart';
 import 'package:moviewebapp/app/core/utils/assets_path.dart';
+
 // import 'package:moviewebapp/app/views/twitter_ui/twitter_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 
 class NavigationMenu extends StatefulWidget {
   const NavigationMenu({Key? key}) : super(key: key);
@@ -79,7 +79,8 @@ class _NavigationMenuState extends State<NavigationMenu> {
                 preferredSize: const Size.fromHeight(60.0),
                 child: MovieAppBar(
                   defaultSelectedIndex: 0,
-                  backGroundColor: black1, //dashBoardProvider.appBarBackgroundColor,
+                  backGroundColor:
+                      Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).colorScheme.surface,
                   onChange: (value) {
                     setMovies(screenNo: value, showAppBar: false, showLeadingIcon: false);
                     _currentScreenNo.value = value;

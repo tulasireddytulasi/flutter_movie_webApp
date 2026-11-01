@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -9,11 +8,9 @@ import 'package:moviewebapp/app/views/all_movies_screen/widgets/movie_card.dart'
 import 'package:moviewebapp/app/providers/movies_provider.dart';
 
 import 'package:moviewebapp/app/core/responses/movie_apis.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 import 'package:moviewebapp/app/core/utils/common_functions.dart';
 import 'package:moviewebapp/app/core/utils/constants.dart';
 import 'package:moviewebapp/app/core/utils/navigation/navigation.dart';
-import 'package:moviewebapp/app/core/utils/styles.dart';
 import 'package:provider/provider.dart';
 
 class MovieListScreen extends StatefulWidget {
@@ -38,7 +35,8 @@ class MovieListScreen extends StatefulWidget {
 }
 
 class _MovieListScreenState extends State<MovieListScreen> {
-  final PagingController<int, Movies> _pagingController = PagingController(firstPageKey: 1);
+  final PagingController<int, Movies> _pagingController =
+      PagingController(firstPageKey: 1);
 
   int columns = 5;
   Map<String, dynamic> layoutData = {};
@@ -77,7 +75,8 @@ class _MovieListScreenState extends State<MovieListScreen> {
   String getReleaseDate({required DateTime? releaseDate}) {
     String movieReleaseDateValue;
     if (releaseDate != null) {
-      movieReleaseDateValue = DateFormat("yyyy-MM-dd").format(releaseDate).toString();
+      movieReleaseDateValue =
+          DateFormat("yyyy-MM-dd").format(releaseDate).toString();
       return movieReleaseDateValue;
     } else {
       return Constants.time00;
@@ -93,22 +92,19 @@ class _MovieListScreenState extends State<MovieListScreen> {
 
     return Consumer<MoviesProvider>(builder: (context, movieProvider, child) {
       return Scaffold(
-        backgroundColor: black1,
         appBar: widget.showAppBar
             ? AppBar(
-                backgroundColor: black1,
                 leading: widget.showLeadingIcon
                     ? IconButton(
                         onPressed: () => Navigator.of(context).pop(),
                         icon: const Icon(
                           Icons.arrow_back,
-                          color: WHITE,
                         ),
                       )
                     : null,
                 title: Text(
                   widget.screenTitle,
-                  style: semiBoldGrey30,
+                  style: Theme.of(context).appBarTheme.titleTextStyle,
                 ),
               )
             : null,
@@ -136,7 +132,8 @@ class _MovieListScreenState extends State<MovieListScreen> {
                 child: MovieCard(
                   movieName: item.title ?? "",
                   imageURL: item.posterPath ?? "",
-                  movieReleaseDate: getReleaseDate(releaseDate: item.releaseDate),
+                  movieReleaseDate:
+                      getReleaseDate(releaseDate: item.releaseDate),
                   isMovieTitleVisible: isMovieTitleVisible,
                 ),
               ),

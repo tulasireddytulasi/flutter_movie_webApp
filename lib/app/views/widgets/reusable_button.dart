@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
-import 'package:moviewebapp/app/core/utils/constants.dart';
 
 class ProceedButton extends StatelessWidget {
   final String? text;
@@ -8,9 +6,10 @@ class ProceedButton extends StatelessWidget {
   final double buttonWidth;
   final double topPadding;
   final double bottomPadding;
-  final Color color;
+  final Color? color;
   final double borderRadius;
   final Widget? childWidget;
+
   const ProceedButton({
     Key? key,
     this.text,
@@ -18,10 +17,11 @@ class ProceedButton extends StatelessWidget {
     required this.buttonWidth,
     this.topPadding = 14,
     this.bottomPadding = 14,
-    this.color = Colors.green,
+    this.color,
     this.borderRadius = 25,
     this.childWidget,
   }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -35,16 +35,12 @@ class ProceedButton extends StatelessWidget {
           child: childWidget ??
               Text(
                 text ?? "",
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontFamily: montserratRegular,
-                  color: WHITE,
-                ),
               ),
         ),
         style: ElevatedButton.styleFrom(
           elevation: 0,
-          backgroundColor: color,
+          backgroundColor: color ?? Theme.of(context).colorScheme.primary,
+          foregroundColor: Theme.of(context).colorScheme.onPrimary,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius)),
         ),
       ),

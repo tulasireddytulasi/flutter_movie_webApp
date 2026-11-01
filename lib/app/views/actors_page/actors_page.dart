@@ -6,7 +6,6 @@ import 'package:moviewebapp/app/views/actors_page/widgets/lable_widget.dart';
 import 'package:moviewebapp/app/views/movie_info_screen/widgets/expandable_text_widget.dart';
 import 'package:moviewebapp/app/providers/actors_info_provider.dart';
 import 'package:moviewebapp/app/core/responses/api_constants.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 import 'package:moviewebapp/app/core/utils/common_functions.dart';
 import 'package:provider/provider.dart';
 
@@ -38,11 +37,10 @@ class _ActorsPageState extends State<ActorsPage> {
     final double _screenWidth = MediaQuery.of(context).size.width;
     final bool _webView = _screenWidth >= 600;
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Theme.of(context).colorScheme.surface.withValues(alpha: 0),
       appBar: _webView
           ? null
           : AppBar(
-              backgroundColor: black1,
               elevation: 1,
               leading: InkWell(
                 onTap: () {
@@ -53,7 +51,6 @@ class _ActorsPageState extends State<ActorsPage> {
                   margin: const EdgeInsets.all(10),
                   child: const Icon(
                     Icons.arrow_back,
-                    color: WHITE,
                   ),
                 ),
               ),
@@ -76,14 +73,13 @@ class _ActorsPageState extends State<ActorsPage> {
                     margin: const EdgeInsets.all(10),
                     child: const Icon(
                       Icons.share,
-                      color: WHITE,
                     ),
                   ),
                 ),
               ],
-              title: const Text(
+              title: Text(
                 "Actors Screen",
-                style: TextStyle(fontSize: 18, color: WHITE),
+                style: Theme.of(context).appBarTheme.titleTextStyle,
               ),
             ),
       body: SafeArea(
@@ -103,7 +99,7 @@ class _ActorsPageState extends State<ActorsPage> {
                     topRight: Radius.circular(_webView ? 20 : 0),
                     topLeft: Radius.circular(_webView ? 20 : 0),
                   ),
-                  color: black1,
+                  color: Theme.of(context).colorScheme.surface,
                   shape: BoxShape.rectangle,
                 ),
                 child: Column(
@@ -125,7 +121,6 @@ class _ActorsPageState extends State<ActorsPage> {
                               margin: const EdgeInsets.all(10),
                               child: const Icon(
                                 Icons.arrow_back,
-                                color: WHITE,
                               ),
                             ),
                           ),
@@ -134,12 +129,15 @@ class _ActorsPageState extends State<ActorsPage> {
                               Navigator.of(context).pop();
                             },
                             child: Container(
-                              decoration: BoxDecoration(border: Border.all(color: BLACK, width: 2), shape: BoxShape.circle, color: BLACK),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Theme.of(context).colorScheme.outlineVariant, width: 2),
+                                shape: BoxShape.circle,
+                                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                              ),
                               padding: const EdgeInsets.all(2),
                               margin: const EdgeInsets.all(10),
                               child: const Icon(
                                 Icons.clear,
-                                color: WHITE,
                               ),
                             ),
                           ),
@@ -171,16 +169,13 @@ class _ActorsPageState extends State<ActorsPage> {
                           children: [
                             Container(
                               width: _pageWidth / 2,
-                              // decoration: BoxDecoration(
-                              //   border: Border.all(color: WHITE, width: 1),
-                              // ),
                               margin: const EdgeInsets.only(left: 0, top: 20),
                               child: Text(
                                 actorsInfoProvider.actorName,
                                 softWrap: true,
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 4,
-                                style: const TextStyle(fontSize: 18, color: WHITE, fontWeight: FontWeight.bold),
+                                style: Theme.of(context).textTheme.titleLarge,
                               ),
                             ),
                             Row(
@@ -189,15 +184,12 @@ class _ActorsPageState extends State<ActorsPage> {
                               children: [
                                 Container(
                                   padding: const EdgeInsets.only(left: 0, right: 5, top: 10, bottom: 0),
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.map,
-                                    color: GREY,
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                                   ),
                                 ),
                                 Container(
-                                  // decoration: BoxDecoration(
-                                  //   border: Border.all(color: WHITE, width: 1),
-                                  // ),
                                   margin: const EdgeInsets.only(left: 0, top: 10),
                                   child: RichText(
                                     softWrap: true,
@@ -206,11 +198,11 @@ class _ActorsPageState extends State<ActorsPage> {
                                     text: TextSpan(children: [
                                       TextSpan(
                                         text: actorsInfoProvider.totalMoviesActed.toString(),
-                                        style: const TextStyle(fontSize: 18, color: WHITE, fontWeight: FontWeight.bold),
+                                        style: Theme.of(context).textTheme.titleLarge,
                                       ),
-                                      const TextSpan(
+                                      TextSpan(
                                         text: " movies",
-                                        style: TextStyle(fontSize: 18, color: WHITE, fontWeight: FontWeight.normal),
+                                        style: Theme.of(context).textTheme.bodyLarge,
                                       ),
                                     ]),
                                   ),
@@ -219,16 +211,13 @@ class _ActorsPageState extends State<ActorsPage> {
                             ),
                             Container(
                               width: 55,
-                              // decoration: BoxDecoration(
-                              //   border: Border.all(color: WHITE, width: 1),
-                              // ),
                               margin: const EdgeInsets.only(left: 0, top: 10),
                               child: Text(
                                 actorsInfoProvider.role,
                                 softWrap: true,
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 4,
-                                style: const TextStyle(fontSize: 18, color: WHITE, fontWeight: FontWeight.bold),
+                                style: Theme.of(context).textTheme.titleMedium,
                               ),
                             ),
                           ],
@@ -237,7 +226,7 @@ class _ActorsPageState extends State<ActorsPage> {
                     ),
                     Divider(
                       height: 1,
-                      color: GREY.withValues(alpha: 0.5),
+                      color: Theme.of(context).dividerColor,
                       thickness: 1,
                     ),
                     Container(
@@ -249,9 +238,9 @@ class _ActorsPageState extends State<ActorsPage> {
                         children: [
                           Container(
                             padding: const EdgeInsets.only(left: 20, right: 5),
-                            child: const Icon(
+                            child: Icon(
                               Icons.map,
-                              color: GREY,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
                           ),
                           SizedBox(
@@ -264,11 +253,11 @@ class _ActorsPageState extends State<ActorsPage> {
                                 children: [
                                   TextSpan(
                                     text: actorsInfoProvider.dob,
-                                    style: const TextStyle(fontSize: 14, color: WHITE, fontWeight: FontWeight.normal),
+                                    style: Theme.of(context).textTheme.bodyMedium,
                                   ),
                                   TextSpan(
                                     text: " in ${actorsInfoProvider.birthPlace}",
-                                    style: const TextStyle(fontSize: 14, color: WHITE, fontWeight: FontWeight.normal),
+                                    style: Theme.of(context).textTheme.bodyMedium,
                                   ),
                                 ],
                               ),
@@ -280,23 +269,19 @@ class _ActorsPageState extends State<ActorsPage> {
                     Container(
                       width: _pageWidth / 1,
                       decoration: BoxDecoration(
-                        // border: Border.all(color: WHITE, width: 1),
-                        color: GREY.withValues(alpha: 0.1),
+                        color: Theme.of(context).colorScheme.surfaceContainer,
                       ),
                       padding: const EdgeInsets.only(left: 20, top: 20, right: 10, bottom: 15),
                       child: ExpandableText(
                         text: actorsInfoProvider.biography,
                         maxLines: 3,
-                        textStyle: const TextStyle(
-                          fontSize: 14,
-                          color: WHITE,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        textStyle: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ),
                     const LabelWidget(label: "Actor Pics"),
                     Container(
-                      height: _screenWidth >= 900 ? 250 : 130, //getSimilarMoviesSectionHeight(screenSize: _screenWidth),
+                      height:
+                          _screenWidth >= 900 ? 250 : 130, //getSimilarMoviesSectionHeight(screenSize: _screenWidth),
                       margin: const EdgeInsets.only(top: 0, left: 10),
                       child: ActorsImages(),
                     ),

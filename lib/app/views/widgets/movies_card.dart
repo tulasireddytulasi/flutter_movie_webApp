@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/core/responses/api_constants.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 import 'package:moviewebapp/app/core/utils/common_functions.dart';
 
 class MoviesCard extends StatefulWidget {
@@ -22,7 +21,6 @@ class MoviesCard extends StatefulWidget {
 }
 
 class _MoviesCardState extends State<MoviesCard> {
-  Color? movieCardColor;
   final ValueNotifier<BlendMode?> _blendMode = ValueNotifier<BlendMode?>(null);
 
   @override
@@ -33,10 +31,8 @@ class _MoviesCardState extends State<MoviesCard> {
       onTap: () => widget.voidCallback(),
       onHover: (onHover) {
         if (onHover) {
-          movieCardColor = Colors.grey;
           _blendMode.value = BlendMode.saturation;
         } else {
-          movieCardColor = null;
           _blendMode.value = null;
         }
       },
@@ -54,7 +50,7 @@ class _MoviesCardState extends State<MoviesCard> {
                       width: getSimilarMoviesImageWidth(screenSize: _screenWidth),
                       height: getSimilarMoviesImageHeight(screenSize: _screenWidth),
                       fit: BoxFit.cover,
-                      color: movieCardColor,
+                      color: blendMode == null ? null : Theme.of(context).colorScheme.onSurfaceVariant,
                       colorBlendMode: blendMode,
                     ),
                   ),
@@ -66,7 +62,7 @@ class _MoviesCardState extends State<MoviesCard> {
             width: 100,
             child: Text(
               widget.movieName,
-              style: const TextStyle(fontSize: 12, color: GREY),
+              style: Theme.of(context).textTheme.bodySmall,
               maxLines: 2,
               textAlign: TextAlign.start,
             ),

@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
         scrollBehavior: MyCustomScrollBehavior(),
         theme: AppTheme.getLightTheme(),
         darkTheme: AppTheme.getDarkTheme(),
-        themeMode: ThemeMode.light,
+        themeMode: ThemeMode.dark,
         home: const NavigationMenu(),
       ),
     );

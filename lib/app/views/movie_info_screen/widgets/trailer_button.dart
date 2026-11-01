@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 
 class TrailerButtons extends StatefulWidget {
   const TrailerButtons({Key? key}) : super(key: key);
@@ -14,24 +13,26 @@ class _TrailerButtonsState extends State<TrailerButtons> {
     return Container(
       margin: const EdgeInsets.only(top: 20, bottom: 20, left: 10),
       alignment: Alignment.center,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
           shape: BoxShape.rectangle,
           borderRadius: BorderRadius.all(Radius.circular(5)),
-          color: Colors.blue),
+          color: Theme.of(context).colorScheme.primary),
       height: 50,
       width: 200,
       child: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
+        children: [
           Icon(
             Icons.play_arrow,
-            color: WHITE,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
-          SizedBox(width: 5),
+          const SizedBox(width: 5),
           Text(
             "PLAY NOW",
-            style: TextStyle(fontSize: 20, color: WHITE),
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
           ),
         ],
       ),

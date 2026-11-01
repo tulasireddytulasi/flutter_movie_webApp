@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   final int defaultSelectedIndex;
@@ -36,11 +35,11 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
 
   @override
   Widget build(BuildContext context) {
-    final double _screenWidth = MediaQuery.of(context).size.width;
-    List<Widget> _navBarItemList = [];
+    final double screenWidth = MediaQuery.of(context).size.width;
+    List<Widget> navBarItemList = [];
 
     for (var i = 0; i < _titles.length; i++) {
-      _navBarItemList.add(buildNavBarItem(
+      navBarItemList.add(buildNavBarItem(
         i,
         _titles[i],
         _imgurls[i],
@@ -53,11 +52,11 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         borderRadius: BorderRadius.circular(10),
         child: Container(
           padding: const EdgeInsets.all(2),
-          width: _screenWidth >= 600 ? 500 : null,
-          color: Colors.white.withValues(alpha: 0.3127763439360118),
+          width: screenWidth >= 600 ? 500 : null,
+          color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.85),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: _navBarItemList,
+            children: navBarItemList,
           ),
         ),
       ),
@@ -97,12 +96,16 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
               ),
               CircleAvatar(
                 radius: 20,
-                backgroundColor: index == _selectedIndex ? RANGOON_GREEN : LIGHTWHITE,
+                backgroundColor: index == _selectedIndex
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.surfaceContainerHighest,
                 child: Image.asset(
                   imgUrl,
                   width: 22,
                   height: 22,
-                  color: index == _selectedIndex ? WHITE : BLACK,
+                  color: index == _selectedIndex
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
               const SizedBox(
@@ -110,10 +113,11 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
               ),
               Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 10,
-                  color: WHITE,
-                ),
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: index == _selectedIndex
+                          ? Theme.of(context).bottomNavigationBarTheme.selectedItemColor
+                          : Theme.of(context).bottomNavigationBarTheme.unselectedItemColor,
+                    ),
               ),
             ],
           ),

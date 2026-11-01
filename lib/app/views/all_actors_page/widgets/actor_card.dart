@@ -5,7 +5,6 @@ import 'package:moviewebapp/app/views/all_actors_page/widgets/user_card.dart';
 import 'package:moviewebapp/app/views/bottom_sheet/bottom_sheet_widget.dart';
 import 'package:moviewebapp/app/providers/navigation_provider.dart';
 import 'package:moviewebapp/app/core/responses/api_constants.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 import 'package:provider/provider.dart';
 
 class ActorCard extends StatefulWidget {
@@ -14,8 +13,6 @@ class ActorCard extends StatefulWidget {
     required this.castImage,
     required this.actorName,
     required this.actorId,
-    this.textColor = GREY,
-    this.textSize = 14,
     required this.ratio,
     required this.genderId,
     required this.knownFor,
@@ -25,8 +22,6 @@ class ActorCard extends StatefulWidget {
   final String actorId;
   final String castImage;
   final String actorName;
-  final Color textColor;
-  final double textSize;
   final double ratio;
   final int genderId;
   final String knownFor;
@@ -59,7 +54,7 @@ class _ActorCardState extends State<ActorCard> {
                   minWidth: 900,
                   minHeight: 300,
                 ),
-                backgroundColor: Colors.transparent,
+                backgroundColor: Theme.of(context).colorScheme.surface.withValues(alpha: 0),
                 isScrollControlled: true,
                 isDismissible: true,
                 enableDrag: false,
@@ -76,7 +71,7 @@ class _ActorCardState extends State<ActorCard> {
                 });
           }
         },
-        hoverColor: Colors.transparent,
+        hoverColor: Theme.of(context).colorScheme.surface.withValues(alpha: 0),
         onHover: (val) {
           if (val) {
             navigationProvider.setOnHover(actorID: widget.actorId);

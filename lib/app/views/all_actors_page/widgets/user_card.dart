@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/core/utils/assets_path.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 
 class UserCard extends StatelessWidget {
   const UserCard({
@@ -24,7 +23,6 @@ class UserCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size.width;
     return Card(
-      color: pickledBlueWood,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,7 +39,7 @@ class UserCard extends StatelessWidget {
                     ? Container(
                         width: 100,
                         height: 100,
-                        color: WHITE,
+                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
                       )
                     : Hero(
                         tag: name,
@@ -69,17 +67,13 @@ class UserCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      width: size/2,
+                      width: size / 2,
                       child: Text(
                         name,
                         softWrap: true,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          color: WHITE,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -87,11 +81,7 @@ class UserCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       softWrap: true,
                       text: TextSpan(
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: WHITE,
-                          fontWeight: FontWeight.normal,
-                        ),
+                        style: Theme.of(context).textTheme.bodyMedium,
                         children: [
                           TextSpan(text: "$knownFor, "),
                           TextSpan(text: gender),
@@ -101,11 +91,7 @@ class UserCard extends StatelessWidget {
                     const SizedBox(height: 10),
                     Text(
                       "Popularity: $popularity",
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: WHITE,
-                        fontWeight: FontWeight.normal,
-                      ),
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
                 ),
@@ -115,7 +101,7 @@ class UserCard extends StatelessWidget {
           (info != null && info!.isNotEmpty)
               ? const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Divider(color: GREY, height: 1, thickness: 1),
+                  child: Divider(height: 1, thickness: 1),
                 )
               : const SizedBox.shrink(),
           (info != null && info!.isNotEmpty)
@@ -126,11 +112,7 @@ class UserCard extends StatelessWidget {
                     softWrap: true,
                     maxLines: 5,
                     text: TextSpan(
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: WHITE,
-                        fontWeight: FontWeight.normal,
-                      ),
+                      style: Theme.of(context).textTheme.bodyMedium,
                       children: [
                         const TextSpan(text: "Biography: "),
                         TextSpan(text: info),
