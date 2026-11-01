@@ -82,7 +82,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
                 preferredSize: const Size.fromHeight(60.0),
                 child: MovieAppBar(
                   defaultSelectedIndex: 0,
-                  backGroundColor: tealishBlue, //dashBoardProvider.appBarBackgroundColor,
+                  backGroundColor: black1, //dashBoardProvider.appBarBackgroundColor,
                   onChange: (value) {
                     setMovies(screenNo: value, showAppBar: false, showLeadingIcon: false);
                     _currentScreenNo.value = value;

@@ -14,6 +14,7 @@ class HorizontalMovieCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final bool screenWidth600 = screenWidth >= 600;
+    final bool screenWidth1000 = screenWidth <= 1000;
     final String posterSize = screenWidth600 ? ApiConstants.movieImageBaseUrlw1280 : ApiConstants.movieImageBaseUrlw500;
     // Horizontal Card Image URL
     const imageUrl = 'https://image.tmdb.org/t/p/w1280//8CIgg0gCHIYz0jrx5IcZEOy047J.jpg';
@@ -36,7 +37,7 @@ class HorizontalMovieCard extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       child: AspectRatio(
-        aspectRatio: 16 / 9,
+        aspectRatio: screenWidth1000 ? 16 / 9 : 21 / 9,
         child: Stack(
           fit: StackFit.expand,
           children: [

@@ -27,14 +27,14 @@ class _MovieBannerCardState extends State<MovieBannerCard> {
     return LayoutBuilder(
       builder: (context, constraints) {
         // Responsive switch: Horizontal for tablet/desktop, Vertical for mobile
-        bool isDesktopOrTablet = constraints.maxWidth > 700;
+        bool isDesktopOrTablet = constraints.maxWidth > 600;
         return Padding(
           padding: const EdgeInsets.only(bottom: 20.0, left: 20.0, right: 20.0),
           child: Consumer<MoviesProvider>(builder: (context, moviesProvider, child) {
             final MoviesList? movieData = moviesProvider.movieBannerModel.moviesList?.first;
             return ConstrainedBox(
               constraints: BoxConstraints(
-                maxWidth: isDesktopOrTablet ? 1000 : 450,
+                maxWidth: isDesktopOrTablet ? double.infinity : 600,
               ),
               child: isDesktopOrTablet
                   ? HorizontalMovieCard(movieInfo: movieData)

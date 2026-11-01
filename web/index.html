@@ -19,6 +19,8 @@
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="A new Flutter project.">
+  <meta http-equiv="cross-origin-resource-policy" content="cross-origin">
+  <meta name="cross-origin-opener-policy" content="same-origin-allow-popups">
 
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +38,10 @@
   <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->
+  <script type="text/javascript">
+    window.flutterWebRenderer = "html";
+  </script>
+
   <script>
     var serviceWorkerVersion = "1.0.0";
     var scriptLoaded = false;
