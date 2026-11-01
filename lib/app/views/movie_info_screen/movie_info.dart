@@ -127,9 +127,6 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                         ),
                         Container(
                           height: getActorSectionHeight(screenSize: _screenWidth),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant, width: 1),
-                          ),
                           margin: const EdgeInsets.only(top: 20),
                           child: const Cast(),
                         ),
@@ -171,7 +168,9 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                                 width: 130,
                                 child: Text(
                                   "TRAILER",
-                                  style: Theme.of(context).textTheme.labelLarge,
+                                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                    fontSize: 20,
+                                  ),
                                 ),
                               ),
                             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviewebapp/app/theme/app_theme.dart';
 import 'package:moviewebapp/app/core/responses/api_constants.dart';
 import 'package:moviewebapp/app/core/utils/common_functions.dart';
 import 'package:moviewebapp/app/providers/movie_info_provider.dart';
@@ -19,7 +20,7 @@ class RatingWidget extends StatelessWidget {
           IconButton(
             icon: Icon(
               Icons.star,
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).extension<AppThemeColors>()!.ratingStar,
             ),
             onPressed: () {},
           ),

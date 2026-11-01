@@ -76,7 +76,6 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
               },
               child: Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: Theme.of(context).colorScheme.outlineVariant, width: 2),
                   shape: BoxShape.circle,
                   color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 ),

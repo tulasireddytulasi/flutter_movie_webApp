@@ -1,8 +1,32 @@
 import 'package:flutter/material.dart';
 
+@immutable
+class AppThemeColors extends ThemeExtension<AppThemeColors> {
+  const AppThemeColors({required this.ratingStar});
+
+  final Color ratingStar;
+
+  @override
+  AppThemeColors copyWith({Color? ratingStar}) {
+    return AppThemeColors(ratingStar: ratingStar ?? this.ratingStar);
+  }
+
+  @override
+  AppThemeColors lerp(covariant AppThemeColors? other, double t) {
+    if (other == null) return this;
+    return AppThemeColors(
+      ratingStar: Color.lerp(ratingStar, other.ratingStar, t)!,
+    );
+  }
+}
+
 /// Central theme configuration for Light and Dark modes
 /// All UI components should use colors and typography from Theme.of(context)
 class AppTheme {
+  static const _themeColors = AppThemeColors(
+    ratingStar: Color(0xFFFFDF61),
+  );
+
   /// Primary brand colors
   static const Color _primaryDark = Color(0xFF89cfbe);
   static const Color _primaryLight = Color(0xFF1B2230);
@@ -28,6 +52,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
+      extensions: const [_themeColors],
       primaryColor: _primaryLight,
       scaffoldBackgroundColor: _lightSurfaceDark,
       colorScheme: ColorScheme.light(
@@ -35,6 +60,8 @@ class AppTheme {
         primaryContainer: _primaryLight.withValues(alpha: 0.1),
         secondary: _primaryDark,
         secondaryContainer: _primaryDark.withValues(alpha: 0.1),
+        tertiary: Colors.blue,
+        onTertiary: Colors.white,
         surface: _lightSurfaceDark,
         surfaceContainer: _lightSurfaceLight,
         surfaceContainerHighest: _lightSurfaceLight,
@@ -181,6 +208,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
+      extensions: const [_themeColors],
       primaryColor: _primaryDark,
       scaffoldBackgroundColor: _darkSurfaceDark,
       colorScheme: ColorScheme.dark(
@@ -188,6 +216,8 @@ class AppTheme {
         primaryContainer: _primaryDark.withValues(alpha: 0.2),
         secondary: _primaryLight,
         secondaryContainer: _primaryLight.withValues(alpha: 0.2),
+        tertiary: Colors.blue,
+        onTertiary: Colors.white,
         surface: _darkSurfaceDark,
         surfaceContainer: _darkSurfaceMedium,
         surfaceContainerHighest: _darkSurfaceLight,
