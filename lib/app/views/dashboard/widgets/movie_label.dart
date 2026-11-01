@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 import 'package:moviewebapp/app/core/utils/constants.dart';
 
 class MovieLabel extends StatelessWidget {
@@ -11,6 +10,8 @@ class MovieLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screen = MediaQuery.of(context).size.width;
+    final theme = Theme.of(context);
+    
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -23,7 +24,7 @@ class MovieLabel extends StatelessWidget {
           child: Text(
             movieLabel,
             softWrap: true,
-            style: const TextStyle(fontSize: 18, color: WHITE),
+            style: theme.textTheme.headlineSmall,
           ),
         ),
         InkWell(
@@ -33,18 +34,18 @@ class MovieLabel extends StatelessWidget {
               Container(
                 alignment: Alignment.topLeft,
                 margin: const EdgeInsets.only(left: 15, top: 0),
-                child: const Text(
+                child: Text(
                   Constants.viewMore,
-                  style: TextStyle(fontSize: 14, color: WHITE),
+                  style: theme.textTheme.bodyMedium,
                 ),
               ),
               Container(
                 alignment: Alignment.topRight,
                 margin: const EdgeInsets.only(right: 15),
-                child: const Icon(
+                child: Icon(
                   Icons.chevron_right_outlined,
                   size: 24,
-                  color: WHITE,
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
             ],

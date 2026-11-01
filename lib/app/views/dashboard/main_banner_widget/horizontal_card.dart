@@ -12,13 +12,11 @@ class HorizontalMovieCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final double screenWidth = MediaQuery.of(context).size.width;
     final bool screenWidth600 = screenWidth >= 600;
     final bool screenWidth1000 = screenWidth <= 1000;
     final String posterSize = screenWidth600 ? ApiConstants.movieImageBaseUrlw1280 : ApiConstants.movieImageBaseUrlw500;
-    // Horizontal Card Image URL
-    const imageUrl = 'https://image.tmdb.org/t/p/w1280//8CIgg0gCHIYz0jrx5IcZEOy047J.jpg';
-    const titleImageUrl = 'https://image.tmdb.org/t/p/w500/kDdRAxIYPWwmhDqU8PgDPcwFEOt.png';
 
     final String id = movieInfo?.id ?? "";
     final List<String> genre = movieInfo?.genre ?? [];
@@ -33,7 +31,7 @@ class HorizontalMovieCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.15), width: 1),
+        border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.15), width: 1),
       ),
       clipBehavior: Clip.antiAlias,
       child: AspectRatio(
@@ -41,33 +39,18 @@ class HorizontalMovieCard extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            // Background Image using cached_network_image ^4.0.4
+            // Background Image
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: CachedNetworkImage(
                 imageUrl: posterImageUrl,
                 fit: BoxFit.cover,
-                placeholder: (context, url) => const Center(
-                  child: CircularProgressIndicator(color: Colors.white),
+                placeholder: (context, url) => Center(
+                  child: CircularProgressIndicator(color: theme.colorScheme.primary),
                 ),
-                errorWidget: (context, url, error) => const Icon(Icons.error, color: Colors.white),
+                errorWidget: (context, url, error) => Icon(Icons.error, color: theme.colorScheme.error),
               ),
             ),
-            // Gradient Overlay
-            // DecoratedBox(
-            //   decoration: BoxDecoration(
-            //     gradient: LinearGradient(
-            //       begin: Alignment.centerLeft,
-            //       end: Alignment.centerRight,
-            //       colors: [
-            //         Colors.black.withValues(alpha: 0.9),
-            //         Colors.black.withValues(alpha: 0.5),
-            //         Colors.transparent,
-            //       ],
-            //       stops: const [0.0, 0.5, 1.0],
-            //     ),
-            //   ),
-            // ),
             // Content
             Padding(
               padding: const EdgeInsets.all(36.0),
@@ -81,7 +64,7 @@ class HorizontalMovieCard extends StatelessWidget {
                     height: 80,
                     fit: BoxFit.contain,
                     placeholder: (context, url) => const SizedBox(height: 80),
-                    errorWidget: (context, url, error) => const Icon(Icons.broken_image, color: Colors.white54),
+                    errorWidget: (context, url, error) => Icon(Icons.broken_image, color: theme.colorScheme.onSurface.withValues(alpha: 0.54)),
                   ) : const SizedBox.shrink(),
                   const SizedBox(height: 14),
                   RichText(
@@ -94,23 +77,14 @@ class HorizontalMovieCard extends StatelessWidget {
                         (index) => TextSpan(
                           text: genreList.length - 1 != index ? "${genreList[index]} . " : genreList[index],
                           style: TextStyle(
-                            color: Colors.white70,
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
                           ),
-                          // style: const TextStyle(fontSize: 12, color: WHITE, fontWeight: FontWeight.normal),
                         ),
                       ),
                     ),
                   ),
-                  // const Text(
-                  //   'Film · Chilling · Scary · Supernatural Horror',
-                  //   style: TextStyle(
-                  //     color: Colors.white70,
-                  //     fontSize: 13,
-                  //     fontWeight: FontWeight.w500,
-                  //   ),
-                  // ),
                   const SizedBox(height: 24),
                   // Action Buttons Row
                   Row(
@@ -118,8 +92,8 @@ class HorizontalMovieCard extends StatelessWidget {
                       ElevatedButton(
                         onPressed: () => Navigation().youTubeScreen(context: context, youTubeVideoKey: youTubeVideoKey),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
+                          backgroundColor: theme.colorScheme.primary,
+                          foregroundColor: theme.scaffoldBackgroundColor,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 28,
                             vertical: 14,
@@ -129,16 +103,15 @@ class HorizontalMovieCard extends StatelessWidget {
                           ),
                           elevation: 0,
                         ),
-                        child: const Row(
+                        child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.play_arrow_rounded, size: 26),
-                            SizedBox(width: 8),
+                            const Icon(Icons.play_arrow_rounded, size: 26),
+                            const SizedBox(width: 8),
                             Text(
                               'Play Movie',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                              style: theme.textTheme.labelLarge?.copyWith(
+                                color: theme.scaffoldBackgroundColor,
                               ),
                             ),
                           ],
@@ -148,8 +121,8 @@ class HorizontalMovieCard extends StatelessWidget {
                       ElevatedButton(
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2C2C2C).withValues(alpha: 0.85),
-                          foregroundColor: Colors.white,
+                          backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.85),
+                          foregroundColor: theme.colorScheme.onSurface,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 28,
                             vertical: 14,
@@ -159,23 +132,21 @@ class HorizontalMovieCard extends StatelessWidget {
                           ),
                           elevation: 0,
                         ),
-                        child: const Row(
+                        child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.add, size: 22),
-                            SizedBox(width: 8),
+                            const Icon(Icons.add, size: 22),
+                            const SizedBox(width: 8),
                             Text(
                               'My List',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: theme.textTheme.labelLarge,
                             ),
                           ],
                         ),
                       ),
                     ],
                   ),
+                  const SizedBox(height: 14),
                 ],
               ),
             ),

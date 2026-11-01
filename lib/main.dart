@@ -6,11 +6,9 @@ import 'package:moviewebapp/app/providers/movie_info_provider.dart';
 import 'package:moviewebapp/app/providers/movies_provider.dart';
 import 'package:moviewebapp/app/providers/navigation_provider.dart';
 import 'package:moviewebapp/app/providers/universal_provider.dart';
+import 'package:moviewebapp/app/theme/app_theme.dart';
 import 'package:moviewebapp/app/views/navigation_menu/navigation_menu.dart';
-
 import 'package:provider/provider.dart';
-
-// import 'app/views/celebs_screen/celebs_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,19 +16,6 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
-  final MaterialColor mainAppColor = const MaterialColor(0xFF89cfbe, <int, Color>{
-    50: Color(0xFF1B2230),
-    100: Color(0xE61B2230),
-    200: Color(0xCC1B2230),
-    300: Color(0xB31B2230),
-    400: Color(0x991B2230),
-    500: Color(0x801B2230),
-    600: Color(0x661B2230),
-    700: Color(0x4D1B2230),
-    800: Color(0x331B2230),
-    900: Color(0x001B2230),
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +32,9 @@ class MyApp extends StatelessWidget {
         title: 'Movie Flutter Web App',
         debugShowCheckedModeBanner: false,
         scrollBehavior: MyCustomScrollBehavior(),
-        theme: ThemeData(
-          primarySwatch: mainAppColor,
-        ),
+        theme: AppTheme.getLightTheme(),
+        darkTheme: AppTheme.getDarkTheme(),
+        themeMode: ThemeMode.light,
         home: const NavigationMenu(),
       ),
     );

@@ -11,6 +11,7 @@ class VerticalMovieCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final double screenWidth = MediaQuery.of(context).size.width;
     final bool screenWidth600 = screenWidth >= 600;
     final String posterSize = screenWidth600 ? ApiConstants.movieImageBaseUrlw1280 : ApiConstants.movieImageBaseUrlw500;
@@ -26,7 +27,7 @@ class VerticalMovieCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.15), width: 1),
+        border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.15), width: 1),
       ),
       clipBehavior: Clip.antiAlias,
       child: AspectRatio(
@@ -34,33 +35,18 @@ class VerticalMovieCard extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            // Background Image using cached_network_image ^4.0.4
+            // Background Image
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: CachedNetworkImage(
                 imageUrl: posterImageUrl,
                 fit: BoxFit.cover,
-                placeholder: (context, url) => const Center(
-                  child: CircularProgressIndicator(color: Colors.white),
+                placeholder: (context, url) => Center(
+                  child: CircularProgressIndicator(color: theme.colorScheme.primary),
                 ),
-                errorWidget: (context, url, error) => const Icon(Icons.error, color: Colors.white),
+                errorWidget: (context, url, error) => Icon(Icons.error, color: theme.colorScheme.error),
               ),
             ),
-            // Gradient Overlay for readability
-            // DecoratedBox(
-            //   decoration: BoxDecoration(
-            //     gradient: LinearGradient(
-            //       begin: Alignment.topCenter,
-            //       end: Alignment.bottomCenter,
-            //       colors: [
-            //         Colors.transparent,
-            //         Colors.black.withValues(alpha: 0.2),
-            //         Colors.black.withValues(alpha: 0.85),
-            //       ],
-            //       stops: const [0.4, 0.65, 1.0],
-            //     ),
-            //   ),
-            // ),
             // Card Content
             Padding(
               padding: const EdgeInsets.all(20.0),
@@ -74,7 +60,7 @@ class VerticalMovieCard extends StatelessWidget {
                     height: 80,
                     fit: BoxFit.contain,
                     placeholder: (context, url) => const SizedBox(height: 80),
-                    errorWidget: (context, url, error) => const Icon(Icons.broken_image, color: Colors.white54),
+                    errorWidget: (context, url, error) => Icon(Icons.broken_image, color: theme.colorScheme.onSurface.withValues(alpha: 0.54)),
                   ),
                   const SizedBox(height: 14),
                   // Genres
@@ -89,7 +75,7 @@ class VerticalMovieCard extends StatelessWidget {
                             (index) => TextSpan(
                           text: genre.length - 1 != index ? "${genre[index]} . " : genre[index],
                           style: TextStyle(
-                            color: Colors.white70,
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                           ),
@@ -105,23 +91,22 @@ class VerticalMovieCard extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () => Navigation().youTubeScreen(context: context, youTubeVideoKey: youTubeVideoKey),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.black,
+                        backgroundColor: theme.colorScheme.primary,
+                        foregroundColor: theme.scaffoldBackgroundColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                         elevation: 0,
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.play_arrow_rounded, size: 28),
-                          SizedBox(width: 8),
+                          const Icon(Icons.play_arrow_rounded, size: 28),
+                          const SizedBox(width: 8),
                           Text(
                             'Play Movie',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                            style: theme.textTheme.labelLarge?.copyWith(
+                              color: theme.scaffoldBackgroundColor,
                             ),
                           ),
                         ],
@@ -136,24 +121,21 @@ class VerticalMovieCard extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2C2C2C).withValues(alpha: 0.85),
-                        foregroundColor: Colors.white,
+                        backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.85),
+                        foregroundColor: theme.colorScheme.onSurface,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                         elevation: 0,
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.add, size: 22),
-                          SizedBox(width: 8),
+                          const Icon(Icons.add, size: 22),
+                          const SizedBox(width: 8),
                           Text(
                             'My List',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: theme.textTheme.labelLarge,
                           ),
                         ],
                       ),

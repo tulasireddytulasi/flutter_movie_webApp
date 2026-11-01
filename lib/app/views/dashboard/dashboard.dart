@@ -6,7 +6,6 @@ import 'package:moviewebapp/app/views/all_movies_screen/movies_list.dart';
 import 'package:moviewebapp/app/views/dashboard/widgets/movie_label.dart';
 import 'package:moviewebapp/app/views/dashboard/widgets/movies_list.dart';
 import 'package:moviewebapp/app/providers/dashboard_provider.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 import 'package:moviewebapp/app/core/utils/common_functions.dart';
 import 'package:provider/provider.dart';
 import 'main_banner_widget/movie_banner_card.dart';
@@ -41,9 +40,9 @@ class _DashboardState extends State<Dashboard> {
     /// Update the state based on scroll position
     _isScrolled = _scrollController.position.pixels >= 100;
     if (_isScrolled) {
-      dashBoardProvider.setAppBarColorAndElevation(color: black1, elevation: 1.0);
+      dashBoardProvider.setAppBarColorAndElevation(color: Theme.of(context).scaffoldBackgroundColor, elevation: 1.0);
     } else {
-      dashBoardProvider.setAppBarColorAndElevation(color: black1, elevation: 0.0);
+      dashBoardProvider.setAppBarColorAndElevation(color: Theme.of(context).scaffoldBackgroundColor, elevation: 0.0);
     }
   }
 
@@ -58,28 +57,30 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final theme = Theme.of(context);
+    
     return Scaffold(
-      backgroundColor: black1,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: screenWidth < 750 ? AppBar(
         backgroundColor: dashBoardProvider.appBarBackgroundColor,
         elevation: dashBoardProvider.appBarElevation,
-        title: const Text(
+        title: Text(
           "TheFridayMovies",
-          style: semiBoldGrey30,
+          style: theme.textTheme.headlineMedium,
         ),
         actions: [
           IconButton(
             onPressed: () => showAlert(),
-            icon: const Icon(
+            icon: Icon(
               Icons.notifications,
-              color: Colors.white,
+              color: theme.colorScheme.onSurface,
             ),
           ),
           IconButton(
             onPressed: () => showAlert(),
-            icon: const Icon(
+            icon: Icon(
               Icons.person,
-              color: Colors.white,
+              color: theme.colorScheme.onSurface,
             ),
           ),
         ],

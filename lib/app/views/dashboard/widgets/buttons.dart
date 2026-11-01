@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/views/widgets/reusable_button.dart';
 import 'package:moviewebapp/app/core/utils/assets_path.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 import 'package:moviewebapp/app/core/utils/constants.dart';
 import 'package:moviewebapp/app/core/utils/navigation/navigation.dart';
 
@@ -13,6 +12,8 @@ class Buttons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double _screenWidth = MediaQuery.of(context).size.width;
+    final theme = Theme.of(context);
+    
     return Row(
       children: [
         ProceedButton(
@@ -25,14 +26,16 @@ class Buttons extends StatelessWidget {
                 child: Image.asset(pauseIcon, fit: BoxFit.cover, width: 18),
               ),
               const SizedBox(width: 10),
-              const Text(
+              Text(
                 "Play",
-                style: TextStyle(fontSize: 14, fontFamily: montserratSemiBold, color: PURE_BLACK),
+                style: theme.textTheme.labelLarge?.copyWith(
+                  color: theme.scaffoldBackgroundColor,
+                ),
               ),
             ],
           ),
           buttonWidth: 80,
-          color: WHITE,
+          color: theme.colorScheme.primary,
           borderRadius: 4,
           callingAPI: () => Navigation().youTubeScreen(context: context, youTubeVideoKey: youTubeVideoKey),
           bottomPadding: 10,
@@ -46,24 +49,20 @@ class Buttons extends StatelessWidget {
             children: [
               Container(
                 padding: const EdgeInsets.all(0.0),
-                child: const Icon(
+                child: Icon(
                   Icons.info_outline_rounded,
-                  color: WHITE,
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
               const SizedBox(width: 10),
-              const Text(
+              Text(
                 "More Info",
-                style: TextStyle(
-                  fontSize: 14,
-                  fontFamily: montserratSemiBold,
-                  color: WHITE,
-                ),
+                style: theme.textTheme.labelLarge,
               ),
             ],
           ),
           buttonWidth: 120,
-          color: WHITE.withValues(alpha: 0.1),
+          color: theme.colorScheme.primary.withValues(alpha: 0.1),
           borderRadius: 4,
           callingAPI: () {
             Navigation().navigateToMoviesInfoPage(
