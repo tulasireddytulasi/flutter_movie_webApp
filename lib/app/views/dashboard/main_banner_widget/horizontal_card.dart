@@ -41,13 +41,16 @@ class HorizontalMovieCard extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             // Background Image using cached_network_image ^4.0.4
-            CachedNetworkImage(
-              imageUrl: posterImageUrl,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => const Center(
-                child: CircularProgressIndicator(color: Colors.white),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: CachedNetworkImage(
+                imageUrl: posterImageUrl,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => const Center(
+                  child: CircularProgressIndicator(color: Colors.white),
+                ),
+                errorWidget: (context, url, error) => const Icon(Icons.error, color: Colors.white),
               ),
-              errorWidget: (context, url, error) => const Icon(Icons.error, color: Colors.white),
             ),
             // Gradient Overlay
             // DecoratedBox(

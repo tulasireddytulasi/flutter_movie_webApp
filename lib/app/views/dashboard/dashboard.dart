@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/core/utils/constants.dart';
+import 'package:moviewebapp/app/core/utils/styles.dart';
 import 'package:moviewebapp/app/views/all_movies_screen/movies_list.dart';
 // import 'package:moviewebapp/app/views/dashboard/main_banner_widget/main_banner.dart';
 import 'package:moviewebapp/app/views/dashboard/widgets/movie_label.dart';
@@ -40,17 +41,41 @@ class _DashboardState extends State<Dashboard> {
     /// Update the state based on scroll position
     _isScrolled = _scrollController.position.pixels >= 100;
     if (_isScrolled) {
-      dashBoardProvider.setAppBarColorAndElevation(color: tealishBlue, elevation: 1.0);
+      dashBoardProvider.setAppBarColorAndElevation(color: black1, elevation: 1.0);
     } else {
-      dashBoardProvider.setAppBarColorAndElevation(color: Colors.transparent, elevation: 0.0);
+      dashBoardProvider.setAppBarColorAndElevation(color: black1, elevation: 0.0);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final _screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: tealishBlue,
+      backgroundColor: black1,
+      appBar: AppBar(
+        backgroundColor: dashBoardProvider.appBarBackgroundColor,
+        elevation: dashBoardProvider.appBarElevation,
+        title: const Text(
+          "TheFridayMovies",
+          style: semiBoldGrey30,
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.notifications,
+              color: Colors.white,
+            ),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.person,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
       body: NotificationListener<ScrollNotification>(
         onNotification: (scrollNotification) {
           return true;
@@ -100,7 +125,7 @@ class _DashboardState extends State<Dashboard> {
                         },
                       ),
                       Container(
-                        height: getSimilarMoviesSectionHeight(screenSize: _screenWidth),
+                        height: getSimilarMoviesSectionHeight(screenSize: screenWidth),
                         margin: const EdgeInsets.only(top: 16),
                         child: MoviesList(
                           movieType: dashBoardProvider.moviesDataMapObject["$index"]["movieType"],

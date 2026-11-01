@@ -56,7 +56,7 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
               alignment: Alignment.bottomCenter,
               width: getBottomSheetWidth(screenWidth: _screenWidth) + 30,
               decoration: const BoxDecoration(
-                color: tealishBlue,
+                color: black1,
                 borderRadius: BorderRadius.only(
                   topRight: Radius.circular(20),
                   topLeft: Radius.circular(20),

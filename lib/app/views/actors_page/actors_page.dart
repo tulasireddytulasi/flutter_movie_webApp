@@ -42,7 +42,7 @@ class _ActorsPageState extends State<ActorsPage> {
       appBar: _webView
           ? null
           : AppBar(
-              backgroundColor: tealishBlue,
+              backgroundColor: black1,
               elevation: 1,
               leading: InkWell(
                 onTap: () {
@@ -103,7 +103,7 @@ class _ActorsPageState extends State<ActorsPage> {
                     topRight: Radius.circular(_webView ? 20 : 0),
                     topLeft: Radius.circular(_webView ? 20 : 0),
                   ),
-                  color: tealishBlue,
+                  color: black1,
                   shape: BoxShape.rectangle,
                 ),
                 child: Column(
