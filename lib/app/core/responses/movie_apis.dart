@@ -80,20 +80,24 @@ Future<List<Movies>> fetchMovies({
 Future<List<Movies>> searchMovies({
   required int pageNo,
   required String movieQuery,
-  required String withOriginalLanguage,
   String language = "en-US",
-  String? withGenres,
   bool includeAdult = false,
 }) async {
   try {
-    final String getSearchMoviesURL = "/search/movie?query=$movieQuery&api_key=${ApiConstants.apiKey}"
-        "&with_original_language=$withOriginalLanguage&language=$language&page=$pageNo"
-        "&with_genres=$withGenres&include_adult=$includeAdult";
+    final String query = Uri(
+      queryParameters: <String, String>{
+        'query': movieQuery,
+        'api_key': ApiConstants.apiKey,
+        'language': language,
+        'page': pageNo.toString(),
+        'include_adult': includeAdult.toString(),
+      },
+    ).query;
+    final String getSearchMoviesURL = "search/movie?$query";
     final response = await getMethod(url: getSearchMoviesURL);
     if (response.statusCode == 200) {
-      MoviesModel getSearchMoviesModel = getMoviesFromJson(response.body);
-      final List<Movies> movies = getSearchMoviesModel.results!;
-      return movies;
+      final MoviesModel getSearchMoviesModel = getMoviesFromJson(response.body);
+      return getSearchMoviesModel.results ?? <Movies>[];
     } else {
       throw Exception('Failed to load page');
     }
@@ -154,7 +158,7 @@ Future<MoviesModel> getSimilarMoviesListData({
   MoviesModel getSimilarMoviesModel;
   try {
     Response response =
-        await getSimilarMoviesList(movieId: movieId, pageNo: pageNo, withOriginalLanguage: withOriginalLanguage);
+      await getSimilarMoviesList(movieId: movieId, pageNo: pageNo, withOriginalLanguage: withOriginalLanguage);
     getSimilarMoviesModel = getMoviesFromJson(response.body);
     return getSimilarMoviesModel;
   } catch (error, stackTrace) {
