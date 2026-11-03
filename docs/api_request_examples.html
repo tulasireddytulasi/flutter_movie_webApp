@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Example requests and responses for the Movie Web App API helpers.">
+  <title>Movie Web App | API Request Examples</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1c292e;
+      --muted: #59696e;
+      --paper: #f3f6f4;
+      --surface: #fff;
+      --line: #d6e0dd;
+      --green: #0c766c;
+      --green-soft: #e0f2ed;
+      --red: #a94735;
+      --red-soft: #fae9e3;
+      --code: #17272b;
+      --code-ink: #e8f0ed;
+      --mono: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+      --sans: "Aptos", "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font: 16px/1.5 var(--sans);
+    }
+    .masthead {
+      padding: 38px max(22px, calc((100vw - 1120px) / 2)) 32px;
+      color: #fff;
+      background: var(--ink);
+      border-bottom: 5px solid var(--green);
+    }
+    .eyebrow { margin: 0 0 8px; color: #9cdbcb; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+    h1 { margin: 0 0 10px; font-size: clamp(30px, 4vw, 46px); line-height: 1.1; }
+    .masthead p:last-child { max-width: 760px; margin: 0; color: #d4dfdc; }
+    main { width: min(1120px, calc(100% - 36px)); margin: 26px auto 60px; }
+    .notice {
+      padding: 16px 18px;
+      margin-bottom: 22px;
+      background: var(--green-soft);
+      border-left: 4px solid var(--green);
+    }
+    .notice p { margin: 0; }
+    .notice p + p { margin-top: 6px; }
+    .index { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 30px; padding: 0; list-style: none; }
+    .index a { display: block; padding: 6px 9px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); text-decoration: none; font-size: 13px; }
+    .index a:hover, .index a:focus-visible { color: var(--green); border-color: var(--green); }
+    .example { padding: 26px 0 30px; border-top: 1px solid var(--line); }
+    .example-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 16px; margin-bottom: 18px; }
+    h2 { margin: 0; font-size: 23px; }
+    .helpers { color: var(--muted); font: 13px var(--mono); }
+    .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .field { min-width: 0; padding: 14px; background: var(--surface); border: 1px solid var(--line); }
+    .field.response { grid-column: 1 / -1; }
+    h3 { margin: 0 0 9px; color: var(--green); font-size: 12px; font-weight: 800; text-transform: uppercase; }
+    pre {
+      overflow-x: auto;
+      margin: 0;
+      padding: 12px;
+      color: var(--code-ink);
+      background: var(--code);
+      font: 12px/1.55 var(--mono);
+      white-space: pre;
+      tab-size: 2;
+    }
+    .field.url pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+    .field p { margin: 0; color: var(--muted); font-size: 14px; }
+    code { font-family: var(--mono); font-size: .92em; overflow-wrap: anywhere; }
+    footer { padding-top: 18px; color: var(--muted); border-top: 1px solid var(--line); font-size: 13px; }
+    footer a { color: var(--green); }
+    @media (max-width: 680px) {
+      .masthead { padding: 30px 20px 25px; }
+      main { width: calc(100% - 24px); margin-top: 16px; }
+      .fields { grid-template-columns: 1fr; }
+      .field.response { grid-column: auto; }
+      .example { padding-top: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="masthead">
+    <p class="eyebrow">Developer reference / TMDB</p>
+    <h1>API Request Examples</h1>
+    <p>Request headers, URLs, parameters, bodies, and representative responses for the movie app's API helpers.</p>
+  </header>
+
+  <main>
+    <aside class="notice">
+      <p><strong>Examples use placeholders.</strong> Replace <code>{{API_KEY}}</code> with the configured TMDB key. Response JSON is illustrative and shortened to relevant fields; it is not a live response.</p>
+      <p>All app requests use <code>GET</code>. JSON requests send <code>content-type: application/json</code> and <code>accept: application/json</code>; no request body is sent.</p>
+    </aside>
+
+    <nav aria-label="Endpoint examples">
+      <ul class="index">
+        <li><a href="#movie-list">Movie list</a></li>
+        <li><a href="#search">Movie search</a></li>
+        <li><a href="#movie-details">Movie details</a></li>
+        <li><a href="#recommendations">Recommendations</a></li>
+        <li><a href="#reviews">Reviews</a></li>
+        <li><a href="#movie-images">Movie images</a></li>
+        <li><a href="#videos">Videos</a></li>
+        <li><a href="#actor-images">Actor images</a></li>
+        <li><a href="#actor-details">Actor details</a></li>
+        <li><a href="#popular-actors">Popular actors</a></li>
+        <li><a href="#actor-credits">Actor credits</a></li>
+        <li><a href="#image-bytes">Image bytes</a></li>
+      </ul>
+    </nav>
+
+    <article class="example" id="movie-list">
+      <header class="example-heading"><h2>Movie list</h2><span class="helpers">getMoviesList / getPopularMoviesList / fetchMovies</span></header>
+      <div class="fields">
+        <section class="field"><h3>Header</h3><pre>content-type: application/json
+accept: application/json</pre></section>
+        <section class="field url"><h3>Request URL</h3><pre>GET https://api.themoviedb.org/3/movie/popular?api_key={{API_KEY}}&amp;with_original_language=en&amp;page=1&amp;with_genres=28</pre></section>
+        <section class="field"><h3>Params</h3><pre>movieType = popular
+with_original_language = en
+page = 1
+with_genres = 28</pre></section>
+        <section class="field"><h3>Body</h3><p>None. This is a GET request.</p></section>
+        <section class="field response"><h3>Response</h3><pre>{
+  "page": 1,
+  "results": [
+    {
+      "adult": false,
+      "backdrop_path": "/sample-backdrop.jpg",
+      "genre_ids": [28, 878],
+      "id": 27205,
+      "original_language": "en",
+      "original_title": "Inception",
+      "overview": "A sample movie overview.",
+      "popularity": 84.2,
+      "poster_path": "/sample-poster.jpg",
+      "release_date": "2010-07-15",
+      "title": "Inception",
+      "video": false,
+      "vote_average": 8.4,
+      "vote_count": 35000
+    }
+  ],
+  "total_pages": 100,
+  "total_results": 2000
+}</pre></section>
+      </div>
+    </article>
+
+    <article class="example" id="search">
+      <header class="example-heading"><h2>Movie search</h2><span class="helpers">searchMovies</span></header>
+      <div class="fields">
+        <section class="field"><h3>Header</h3><pre>content-type: application/json
+accept: application/json</pre></section>
+        <section class="field url"><h3>Request URL</h3><pre>GET https://api.themoviedb.org/3/search/movie?query=The%20Matrix&amp;api_key={{API_KEY}}&amp;with_original_language=en&amp;language=en-US&amp;page=1&amp;with_genres=28&amp;include_adult=false</pre></section>
+        <section class="field"><h3>Params</h3><pre>query = The Matrix
+with_original_language = en
+language = en-US
+page = 1
+with_genres = 28
+include_adult = false</pre></section>
+        <section class="field"><h3>Body</h3><p>None. This is a GET request.</p></section>
+        <section class="field response"><h3>Response</h3><pre>{
+  "page": 1,
+  "results": [
+    {
+      "adult": false,
+      "backdrop_path": "/sample-matrix-backdrop.jpg",
+      "genre_ids": [28, 878],
+      "id": 603,
+      "original_language": "en",
+      "original_title": "The Matrix",
+      "overview": "A sample movie overview.",
+      "popularity": 75.1,
+      "poster_path": "/sample-matrix-poster.jpg",
+      "release_date": "1999-03-30",
+      "title": "The Matrix",
+      "video": false,
+      "vote_average": 8.2,
+      "vote_count": 25000
+    }
+  ],
+  "total_pages": 1,
+  "total_results": 1
+}</pre></section>
+      </div>
+    </article>
+
+    <article class="example" id="movie-details">
+      <header class="example-heading"><h2>Movie details</h2><span class="helpers">getMoviesInfo / getMoviesInfoData</span></header>
+      <div class="fields">
+        <section class="field"><h3>Header</h3><pre>content-type: application/json
+accept: application/json</pre></section>
+        <section class="field url"><h3>Request URL</h3><pre>GET https://api.themoviedb.org/3/movie/27205?api_key={{API_KEY}}&amp;append_to_response=credits</pre></section>
+        <section class="field"><h3>Params</h3><pre>movieId = 27205
+append_to_response = credits</pre></section>
+        <section class="field"><h3>Body</h3><p>None. This is a GET request.</p></section>
+        <section class="field response"><h3>Response</h3><pre>{
+  "adult": false,
+  "backdrop_path": "/sample-backdrop.jpg",
+  "belongs_to_collection": null,
+  "budget": 160000000,
+  "genres": [{"id": 28, "name": "Action"}],
+  "homepage": "https://example.com/movie",
+  "id": 27205,
+  "imdb_id": "tt1375666",
+  "original_language": "en",
+  "original_title": "Inception",
+  "overview": "A sample movie overview.",
+  "popularity": 84.2,
+  "poster_path": "/sample-poster.jpg",
+  "production_companies": [],
+  "production_countries": [],
+  "release_date": "2010-07-15",
+  "revenue": 825532764,
+  "runtime": 148,
+  "spoken_languages": [],
+  "status": "Released",
+  "tagline": "A sample tagline.",
+  "title": "Inception",
+  "video": false,
+  "vote_average": 8.4,
+  "vote_count": 35000,
+  "credits": {"cast": [], "crew": []}
+}</pre></section>
+      </div>
+    </article>
+
+    <article class="example" id="recommendations">
+      <header class="example-heading"><h2>Movie recommendations</h2><span class="helpers">getSimilarMoviesList / getSimilarMoviesListData</span></header>
+      <div class="fields">
+        <section class="field"><h3>Header</h3><pre>content-type: application/json
+accept: application/json</pre></section>
+        <section class="field url"><h3>Request URL</h3><pre>GET https://api.themoviedb.org/3/movie/27205/recommendations?api_key={{API_KEY}}&amp;with_original_language=en&amp;page=1</pre></section>
+        <section class="field"><h3>Params</h3><pre>movieId = 27205
+with_original_language = en
+page = 1</pre></section>
+        <section class="field"><h3>Body</h3><p>None. This is a GET request.</p></section>
+        <section class="field response"><h3>Response</h3><pre>{
+  "page": 1,
+  "results": [
+    {
+      "adult": false,
+      "backdrop_path": "/sample-backdrop.jpg",
+      "genre_ids": [28, 878],
+      "id": 157336,
+      "original_language": "en",
+      "original_title": "Interstellar",
+      "overview": "A sample recommendation overview.",
+      "popularity": 92.4,
+      "poster_path": "/sample-poster.jpg",
+      "release_date": "2014-11-05",
+      "title": "Interstellar",
+      "video": false,
+      "vote_average": 8.4,
+      "vote_count": 32000
+    }
+  ],
+  "total_pages": 5,
+  "total_results": 87
+}</pre></section>
+      </div>
+    </article>
+
+    <article class="example" id="reviews">
+      <header class="example-heading"><h2>Movie reviews</h2><span class="helpers">getMovieReviews</span></header>
+      <div class="fields">
+        <section class="field"><h3>Header</h3><pre>content-type: application/json
+accept: application/json</pre></section>
+        <section class="field url"><h3>Request URL</h3><pre>GET https://api.themoviedb.org/3/movie/27205/reviews?api_key={{API_KEY}}&amp;page=1</pre></section>
+        <section class="field"><h3>Params</h3><pre>movieId = 27205
+page = 1</pre></section>
+        <section class="field"><h3>Body</h3><p>None. This is a GET request.</p></section>
+        <section class="field response"><h3>Response</h3><pre>{
+  "id": 27205,
+  "page": 1,
+  "results": [
+    {
+      "author": "sample_user",
+      "author_details": {
+        "name": "Sample Reviewer",
+        "username": "sample_user",
+        "avatar_path": null,
+        "rating": 8.0
+      },
+      "content": "A representative review excerpt.",
+      "created_at": "2024-01-15T12:00:00.000Z",
+      "id": "sample-review-id",
+      "updated_at": "2024-01-15T12:00:00.000Z",
+      "url": "https://www.themoviedb.org/review/sample-review-id"
+    }
+  ],
+  "total_pages": 1,
+  "total_results": 1
+}</pre></section>
+      </div>
+    </article>
+
+    <article class="example" id="movie-images">
+      <header class="example-heading"><h2>Movie images</h2><span class="helpers">getMovieLogosAPI</span></header>
+      <div class="fields">
+        <section class="field"><h3>Header</h3><pre>content-type: application/json
+accept: application/json</pre></section>
+        <section class="field url"><h3>Request URL</h3><pre>GET https://api.themoviedb.org/3/movie/27205/images?api_key={{API_KEY}}</pre></section>
+        <section class="field"><h3>Params</h3><pre>movieId = 27205</pre></section>
+        <section class="field"><h3>Body</h3><p>None. This is a GET request.</p></section>
+        <section class="field response"><h3>Response</h3><pre>{
+  "id": 27205,
+  "backdrops": [
+    {
+      "aspect_ratio": 1.78,
+      "height": 1080,
+      "iso_639_1": null,
+      "file_path": "/sample-backdrop.jpg",
+      "vote_average": 5.4,
+      "vote_count": 12,
+      "width": 1920
+    }
+  ],
+  "logos": [],
+  "posters": []
+}</pre></section>
+      </div>
+    </article>
+
+    <article class="example" id="videos">
+      <header class="example-heading"><h2>Movie videos</h2><span class="helpers">getMovieVideosAPI</span></header>
+      <div class="fields">
+        <section class="field"><h3>Header</h3><pre>content-type: application/json
+accept: application/json</pre></section>
+        <section class="field url"><h3>Request URL</h3><pre>GET https://api.themoviedb.org/3/movie/27205/videos?api_key={{API_KEY}}</pre></section>
+        <section class="field"><h3>Params</h3><pre>movieId = 27205</pre></section>
+        <section class="field"><h3>Body</h3><p>None. This is a GET request.</p></section>
+        <section class="field response"><h3>Response</h3><pre>{
+  "id": 27205,
+  "results": [
+    {
+      "iso_639_1": "en",
+      "iso_3166_1": "US",
+      "name": "Official Trailer",
+      "key": "sampleVideoKey",
+      "site": "YouTube",
+      "size": 1080,
+      "type": "Trailer",
+      "official": true,
+      "published_at": "2010-05-10T00:00:00.000Z",
+      "id": "sample-video-id"
+    }
+  ]
+}</pre></section>
+      </div>
+    </article>
+
+    <article class="example" id="actor-images">
+      <header class="example-heading"><h2>Actor images</h2><span class="helpers">getPopularActorsImages</span></header>
+      <div class="fields">
+        <section class="field"><h3>Header</h3><pre>content-type: application/json
+accept: application/json</pre></section>
+        <section class="field url"><h3>Request URL</h3><pre>GET https://api.themoviedb.org/3/person/6193/images?api_key={{API_KEY}}</pre></section>
+        <section class="field"><h3>Params</h3><pre>actorId = 6193</pre></section>
+        <section class="field"><h3>Body</h3><p>None. This is a GET request.</p></section>
+        <section class="field response"><h3>Response</h3><pre>{
+  "id": 6193,
+  "profiles": [
+    {
+      "aspect_ratio": 0.67,
+      "height": 1200,
+      "iso_639_1": null,
+      "file_path": "/sample-profile.jpg",
+      "vote_average": 5.3,
+      "vote_count": 8,
+      "width": 800
+    }
+  ]
+}</pre></section>
+      </div>
+    </article>
+
+    <article class="example" id="actor-details">
+      <header class="example-heading"><h2>Actor details</h2><span class="helpers">getActorsInfo</span></header>
+      <div class="fields">
+        <section class="field"><h3>Header</h3><pre>content-type: application/json
+accept: application/json</pre></section>
+        <section class="field url"><h3>Request URL</h3><pre>GET https://api.themoviedb.org/3/person/6193?api_key={{API_KEY}}</pre></section>
+        <section class="field"><h3>Params</h3><pre>actorId = 6193</pre></section>
+        <section class="field"><h3>Body</h3><p>None. This is a GET request.</p></section>
+        <section class="field response"><h3>Response</h3><pre>{
+  "adult": false,
+  "also_known_as": ["Sample alternate name"],
+  "biography": "A representative biography.",
+  "birthday": "1964-09-02",
+  "deathday": null,
+  "gender": 2,
+  "homepage": null,
+  "id": 6193,
+  "imdb_id": "nm0000000",
+  "known_for_department": "Acting",
+  "name": "Sample Actor",
+  "place_of_birth": "Sample City",
+  "popularity": 42.5,
+  "profile_path": "/sample-profile.jpg"
+}</pre></section>
+      </div>
+    </article>
+
+    <article class="example" id="popular-actors">
+      <header class="example-heading"><h2>Popular actors</h2><span class="helpers">getPopularActorsInfo / fetchPopularActors</span></header>
+      <div class="fields">
+        <section class="field"><h3>Header</h3><pre>content-type: application/json
+accept: application/json</pre></section>
+        <section class="field url"><h3>Request URL</h3><pre>GET https://api.themoviedb.org/3/person/popular?language=en-US&amp;page=1&amp;api_key={{API_KEY}}</pre></section>
+        <section class="field"><h3>Params</h3><pre>language = en-US
+page = 1</pre></section>
+        <section class="field"><h3>Body</h3><p>None. This is a GET request.</p></section>
+        <section class="field response"><h3>Response</h3><pre>{
+  "page": 1,
+  "results": [
+    {
+      "adult": false,
+      "gender": 2,
+      "id": 6193,
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": "/sample-backdrop.jpg",
+          "genre_ids": [18],
+          "id": 27205,
+          "media_type": "movie",
+          "original_language": "en",
+          "original_title": "Sample Film",
+          "overview": "A sample overview.",
+          "poster_path": "/sample-poster.jpg",
+          "release_date": "2020-01-01",
+          "title": "Sample Film",
+          "video": false,
+          "vote_average": 7.5,
+          "vote_count": 100
+        }
+      ],
+      "known_for_department": "Acting",
+      "name": "Sample Actor",
+      "popularity": 42.5,
+      "profile_path": "/sample-profile.jpg"
+    }
+  ],
+  "total_pages": 500,
+  "total_results": 10000
+}</pre></section>
+      </div>
+    </article>
+
+    <article class="example" id="actor-credits">
+      <header class="example-heading"><h2>Actor movie credits</h2><span class="helpers">getActorsActedMoviesInfo</span></header>
+      <div class="fields">
+        <section class="field"><h3>Header</h3><pre>content-type: application/json
+accept: application/json</pre></section>
+        <section class="field url"><h3>Request URL</h3><pre>GET https://api.themoviedb.org/3/person/6193/movie_credits?api_key={{API_KEY}}</pre></section>
+        <section class="field"><h3>Params</h3><pre>actorId = 6193</pre></section>
+        <section class="field"><h3>Body</h3><p>None. This is a GET request.</p></section>
+        <section class="field response"><h3>Response</h3><pre>{
+  "id": 6193,
+  "cast": [
+    {
+      "adult": false,
+      "backdrop_path": "/sample-backdrop.jpg",
+      "genre_ids": [18],
+      "id": 27205,
+      "original_language": "en",
+      "original_title": "Sample Film",
+      "overview": "A sample overview.",
+      "popularity": 42.5,
+      "poster_path": "/sample-poster.jpg",
+      "release_date": "2020-01-01",
+      "title": "Sample Film",
+      "video": false,
+      "vote_average": 7.5,
+      "vote_count": 100,
+      "character": "Sample Character",
+      "credit_id": "sample-credit-id",
+      "order": 0
+    }
+  ]
+}</pre></section>
+      </div>
+    </article>
+
+    <article class="example" id="image-bytes">
+      <header class="example-heading"><h2>Image bytes</h2><span class="helpers">getImageAPI</span></header>
+      <div class="fields">
+        <section class="field"><h3>Header</h3><pre>content-type: application/json
+accept: application/json</pre></section>
+        <section class="field url"><h3>Request URL</h3><pre>GET https://image.tmdb.org/t/p/w500/sample-poster.jpg</pre></section>
+        <section class="field"><h3>Params</h3><pre>baseUrl = https://image.tmdb.org
+imgUrl = /t/p/w500/sample-poster.jpg</pre></section>
+        <section class="field"><h3>Body</h3><p>None. This is a GET request.</p></section>
+        <section class="field response"><h3>Response</h3><p>Binary image data (for example, <code>image/jpeg</code>). The helper returns the response bytes as a <code>Uint8List</code>; there is no JSON response body.</p></section>
+      </div>
+    </article>
+
+    <footer>
+      Source: <code>lib/app/core/responses/movie_apis.dart</code> and <code>api_services.dart</code>.
+      See the <a href="api_documentation.html">API endpoint catalog</a> for the full function list and implementation notes.
+    </footer>
+  </main>
+</body>
+</html>
