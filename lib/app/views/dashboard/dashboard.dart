@@ -8,6 +8,7 @@ import 'package:moviewebapp/app/views/dashboard/widgets/movies_list.dart';
 import 'package:moviewebapp/app/providers/dashboard_provider.dart';
 import 'package:moviewebapp/app/core/utils/common_functions.dart';
 import 'package:provider/provider.dart';
+import 'main_banner_widget/main_banner.dart';
 import 'main_banner_widget/movie_banner_card.dart';
 
 class Dashboard extends StatefulWidget {
@@ -61,30 +62,30 @@ class _DashboardState extends State<Dashboard> {
     
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: screenWidth < 750 ? AppBar(
-        backgroundColor: dashBoardProvider.appBarBackgroundColor,
-        elevation: dashBoardProvider.appBarElevation,
-        title: Text(
-          "TheFridayMovies",
-          style: theme.textTheme.headlineMedium,
-        ),
-        actions: [
-          IconButton(
-            onPressed: () => showAlert(),
-            icon: Icon(
-              Icons.notifications,
-              color: theme.colorScheme.onSurface,
-            ),
-          ),
-          IconButton(
-            onPressed: () => showAlert(),
-            icon: Icon(
-              Icons.person,
-              color: theme.colorScheme.onSurface,
-            ),
-          ),
-        ],
-      ) : null,
+      // appBar: screenWidth < 750 ? AppBar(
+      //   backgroundColor: dashBoardProvider.appBarBackgroundColor,
+      //   elevation: dashBoardProvider.appBarElevation,
+      //   title: Text(
+      //     "TheFridayMovies",
+      //     style: theme.textTheme.headlineMedium,
+      //   ),
+      //   actions: [
+      //     IconButton(
+      //       onPressed: () => showAlert(),
+      //       icon: Icon(
+      //         Icons.notifications,
+      //         color: theme.colorScheme.onSurface,
+      //       ),
+      //     ),
+      //     IconButton(
+      //       onPressed: () => showAlert(),
+      //       icon: Icon(
+      //         Icons.person,
+      //         color: theme.colorScheme.onSurface,
+      //       ),
+      //     ),
+      //   ],
+      // ) : null,
       body: NotificationListener<ScrollNotification>(
         onNotification: (scrollNotification) {
           return true;
@@ -96,8 +97,8 @@ class _DashboardState extends State<Dashboard> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-             // const MainBanner(),
-              const MovieBannerCard(),
+              const MainBanner(),
+             // const MovieBannerCard(),
               ListView.builder(
                 itemCount: dashBoardProvider.moviesDataMapObject.length,
                 shrinkWrap: true,

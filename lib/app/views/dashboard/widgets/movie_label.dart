@@ -33,15 +33,15 @@ class MovieLabel extends StatelessWidget {
             children: [
               Container(
                 alignment: Alignment.topLeft,
-                margin: const EdgeInsets.only(left: 15, top: 0),
+                margin: const EdgeInsets.only(left: 10, top: 0),
                 child: Text(
                   Constants.viewMore,
-                  style: theme.textTheme.bodyMedium,
+                  style: theme.textTheme.bodyMedium?.copyWith(fontFamily: montserratSemiBold),
                 ),
               ),
               Container(
                 alignment: Alignment.topRight,
-                margin: const EdgeInsets.only(right: 15),
+                margin: const EdgeInsets.only(right: 10),
                 child: Icon(
                   Icons.chevron_right_outlined,
                   size: 24,
@@ -50,7 +50,7 @@ class MovieLabel extends StatelessWidget {
               ),
             ],
           ),
-        )
+        ),
       ],
     );
   }

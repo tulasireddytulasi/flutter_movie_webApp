@@ -19,7 +19,7 @@ class MoviesList extends StatefulWidget {
   final String? withGenres;
 
   @override
-  _MoviesListState createState() => _MoviesListState();
+  State<MoviesList> createState() => _MoviesListState();
 }
 
 class _MoviesListState extends State<MoviesList> {
@@ -33,7 +33,7 @@ class _MoviesListState extends State<MoviesList> {
 
   @override
   Widget build(BuildContext context) {
-    final double _screenWidth = MediaQuery.of(context).size.width;
+    final double screenWidth = MediaQuery.of(context).size.width;
 
     return FutureBuilder(
       future: dashBoardProvider.getAllMovies(
@@ -49,20 +49,20 @@ class _MoviesListState extends State<MoviesList> {
         } else if (!snapshot.hasData) {
           return const Center(child: Text('No movies found.'));
         } else {
-          MoviesModel _movieModel = (snapshot.data!) as MoviesModel;
+          MoviesModel movieModel = (snapshot.data!) as MoviesModel;
           return ListView.builder(
-            itemCount: _movieModel.results?.length,
+            itemCount: movieModel.results?.length,
             scrollDirection: Axis.horizontal,
             shrinkWrap: true,
             itemBuilder: (BuildContext context, int index) {
               return MoviesCard(
-                movieName: _movieModel.results?[index].title ?? "",
-                poster: _movieModel.results?[index].posterPath ?? "",
-                movieId: _movieModel.results?[index].id.toString() ?? "",
+                movieName: movieModel.results?[index].title ?? "",
+                poster: movieModel.results?[index].posterPath ?? "",
+                movieId: movieModel.results?[index].id.toString() ?? "",
                 voidCallback: () => Navigation().navigateToMoviesInfoPage(
                   context: context,
-                  movieId: _movieModel.results?[index].id.toString() ?? "",
-                  screenWidth: _screenWidth,
+                  movieId: movieModel.results?[index].id.toString() ?? "",
+                  screenWidth: screenWidth,
                 ),
               );
             },

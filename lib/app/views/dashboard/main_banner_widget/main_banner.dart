@@ -67,19 +67,19 @@ class _MainBannerState extends State<MainBanner> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    final double _screenWidth = MediaQuery.of(context).size.width;
-    final bool _screenWidth600 = _screenWidth >= 600;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool screenWidth600 = screenWidth >= 600;
 
     return Consumer<MoviesProvider>(
       builder: (context, moviesProvider, child) {
         final String posterSize =
-            _screenWidth600 ? ApiConstants.movieImageBaseUrlw1280 : ApiConstants.movieImageBaseUrlw500;
-        final _movieBannerData = moviesProvider.movieBannerModel.moviesList?.first;
-        final String _id = _movieBannerData?.id ?? "";
-        final String _logo = _movieBannerData?.logo ?? "";
-        final String _youTubeVideoKey = _movieBannerData?.youTubeVideoKey ?? "";
-        final String _description = _movieBannerData?.description ?? "";
-        final String poster = _screenWidth600 ? _movieBannerData?.backDrop ?? "" : _movieBannerData?.poster ?? "";
+            screenWidth600 ? ApiConstants.movieImageBaseUrlw1280 : ApiConstants.movieImageBaseUrlw500;
+        final movieBannerData = moviesProvider.movieBannerModel.moviesList?.first;
+        final String id = movieBannerData?.id ?? "";
+        final String logo = movieBannerData?.logo ?? "";
+        final String youTubeVideoKey = movieBannerData?.youTubeVideoKey ?? "";
+        final String description = movieBannerData?.description ?? "";
+        final String poster = screenWidth600 ? movieBannerData?.backDrop ?? "" : movieBannerData?.poster ?? "";
         return Stack(
                 children: [
                   ShaderMask(
@@ -109,9 +109,9 @@ class _MainBannerState extends State<MainBanner> with SingleTickerProviderStateM
                             ),
                           ),
                   ),
-                  PlayButtons(genere: genere, movieId: _id, youTubeVideoKey: _youTubeVideoKey),
+                  PlayButtons(genere: genere, movieId: id, youTubeVideoKey: youTubeVideoKey),
                   Visibility(
-                    visible: _screenWidth600,
+                    visible: screenWidth600,
                     child: Positioned(
                       bottom: 0,
                       left: 50,
@@ -129,10 +129,10 @@ class _MainBannerState extends State<MainBanner> with SingleTickerProviderStateM
                           }
                         },
                         child: AnimatedLogoWidget(
-                          id: _id,
-                          youTubeVideoKey: _youTubeVideoKey,
-                          description: _description,
-                          logo: _logo,
+                          id: id,
+                          youTubeVideoKey: youTubeVideoKey,
+                          description: description,
+                          logo: logo,
                           scaleAnimation: _scaleAnimation,
                         ),
                       ),
