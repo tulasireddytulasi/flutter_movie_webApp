@@ -5,6 +5,7 @@ class CustomBottomNavigationBar extends StatefulWidget {
   final Function(int) onChange;
   final List<String> titles;
   final List<String> imgUrls;
+  final List<IconData?> icons;
 
   const CustomBottomNavigationBar({
     Key? key,
@@ -12,6 +13,7 @@ class CustomBottomNavigationBar extends StatefulWidget {
     required this.onChange,
     required this.titles,
     required this.imgUrls,
+    this.icons = const <IconData?>[],
   }) : super(key: key);
 
   @override
@@ -33,11 +35,11 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
 
   @override
   Widget build(BuildContext context) {
-    final double _screenWidth = MediaQuery.of(context).size.width;
-    List<Widget> _navBarItemList = [];
+    final double screenWidth = MediaQuery.of(context).size.width;
+    List<Widget> navBarItemList = [];
 
     for (var i = 0; i < _titles.length; i++) {
-      _navBarItemList.add(buildNavBarItem(i, _titles[i], _imgUrls[i]));
+      navBarItemList.add(buildNavBarItem(i, _titles[i], _imgUrls[i]));
     }
 
     return Container(
@@ -52,16 +54,17 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       ),
       child: Container(
         padding: const EdgeInsets.all(2),
-        width: _screenWidth >= 600 ? 500 : null,
+        width: screenWidth >= 600 ? 500 : null,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: _navBarItemList,
+          children: navBarItemList,
         ),
       ),
     );
   }
 
   Widget buildNavBarItem(int index, String title, String imgUrl) {
+    final IconData? icon = index < widget.icons.length ? widget.icons[index] : null;
     return GestureDetector(
       onTap: () {
         widget.onChange(index);
@@ -80,14 +83,22 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                 backgroundColor: index == _selectedIndex
                     ? Theme.of(context).colorScheme.primary
                     : Theme.of(context).colorScheme.surfaceContainerHighest,
-                child: Image.asset(
-                  imgUrl,
-                  width: 22,
-                  height: 22,
-                  color: index == _selectedIndex
+                child: icon == null
+                  ? Image.asset(
+                    imgUrl,
+                    width: 22,
+                    height: 22,
+                    color: index == _selectedIndex
                       ? Theme.of(context).colorScheme.onPrimary
                       : Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+                    )
+                  : Icon(
+                    icon,
+                    size: 22,
+                    color: index == _selectedIndex
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
               ),
               const SizedBox(height: 2),
               Text(title,

@@ -4,9 +4,9 @@ import 'package:moviewebapp/app/views/all_movies_screen/movies_list.dart';
 import 'package:moviewebapp/app/views/blogs_screen/blogs_screen.dart';
 import 'package:moviewebapp/app/views/dashboard/dashboard.dart';
 import 'package:moviewebapp/app/views/navigation_menu/custom_bottom_navbar_2.dart';
+import 'package:moviewebapp/app/views/movie_import_screen/movie_import_screen.dart';
 
 import 'package:moviewebapp/app/views/navigation_menu/movie_app_bar.dart';
-import 'package:moviewebapp/app/views/profile_screen/profile_screen.dart';
 import 'package:moviewebapp/app/providers/dashboard_provider.dart';
 import 'package:moviewebapp/app/core/utils/assets_path.dart';
 
@@ -35,11 +35,12 @@ class _NavigationMenuState extends State<NavigationMenu> {
     ),
     const AllActorsPage(showAppBar: false, showLeadingIcon: false),
     const BlogsScreen(showAppBar: false),
-    const ProfileScreen(),
+    const MovieImportScreen(),
   ];
-  final List<String> appBarTitles = ["Home", "Movies", "People", "Blogs"];
-  final List<String> bottomBarTitles = ["Dashboard", "Movies", "People", "Blogs"]; // "Account"
-  final List<String> iconAssetPaths = [homeIcon, videoIcon, tvIcon, blogIcon]; // userIcon
+  final List<String> appBarTitles = ["Home", "Movies", "People", "Blogs", "Import"];
+  final List<String> bottomBarTitles = ["Dashboard", "Movies", "People", "Blogs", "Import"];
+  final List<String> iconAssetPaths = [homeIcon, videoIcon, tvIcon, blogIcon, userIcon];
+  final List<IconData?> navigationIcons = [null, null, null, null, Icons.cloud_upload_outlined];
 
   @override
   void initState() {
@@ -112,6 +113,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
                 },
                 titles: bottomBarTitles,
                 imgUrls: iconAssetPaths,
+                icons: navigationIcons,
               )
             : const SizedBox.shrink(),
       );
