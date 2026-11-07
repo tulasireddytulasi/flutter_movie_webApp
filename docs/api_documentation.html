@@ -232,7 +232,86 @@
       </article>
     </section>
 
-    <footer>Source of truth: <code>lib/app/core/responses/movie_apis.dart</code>, <code>api_services.dart</code>, and <code>api_constants.dart</code>.</footer>
+    <section aria-labelledby="mcu-heading">
+      <div class="section-heading"><h2 id="mcu-heading">MCU import</h2><span>Separate screen, full-schema ingestion</span></div>
+      <p>Open <strong>Import &gt; MCU import</strong>. Select from the 22 actual results in
+        <code>MoviesRepo.marvelMovies</code>; seed titles/posters are previews, not the source
+        of uploaded movie details. Every movie writes <code>franchise: "mcu"</code>.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Import source</th><th>GET request</th><th>Data used</th></tr></thead>
+          <tbody>
+            <tr><td><code>TmdbMcuImportService.movie</code></td><td><code>movie/{id}?append_to_response=credits&amp;language=en-US</code></td><td>All 15 movie fields, genres (ID/name), complete cast and crew credits.</td></tr>
+            <tr><td><code>TmdbMcuImportService.person</code></td><td><code>person/{id}?language=en-US</code></td><td>All 13 person profile fields, for every distinct cast/crew person. Successful profiles are cached for the screen session.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Requests use <code>ApiConstants.apiKey</code>, JSON headers, and no body.
+        Movie groups are processed sequentially; person fetching uses at most three workers.
+        TMDB requests time out after 30 seconds and make at most three attempts for transport
+        failures, 429, or 5xx. Retry-After is honored up to two minutes; longer waits stop the
+        item with a retry-later error. Permanent failures and malformed responses are visible.</p>
+      <p>Upload order: <strong>genres + people, then movies with native genre links, then
+        movie_cast + movie_crew</strong>. Movies, genres, and people use TMDB IDs as row IDs;
+        credits use stable TMDB <code>credit_id</code> values. Different roles/jobs are retained.
+        Upserts refresh existing rows. Readback checks all supplied fields and relationship IDs.
+        Missing required data/invalid dates fail explicitly. Overlong optional prose/aliases
+        are truncated with field-specific warnings; IDs, dates, URLs, and image paths are
+        never silently shortened. Null optional dates are preserved; real dates become UTC
+        ISO 8601 midnight. Only relative image paths are stored.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Table</th><th>Actual table ID</th><th>Relationship fields</th></tr></thead>
+          <tbody>
+            <tr><td>movies</td><td><code>6aeeda38001f609f0ca2</code></td><td><code>genres</code> (ID array), inverse <code>cast</code>/<code>crew</code></td></tr>
+            <tr><td>genres</td><td><code>genres</code></td><td>Inverse <code>movies</code></td></tr>
+            <tr><td>people</td><td><code>people</code></td><td>Inverse <code>movie_cast</code>/<code>movie_crew</code></td></tr>
+            <tr><td>movie_cast</td><td><code>movie_cast</code></td><td><code>movie</code>, <code>person</code> (native references)</td></tr>
+            <tr><td>movie_crew</td><td><code>movie_crew</code></td><td><code>movie</code>, <code>person</code> (native references)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Endpoint: <code>https://nyc.cloud.appwrite.io/v1</code>; project:
+        <code>6a566f7e0020a7ca4f55</code>; database: <code>6ae9d8f70009a29b3b5b</code>
+        (The Friday Movies). The old list/search importer still targets
+        <code>movie_list</code> (<code>6ae9d976001eff727511</code>) and is unchanged.</p>
+      <p>The external architecture guide's literal database/movie IDs and inverse people keys
+        differ from the actual database. Actual movie/genre and credit/person deletion rules
+        are Restrict; movie-to-credit deletion is Cascade. Six movie/people indexes exist;
+        four cast/crew relationship-column indexes are unsupported by Appwrite. Do not add
+        shadow foreign keys or recreate schema. Default-bearing fields are optional in the
+        actual database; fetched required values are still validated and supplied explicitly.</p>
+      <article class="note issue">
+        <h3>Temporary anonymous access: administrator setup</h3>
+        <p>No login, anonymous session creation, Account API, or server API key is used.
+          In Appwrite, manually allow <strong>Any create, read, and update</strong> on all five
+          tables, enable the database/tables, and register the application's hostname.
+          Existing rows must permit read/update where row security is enabled.
+          Read permission alone is not sufficient for upserts. No delete permission is needed.
+          Anyone can insert or modify this public data, not just this screen.
+          <strong>Remove temporary Any create/update grants after importing</strong>, including
+          any per-row public grants you configured. Use proper authorization before production.</p>
+      </article>
+      <p>The client SDK cannot inspect column metadata. Preflight checks anonymous table reads
+        and relationship selections, not write grants or schema availability. Confirm that
+        <code>franchise</code> is a writable String of at least three characters and that all
+        expected attributes exist. Check integer storage supports revenue/budget above
+        <code>2147483647</code>; the screen reports actual write/schema errors instead of changing
+        columns or permissions. Appwrite transport/5xx failures get bounded retries; SDK 429
+        stops the run because Retry-After is not exposed. In-flight writes finish on cancel;
+        new operations stop, and stored rows remain.</p>
+      <p>Start with one movie, inspect its fully verified result, then select the remaining
+        movies. Retry unfinished imports safely. Matching legacy credits with random IDs block
+        a movie with a migration warning rather than creating duplicates. Stale credits are
+        kept with warnings; no destructive synchronization or rollback is performed.
+        The screen reports partial writes, field warnings, and per-table verified counts.
+        Successful rows are never deleted. No reviews, recommendations, videos, extra images,
+        unrelated filmography, or new MCU discovery are fetched.</p>
+      <p>Import mappings validate raw JSON at the boundary instead of reusing browsing DTO
+        parsers that lose absent-versus-null fields. Browsing models/helpers remain unchanged.</p>
+    </section>
+
+    <footer>Source of truth: <code>lib/app/core/responses/movie_apis.dart</code>, <code>api_services.dart</code>, <code>api_constants.dart</code>, <code>tmdb_mcu_import_service.dart</code>, <code>appwrite_mcu_import_service.dart</code>, and <code>lib/app/models/mcu_import_models.dart</code>.</footer>
   </main>
 </body>
 </html>
