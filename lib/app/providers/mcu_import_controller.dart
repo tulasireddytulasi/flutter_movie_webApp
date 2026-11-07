@@ -43,8 +43,11 @@ class McuImportController extends ChangeNotifier {
   String? error;
   int processed = 0;
   int total = 0;
+
   int get peopleFetched => _people.length;
+
   int get peopleKnown => _knownPeople.length;
+
   int get peopleReused => _existingPeople.length;
 
   void _notify() {
@@ -71,8 +74,7 @@ class McuImportController extends ChangeNotifier {
 
   void cancel() {
     _cancellation?.requested = true;
-    stage =
-        'Cancelling after in-flight operations finish; completed rows are kept.';
+    stage = 'Cancelling after in-flight operations finish; completed rows are kept.';
     _notify();
   }
 
@@ -82,15 +84,13 @@ class McuImportController extends ChangeNotifier {
     _notify();
   }
 
-  Future<void> _profiles(Set<String> ids, McuImportMapper mapper,
-      McuImportCancellation cancellation) async {
+  Future<void> _profiles(Set<String> ids, McuImportMapper mapper, McuImportCancellation cancellation) async {
     _knownPeople.addAll(ids);
     final missing = ids.where((id) => !_existingPeople.contains(id)).toList();
     var next = 0;
     Object? failure;
     Future<void> worker() async {
-      while (
-          next < missing.length && failure == null && !cancellation.requested) {
+      while (next < missing.length && failure == null && !cancellation.requested) {
         final id = missing[next++];
         try {
           if (await _store.personExists(id, cancellation)) {
@@ -110,8 +110,7 @@ class McuImportController extends ChangeNotifier {
     }
 
     // Settle all workers before continuing or closing the HTTP client.
-    await Future.wait(
-        List.generate(math.min(3, missing.length), (_) => worker()));
+    await Future.wait(List.generate(math.min(3, missing.length), (_) => worker()));
     cancellation.check();
     if (failure != null) {
       if (failure is McuImportException) throw failure!;
@@ -120,35 +119,10 @@ class McuImportController extends ChangeNotifier {
   }
 
   void _checkLegacy(List<McuImportRow> stored, List<McuImportRow> incoming) {
-    for (final old in stored) {
-      final exact = incoming.where((row) => row.id == old.id);
-      if (exact.isNotEmpty) {
-        if (AppwriteMcuImportService.referenceId(old.data['person']) !=
-            exact.first.data['person']) {
-          throw McuImportException(
-              'Existing ${old.table}/${old.id} references a different person.');
-        }
-        continue;
-      }
-      final duplicates = incoming.where((row) =>
-          AppwriteMcuImportService.referenceId(old.data['person']) ==
-              row.data['person'] &&
-          (old.table == 'movie_cast'
-              ? old.data['character'] == row.data['character']
-              : old.data['job'] == row.data['job'] &&
-                  old.data['department'] == row.data['department']));
-      if (duplicates.isNotEmpty) {
-        throw McuImportException(
-            'Legacy ${old.table} row ${old.id} has a nonmatching credit ID. '
-            'Migrate existing credits before retrying; no rows were deleted.');
-      }
-      warnings.add(
-          '${old.table}/${old.id} is outside this selected import; kept unchanged.');
-    }
+    AppwriteMcuImportService.checkExistingCredits(stored, incoming, warnings);
   }
 
-  Future<void> _write(
-      McuImportRow row, McuImportCancellation cancellation) async {
+  Future<void> _write(McuImportRow row, McuImportCancellation cancellation) async {
     cancellation.check();
     await _store.upsert(row, cancellation);
     writes.update(row.table, (value) => value + 1, ifAbsent: () => 1);
@@ -168,8 +142,7 @@ class McuImportController extends ChangeNotifier {
       return;
     }
     final requested = Set<String>.of(ids ?? selectedIds);
-    final selected =
-        movies.where((movie) => requested.contains(movie.id)).toList();
+    final selected = movies.where((movie) => requested.contains(movie.id)).toList();
     if (selected.isEmpty) {
       error = 'Select at least one MCU movie.';
       _notify();
@@ -198,25 +171,15 @@ class McuImportController extends ChangeNotifier {
       for (final movie in selected) {
         var startedWriting = false;
         try {
-          _stage(
-              '${movie.title}: fetching TMDB details and complete credits...',
-              cancellation);
-          final bundle = mapper.movie(
-              await _source.movie(movie.id, cancellation), movie.id,
-              options: options);
+          _stage('${movie.title}: fetching TMDB details and complete credits...', cancellation);
+          final bundle = mapper.movie(await _source.movie(movie.id, cancellation), movie.id, options: options);
           _stage('${movie.title}: checking existing credits...', cancellation);
-          _checkLegacy(
-              await _store.credits('movie_cast', movie.id, cancellation),
-              bundle.cast);
-          _checkLegacy(
-              await _store.credits('movie_crew', movie.id, cancellation),
-              bundle.crew);
+          _checkLegacy(await _store.credits('movie_cast', movie.id, cancellation), bundle.cast);
+          _checkLegacy(await _store.credits('movie_crew', movie.id, cancellation), bundle.crew);
           _stage(
-              '${movie.title}: checking ${bundle.personIds.length} people; fetching missing profiles...',
-              cancellation);
+              '${movie.title}: checking ${bundle.personIds.length} people; fetching missing profiles...', cancellation);
           await _profiles(bundle.personIds, mapper, cancellation);
-          _stage(
-              '${movie.title}: uploading genres and people...', cancellation);
+          _stage('${movie.title}: uploading genres and people...', cancellation);
           for (final row in bundle.genres) {
             cancellation.check();
             startedWriting = true;
@@ -228,8 +191,7 @@ class McuImportController extends ChangeNotifier {
             }
             cancellation.check();
             startedWriting = true;
-            final created =
-                await _store.createPersonIfMissing(_people[id]!, cancellation);
+            final created = await _store.createPersonIfMissing(_people[id]!, cancellation);
             if (created) {
               writes.update('people', (value) => value + 1, ifAbsent: () => 1);
             } else {
@@ -238,13 +200,11 @@ class McuImportController extends ChangeNotifier {
             _writtenPeople.add(id);
             _notify();
           }
-          _stage(
-              '${movie.title}: uploading movie with franchise=${options.normalizedFranchise ?? "null"}...',
+          _stage('${movie.title}: uploading movie with franchise=${options.normalizedFranchise ?? "null"}...',
               cancellation);
           startedWriting = true;
           await _write(bundle.movie, cancellation);
-          _stage('${movie.title}: uploading and verifying cast and crew...',
-              cancellation);
+          _stage('${movie.title}: uploading and verifying cast and crew...', cancellation);
           for (final row in [...bundle.cast, ...bundle.crew]) {
             await _write(row, cancellation);
           }
@@ -258,34 +218,22 @@ class McuImportController extends ChangeNotifier {
         } on McuImportCancelled {
           results[movie.id] = McuMovieImportResult(
               movie,
-              startedWriting
-                  ? McuMovieImportStatus.partial
-                  : McuMovieImportStatus.cancelled,
-              startedWriting
-                  ? 'Cancelled; some rows may be stored. Retry safely.'
-                  : 'Cancelled before writes.');
+              startedWriting ? McuMovieImportStatus.partial : McuMovieImportStatus.cancelled,
+              startedWriting ? 'Cancelled; some rows may be stored. Retry safely.' : 'Cancelled before writes.');
           rethrow;
         } on Exception catch (e) {
-          final message = e is McuImportException
-              ? e.message
-              : 'Unexpected import error: $e';
+          final message = e is McuImportException ? e.message : 'Unexpected import error: $e';
           results[movie.id] = McuMovieImportResult(
-              movie,
-              startedWriting
-                  ? McuMovieImportStatus.partial
-                  : McuMovieImportStatus.failed,
-              message);
+              movie, startedWriting ? McuMovieImportStatus.partial : McuMovieImportStatus.failed, message);
           if (e is McuImportException && e.global) rethrow;
         }
         processed++;
         _notify();
       }
-      stage =
-          'Finished: ${selected.where((m) => results[m.id]?.status == McuMovieImportStatus.complete).length}'
+      stage = 'Finished: ${selected.where((m) => results[m.id]?.status == McuMovieImportStatus.complete).length}'
           ' of $total selected movies fully verified.';
     } on McuImportCancelled {
-      stage =
-          'Cancelled. Completed rows kept; unfinished movies can be retried.';
+      stage = 'Cancelled. Completed rows kept; unfinished movies can be retried.';
     } on Exception catch (e) {
       error = 'Import stopped: $e';
       stage = 'Stopped. Check setup/permissions before retrying.';
@@ -293,8 +241,8 @@ class McuImportController extends ChangeNotifier {
       for (final movie in selected) {
         results.putIfAbsent(
             movie.id,
-            () => McuMovieImportResult(movie, McuMovieImportStatus.cancelled,
-                'Not attempted; retry after resolving the stop.'));
+            () => McuMovieImportResult(
+                movie, McuMovieImportStatus.cancelled, 'Not attempted; retry after resolving the stop.'));
       }
       busy = false;
       _cancellation = null;

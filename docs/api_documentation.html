@@ -232,6 +232,43 @@
       </article>
     </section>
 
+    <section aria-labelledby="movie-editor-heading">
+      <div class="section-heading"><h2 id="movie-editor-heading">Movie ID editor</h2><span>Independent Movie Info and People Info tabs</span></div>
+      <p>Open <strong>Import &gt; Movie ID editor</strong>. Enter any positive TMDB movie ID
+        to fetch <code>movie/{id}?append_to_response=credits&amp;language=en-US</code>.
+        Movie Info shows all database movie fields in editable text fields, including genres
+        as a JSON array of ID/name objects and optional franchise (blank writes null).
+        Additional TMDB response fields, including the complete credit response, appear in
+        read-only text fields; they have no matching database columns and are not uploaded.
+        Fetching another movie replaces the editor; failed fetches keep the prior movie
+        explicitly labeled with its own ID. Changes remain in the editor across tab switches.</p>
+      <p><strong>Movie Info upload</strong> validates edited fields, upserts genres first and
+        the edited movie second, and verifies the written fields by readback. It does not
+        upload profiles or credits. Invalid numbers, dates, booleans, genre JSON, and required
+        values report explicit errors; optional text truncation warnings remain visible.
+        The existing MCU/list/search importers are unchanged.</p>
+      <p><strong>People Info</strong> has separate unique cast and crew lists. Select checkboxes
+        or enter independent counts (default 15; 0 clears a group). Cast is ranked by TMDB order;
+        crew follows response order. All roles/jobs in selected sections are retained. Search
+        filters visible people without altering selection; count selection uses the full list.
+        A person selected in both groups is processed once, with shared status in both lists.</p>
+      <p>People upload requires the fetched movie ID to already exist in Appwrite. It never
+        implicitly uploads the movie or uses unsaved movie edits. Each of at most five parallel
+        workers checks the person, fetches and creates a full profile only when missing, then
+        upserts and verifies that person's selected credits. Existing profiles are never
+        overwritten. Stable TMDB credit IDs and legacy-duplicate checks make retries safe.
+        Credits are grouped by person once and rendered lazily to avoid repeated full-list
+        scans and eager list widgets.</p>
+      <p>List statuses are <strong>Not uploaded, Uploading, Success, Failed, Already Exists</strong>.
+        Already Exists means the profile was reused and selected credits were verified.
+        A profile whose credit upload fails is Failed with a partial-write message, not
+        successful. Retry selected failed people without re-uploading successful ones.
+        A shared permission/schema/rate-limit failure stops scheduling new workers while
+        in-flight workers settle. Cancellation keeps stored rows; no destructive rollback
+        occurs. This screen uses the same temporary anonymous permissions and actual
+        Appwrite table IDs described below; it never creates schema or grants permissions.</p>
+    </section>
+
     <section aria-labelledby="mcu-heading">
       <div class="section-heading"><h2 id="mcu-heading">MCU import</h2><span>Separate screen, full-schema ingestion</span></div>
       <p>Open <strong>Import &gt; MCU import</strong>. Select from the 22 actual results in
@@ -265,6 +302,14 @@
         before enrichment and created only if missing; a concurrent-create conflict reuses the
         existing row without overwriting it. Permission/network failures are not treated as
         missing people. Readback checks newly created profiles and supplied movie/credit fields and relationship IDs.
+        Movie writes use create/update rather than relationship upsert: unchanged genre sets
+        are omitted from updates, and supplied genre IDs are unique. Readback rejects
+        duplicate genre links instead of hiding them with a set comparison. If an existing
+        movie has duplicate genre links, the importer clears only those links and restores
+        the intended unique IDs; genre rows and cast/crew links are not deleted. This repair
+        uses two updates, not an atomic transaction: a network failure can leave a partial
+        relationship update, which is reported and can be repaired by retrying with the
+        intended genres. Avoid concurrent imports of the same movie.
         Missing required data/invalid dates fail explicitly. Overlong optional prose/aliases
         are truncated with field-specific warnings; IDs, dates, URLs, and image paths are
         never silently shortened. Null optional dates are preserved; real dates become UTC

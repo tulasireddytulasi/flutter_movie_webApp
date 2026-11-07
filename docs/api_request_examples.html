@@ -111,6 +111,7 @@
         <li><a href="#actor-credits">Actor credits</a></li>
         <li><a href="#image-bytes">Image bytes</a></li>
         <li><a href="#mcu-import">MCU import</a></li>
+        <li><a href="#movie-editor">Movie ID editor</a></li>
       </ul>
     </nav>
 
@@ -501,6 +502,47 @@ imgUrl = /t/p/w500/sample-poster.jpg</pre></section>
       </div>
     </article>
 
+    <article class="example" id="movie-editor">
+      <header class="example-heading"><h2>Movie ID editor: separate uploads</h2><span class="helpers">MovieEditorController / MovieEditorScreen</span></header>
+      <p>Open Import &gt; Movie ID editor. Movie Info fetches movie details with credits using
+        the existing TMDB request pattern. All supported movie fields are editable; extra
+        TMDB information is shown in read-only fields and is not uploaded.</p>
+      <div class="fields">
+        <section class="field"><h3>Movie Info upload</h3><pre>1. Fetch movie/1726?append_to_response=credits&amp;language=en-US.
+2. Edit or preserve the movie text fields:
+   title, original_title, overview, tagline, release_date, runtime,
+   budget, revenue, status, adult, popularity, vote_average, vote_count,
+   poster_path, backdrop_path, optional franchise, genres JSON.
+3. Click Upload edited movie and genres.
+4. Upsert genre rows, then movie row "1726"; verify readback.
+   No people or cast/crew credits are uploaded by this tab.
+
+Genres input: [{"id":28,"name":"Action"}] (use [] for no genres).
+Boolean input: true or false.
+Optional blank inputs: null; franchise blank clears an existing value.</pre></section>
+        <section class="field"><h3>People Info upload</h3><pre>1. Select cast and crew people using separate checkboxes or first-N counts.
+   Default counts: 15 cast and 15 crew unique people.
+2. Movie "1726" must already exist in Appwrite.
+3. Up to 5 people are processed concurrently:
+   check people/{TMDB person ID};
+   if missing, GET person/{id} and create the full profile;
+   if present, preserve it without fetching or rewriting;
+   upsert selected cast/crew credits using their stable credit_id;
+   verify created profile and selected credit fields/relationships.
+4. Success / Already Exists require credit verification.
+   Failures report partial writes; Retry selected failed people repairs them.
+
+A person in both lists is processed once; status is shared.
+All roles/jobs in selected sections are included.
+Movie Info edits do not alter the fetched credits or People Info uploads.</pre></section>
+      </div>
+      <p>The two tabs use separate upload actions, but overlapping requests and selection edits
+        are disabled while work is active. Shared schema/permission failures stop new work;
+        in-flight operations finish before disposal. No stored rows are deleted.
+        See the <a href="api_documentation.html#movie-editor-heading">Movie ID editor reference</a>
+        and <a href="api_documentation.html#mcu-heading">anonymous upload setup</a>.</p>
+    </article>
+
     <article class="example" id="mcu-import">
       <header class="example-heading"><h2>MCU import: fetch and upload</h2><span class="helpers">TmdbMcuImportService / AppwriteMcuImportService</span></header>
       <p>Use the local Marvel seed IDs, not the example movie ID below. Fetch movie details
@@ -555,6 +597,10 @@ Administrator temporarily allows Any create/read/update on all five tables
 3. Upsert cast (table movie_cast; row ID "sample-cast-credit") and
    crew (table movie_crew; row ID "sample-crew-credit").
 4. Read back and verify fields and native relationship references.
+   Movie genre links use create/update, not repeated relationship upserts.
+   Unchanged genre sets are omitted; duplicate genre links fail verification.
+   Existing duplicate links are cleared and restored as unique IDs.
+   This two-update repair is not atomic; retry a failed partial upload.
 
 Dates: valid YYYY-MM-DD becomes UTC ISO 8601 midnight; empty/null becomes null.
 Franchise: optional user value; blank writes null and clears an existing value.

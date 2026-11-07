@@ -3,6 +3,7 @@ import 'package:moviewebapp/app/core/responses/appwrite_movie_service.dart';
 import 'package:moviewebapp/app/core/responses/movie_apis.dart';
 import 'package:moviewebapp/app/models/get_movies_model.dart';
 import 'package:moviewebapp/app/views/mcu_import_screen/mcu_import_screen.dart';
+import 'package:moviewebapp/app/views/movie_editor_screen/movie_editor_screen.dart';
 
 enum _MovieImportSource { list, search }
 
@@ -21,19 +22,14 @@ class _MovieImportScreenState extends State<MovieImportScreen> {
     'upcoming': 'Upcoming',
   };
 
-  final TextEditingController _pageController =
-      TextEditingController(text: '1');
-  final TextEditingController _languageController =
-      TextEditingController(text: 'en');
-  final TextEditingController _searchLanguageController =
-      TextEditingController(text: 'en-US');
+  final TextEditingController _pageController = TextEditingController(text: '1');
+  final TextEditingController _languageController = TextEditingController(text: 'en');
+  final TextEditingController _searchLanguageController = TextEditingController(text: 'en-US');
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _genresController = TextEditingController();
   final AppwriteMovieService _appwriteMovieService = AppwriteMovieService();
-  final ValueNotifier<_MovieImportSource> _sourceNotifier =
-      ValueNotifier<_MovieImportSource>(_MovieImportSource.list);
-  final ValueNotifier<Set<int>> _selectedMovieIds =
-      ValueNotifier<Set<int>>(<int>{});
+  final ValueNotifier<_MovieImportSource> _sourceNotifier = ValueNotifier<_MovieImportSource>(_MovieImportSource.list);
+  final ValueNotifier<Set<int>> _selectedMovieIds = ValueNotifier<Set<int>>(<int>{});
 
   String _movieType = 'popular';
   List<Movies> _movies = <Movies>[];
@@ -101,15 +97,11 @@ class _MovieImportScreenState extends State<MovieImportScreen> {
     }
 
     final bool isSearch = source == _MovieImportSource.search;
-    final String language =
-        (isSearch ? _searchLanguageController : _languageController)
-            .text
-            .trim();
+    final String language = (isSearch ? _searchLanguageController : _languageController).text.trim();
     if (language.isEmpty) {
       setState(() {
-        _errorMessage = isSearch
-            ? 'Enter a search language, such as en-US.'
-            : 'Enter an original language code, such as en.';
+        _errorMessage =
+            isSearch ? 'Enter a search language, such as en-US.' : 'Enter an original language code, such as en.';
         _statusMessage = null;
       });
       return;
@@ -166,10 +158,7 @@ class _MovieImportScreenState extends State<MovieImportScreen> {
   Future<void> _uploadMovies(_MovieImportSource source) async {
     final Set<int> selectedIds = _selectedMovieIds.value;
     final List<Movies> moviesToUpload = source == _MovieImportSource.search
-        ? _movies
-            .where(
-                (movie) => movie.id != null && selectedIds.contains(movie.id))
-            .toList()
+        ? _movies.where((movie) => movie.id != null && selectedIds.contains(movie.id)).toList()
         : List<Movies>.of(_movies);
     if (moviesToUpload.isEmpty || _isBusy) return;
 
@@ -199,11 +188,9 @@ class _MovieImportScreenState extends State<MovieImportScreen> {
     if (!mounted) return;
     setState(() {
       _isUploading = false;
-      _statusMessage =
-          'Uploaded $_uploadedCount of ${moviesToUpload.length} rows.';
+      _statusMessage = 'Uploaded $_uploadedCount of ${moviesToUpload.length} rows.';
       if (_failedCount > 0) {
-        _errorMessage =
-            '$_failedCount rows failed. Check Appwrite table permissions and column types.';
+        _errorMessage = '$_failedCount rows failed. Check Appwrite table permissions and column types.';
       }
     });
   }
@@ -230,12 +217,8 @@ class _MovieImportScreenState extends State<MovieImportScreen> {
   }) {
     final ThemeData theme = Theme.of(context);
     final bool isSearch = source == _MovieImportSource.search;
-    final int uploadCount = isSearch
-        ? _movies
-            .where(
-                (movie) => movie.id != null && selectedIds.contains(movie.id))
-            .length
-        : _movies.length;
+    final int uploadCount =
+        isSearch ? _movies.where((movie) => movie.id != null && selectedIds.contains(movie.id)).length : _movies.length;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -264,6 +247,21 @@ class _MovieImportScreenState extends State<MovieImportScreen> {
                         ),
                 icon: const Icon(Icons.cloud_upload_outlined),
                 label: const Text('MCU import'),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: OutlinedButton.icon(
+                onPressed: _isBusy
+                    ? null
+                    : () => Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const MovieEditorScreen(),
+                          ),
+                        ),
+                icon: const Icon(Icons.edit_note_outlined),
+                label: const Text('Movie ID editor'),
               ),
             ),
             const SizedBox(height: 12),
@@ -302,8 +300,7 @@ class _MovieImportScreenState extends State<MovieImportScreen> {
                       enabled: !_isBusy,
                       textInputAction: TextInputAction.search,
                       onSubmitted: (_) => _fetchMovies(source),
-                      decoration:
-                          const InputDecoration(labelText: 'Movie title'),
+                      decoration: const InputDecoration(labelText: 'Movie title'),
                     ),
                   ),
                 if (!isSearch)
@@ -311,8 +308,7 @@ class _MovieImportScreenState extends State<MovieImportScreen> {
                     width: 190,
                     child: DropdownButtonFormField<String>(
                       initialValue: _movieType,
-                      decoration:
-                          const InputDecoration(labelText: 'Movie list'),
+                      decoration: const InputDecoration(labelText: 'Movie list'),
                       items: _movieTypes.entries
                           .map((entry) => DropdownMenuItem<String>(
                                 value: entry.key,
@@ -322,9 +318,9 @@ class _MovieImportScreenState extends State<MovieImportScreen> {
                       onChanged: _isBusy
                           ? null
                           : (value) {
-                            if (value != null) {
+                              if (value != null) {
                                 setState(() => _movieType = value);
-                            }
+                              }
                             },
                     ),
                   ),
@@ -340,13 +336,9 @@ class _MovieImportScreenState extends State<MovieImportScreen> {
                 SizedBox(
                   width: 155,
                   child: TextField(
-                    controller: isSearch
-                        ? _searchLanguageController
-                        : _languageController,
+                    controller: isSearch ? _searchLanguageController : _languageController,
                     enabled: !_isBusy,
-                    decoration: InputDecoration(
-                        labelText:
-                            isSearch ? 'Search language' : 'Original language'),
+                    decoration: InputDecoration(labelText: isSearch ? 'Search language' : 'Original language'),
                   ),
                 ),
                 if (!isSearch)
@@ -356,8 +348,7 @@ class _MovieImportScreenState extends State<MovieImportScreen> {
                       controller: _genresController,
                       enabled: !_isBusy,
                       keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                          labelText: 'Genre IDs (optional)'),
+                      decoration: const InputDecoration(labelText: 'Genre IDs (optional)'),
                     ),
                   ),
                 FilledButton.icon(
@@ -366,9 +357,7 @@ class _MovieImportScreenState extends State<MovieImportScreen> {
                   label: Text(isSearch ? 'Search movies' : 'Fetch movies'),
                 ),
                 FilledButton.icon(
-                  onPressed: _isBusy || uploadCount == 0
-                      ? null
-                      : () => _uploadMovies(source),
+                  onPressed: _isBusy || uploadCount == 0 ? null : () => _uploadMovies(source),
                   icon: const Icon(Icons.cloud_upload_outlined),
                   label: Text(_isUploading
                       ? 'Uploading...'
@@ -381,33 +370,26 @@ class _MovieImportScreenState extends State<MovieImportScreen> {
             if (_isUploading) ...<Widget>[
               const SizedBox(height: 14),
               LinearProgressIndicator(
-                value: _uploadTotal == 0
-                    ? null
-                    : (_uploadedCount + _failedCount) / _uploadTotal,
+                value: _uploadTotal == 0 ? null : (_uploadedCount + _failedCount) / _uploadTotal,
               ),
             ],
             if (_statusMessage != null || _errorMessage != null) ...<Widget>[
               const SizedBox(height: 14),
-              if (_statusMessage != null)
-                Text(_statusMessage!, style: theme.textTheme.bodyMedium),
+              if (_statusMessage != null) Text(_statusMessage!, style: theme.textTheme.bodyMedium),
               if (_errorMessage != null) ...<Widget>[
                 const SizedBox(height: 4),
                 Text(
                   _errorMessage!,
-                  style: theme.textTheme.bodyMedium
-                      ?.copyWith(color: theme.colorScheme.error),
+                  style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.error),
                 ),
                 for (final String uploadError in _uploadErrors)
-                  Text(uploadError,
-                      style: theme.textTheme.bodySmall
-                          ?.copyWith(color: theme.colorScheme.error)),
+                  Text(uploadError, style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.error)),
               ],
             ],
             const SizedBox(height: 16),
             Row(
               children: <Widget>[
-                Text(isSearch ? 'Search results' : 'Fetched movies',
-                    style: theme.textTheme.titleMedium),
+                Text(isSearch ? 'Search results' : 'Fetched movies', style: theme.textTheme.titleMedium),
                 const SizedBox(width: 8),
                 Text('${_movies.length}', style: theme.textTheme.bodyMedium),
                 const Spacer(),
@@ -441,16 +423,13 @@ class _MovieImportScreenState extends State<MovieImportScreen> {
                 contentPadding: const EdgeInsets.symmetric(horizontal: 8),
                 leading: isSearch
                     ? Checkbox(
-                        value: _movies[index].id != null &&
-                            selectedIds.contains(_movies[index].id),
+                        value: _movies[index].id != null && selectedIds.contains(_movies[index].id),
                         onChanged: _movies[index].id == null || _isBusy
                             ? null
-                            : (selected) => _setMovieSelected(
-                                _movies[index], selected ?? false),
+                            : (selected) => _setMovieSelected(_movies[index], selected ?? false),
                       )
                     : CircleAvatar(
-                        backgroundColor:
-                            theme.colorScheme.surfaceContainerHighest,
+                        backgroundColor: theme.colorScheme.surfaceContainerHighest,
                         child: Text('${index + 1}'),
                       ),
                 title: Text(_movies[index].title ?? 'Untitled movie'),

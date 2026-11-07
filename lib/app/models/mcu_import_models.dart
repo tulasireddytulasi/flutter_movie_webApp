@@ -27,9 +27,7 @@ class McuImportCancellation {
       check();
       final remaining = end.difference(DateTime.now());
       await Future<void>.delayed(
-        remaining > const Duration(milliseconds: 100)
-            ? const Duration(milliseconds: 100)
-            : remaining,
+        remaining > const Duration(milliseconds: 100) ? const Duration(milliseconds: 100) : remaining,
       );
     }
     check();
@@ -70,8 +68,7 @@ class McuImportOptions {
 
   void validate() {
     if (castLimit < 0 || crewLimit < 0) {
-      throw const McuImportException(
-          'Cast and crew limits must be non-negative integers.');
+      throw const McuImportException('Cast and crew limits must be non-negative integers.');
     }
   }
 }
@@ -89,8 +86,7 @@ class McuMovieBundle {
   final List<McuImportRow> cast;
   final List<McuImportRow> crew;
 
-  Set<String> get personIds =>
-      [...cast, ...crew].map((row) => row.data['person'] as String).toSet();
+  Set<String> get personIds => [...cast, ...crew].map((row) => row.data['person'] as String).toSet();
 }
 
 /// Maps only writable schema fields, preserving absent versus explicit null.
@@ -101,15 +97,13 @@ class McuImportMapper {
 
   static String entityId(dynamic value, String context) {
     if (value is! int || value <= 0) {
-      throw McuImportException(
-          '$context: expected a positive TMDB integer ID.');
+      throw McuImportException('$context: expected a positive TMDB integer ID.');
     }
     return value.toString();
   }
 
   static String creditId(dynamic value, String context) {
-    if (value is! String ||
-        !RegExp(r'^[a-zA-Z0-9][a-zA-Z0-9._-]{0,35}$').hasMatch(value)) {
+    if (value is! String || !RegExp(r'^[a-zA-Z0-9][a-zA-Z0-9._-]{0,35}$').hasMatch(value)) {
       throw McuImportException('$context: missing or invalid TMDB credit_id.');
     }
     return value;
@@ -144,16 +138,14 @@ class McuImportMapper {
         result.add(McuSeedMovie(
           id: id,
           title: title,
-          posterPath:
-              poster is String && poster.startsWith('/') ? poster : null,
+          posterPath: poster is String && poster.startsWith('/') ? poster : null,
         ));
       }
     }
     return result;
   }
 
-  void _text(Map<String, dynamic> source, Map<String, dynamic> target,
-      String key, int size, String context,
+  void _text(Map<String, dynamic> source, Map<String, dynamic> target, String key, int size, String context,
       {bool required = false, bool truncate = true}) {
     if (!source.containsKey(key)) {
       if (required) throw McuImportException('$context.$key: missing value.');
@@ -178,8 +170,7 @@ class McuImportMapper {
     }
   }
 
-  void _number(Map<String, dynamic> source, Map<String, dynamic> target,
-      String key, String context,
+  void _number(Map<String, dynamic> source, Map<String, dynamic> target, String key, String context,
       {bool required = false, bool integer = false, num? min, num? max}) {
     if (!source.containsKey(key)) {
       if (required) throw McuImportException('$context.$key: missing value.');
@@ -200,8 +191,7 @@ class McuImportMapper {
     target[key] = integer ? value : value.toDouble();
   }
 
-  void _boolean(Map<String, dynamic> source, Map<String, dynamic> target,
-      String key, String context) {
+  void _boolean(Map<String, dynamic> source, Map<String, dynamic> target, String key, String context) {
     final value = source[key];
     if (value is! bool) {
       throw McuImportException('$context.$key: expected a boolean.');
@@ -209,8 +199,7 @@ class McuImportMapper {
     target[key] = value;
   }
 
-  void _date(Map<String, dynamic> source, Map<String, dynamic> target,
-      String key, String context) {
+  void _date(Map<String, dynamic> source, Map<String, dynamic> target, String key, String context) {
     if (!source.containsKey(key)) return;
     final value = source[key];
     if (value == null || value == '') {
@@ -227,16 +216,11 @@ class McuImportMapper {
     target[key] = date.toIso8601String();
   }
 
-  void _path(Map<String, dynamic> source, Map<String, dynamic> target,
-      String key, String context) {
+  void _path(Map<String, dynamic> source, Map<String, dynamic> target, String key, String context) {
     _text(source, target, key, 255, context, truncate: false);
     final path = target[key];
-    if (path is String &&
-        (!path.startsWith('/') ||
-            path.startsWith('//') ||
-            path.contains('://'))) {
-      throw McuImportException(
-          '$context.$key: expected a relative image path.');
+    if (path is String && (!path.startsWith('/') || path.startsWith('//') || path.contains('://'))) {
+      throw McuImportException('$context.$key: expected a relative image path.');
     }
   }
 
@@ -263,8 +247,7 @@ class McuImportMapper {
     for (final key in ['popularity', 'vote_average']) {
       _number(source, data, key, context, required: true);
     }
-    _number(source, data, 'vote_count', context,
-        required: true, integer: true, min: 0);
+    _number(source, data, 'vote_count', context, required: true, integer: true, min: 0);
     for (final key in ['poster_path', 'backdrop_path']) {
       _path(source, data, key, context);
     }
@@ -278,65 +261,60 @@ class McuImportMapper {
     }
     data['genres'] = genres.keys.toList();
     final credits = object(source['credits'], '$context.credits');
-    List<McuImportRow> mapCredits(String kind) {
-      final rows = <String, McuImportRow>{};
-      final limit = kind == 'cast' ? options.castLimit : options.crewLimit;
-      if (limit == 0) return [];
-      final entries = array(credits[kind], '$context.credits.$kind')
-          .map((item) => object(item, '$context.$kind'))
-          .toList();
-      if (kind == 'cast') {
-        for (final credit in entries) {
-          _number(credit, <String, dynamic>{}, 'order', '$context.cast',
-              required: true, integer: true, min: 0);
-        }
-        // Preserve response order for ties while ranking cast by TMDB order.
-        final positions = {
-          for (var i = 0; i < entries.length; i++) entries[i]: i
-        };
-        entries.sort((a, b) {
-          final order = (a['order'] as int).compareTo(b['order'] as int);
-          return order != 0 ? order : positions[a]!.compareTo(positions[b]!);
-        });
-      }
-      final selectedPeople = <String>{};
-      for (final credit in entries) {
-        final personId = entityId(credit['id'], '$context.$kind');
-        if (selectedPeople.length < limit) selectedPeople.add(personId);
-      }
-      for (final credit in entries) {
-        final personId = entityId(credit['id'], '$context.$kind');
-        if (!selectedPeople.contains(personId)) continue;
-        final creditKey = creditId(credit['credit_id'], '$context.$kind');
-        final fields = <String, dynamic>{
-          'movie': id,
-          'person': personId,
-        };
-        if (kind == 'cast') {
-          _text(credit, fields, 'character', 255, '$context.$creditKey');
-          _number(credit, fields, 'order', '$context.$creditKey',
-              required: true, integer: true, min: 0);
-        } else {
-          for (final key in ['department', 'job']) {
-            _text(credit, fields, key, 100, '$context.$creditKey',
-                required: true);
-          }
-        }
-        if (rows.containsKey(creditKey)) {
-          throw McuImportException(
-              '$context.$kind: duplicate credit_id $creditKey.');
-        }
-        rows[creditKey] = McuImportRow('movie_$kind', creditKey, fields);
-      }
-      return rows.values.toList();
-    }
-
     return McuMovieBundle(
       movie: McuImportRow('movies', id, data),
       genres: genres.values.toList(),
-      cast: mapCredits('cast'),
-      crew: mapCredits('crew'),
+      cast: creditRows(credits['cast'], id, 'cast', limit: options.castLimit),
+      crew: creditRows(credits['crew'], id, 'crew', limit: options.crewLimit),
     );
+  }
+
+  List<McuImportRow> creditRows(dynamic source, String id, String kind, {required int limit}) {
+    if (!['cast', 'crew'].contains(kind) || limit < 0) {
+      throw const McuImportException('Invalid credit group or limit.');
+    }
+    final context = 'Movie $id';
+    final rows = <String, McuImportRow>{};
+    if (limit == 0) return [];
+    final entries = array(source, '$context.credits.$kind').map((item) => object(item, '$context.$kind')).toList();
+    if (kind == 'cast') {
+      for (final credit in entries) {
+        _number(credit, <String, dynamic>{}, 'order', '$context.cast', required: true, integer: true, min: 0);
+      }
+      // Preserve response order for ties while ranking cast by TMDB order.
+      final positions = {for (var i = 0; i < entries.length; i++) entries[i]: i};
+      entries.sort((a, b) {
+        final order = (a['order'] as int).compareTo(b['order'] as int);
+        return order != 0 ? order : positions[a]!.compareTo(positions[b]!);
+      });
+    }
+    final selectedPeople = <String>{};
+    for (final credit in entries) {
+      final personId = entityId(credit['id'], '$context.$kind');
+      if (selectedPeople.length < limit) selectedPeople.add(personId);
+    }
+    for (final credit in entries) {
+      final personId = entityId(credit['id'], '$context.$kind');
+      if (!selectedPeople.contains(personId)) continue;
+      final creditKey = creditId(credit['credit_id'], '$context.$kind');
+      final fields = <String, dynamic>{
+        'movie': id,
+        'person': personId,
+      };
+      if (kind == 'cast') {
+        _text(credit, fields, 'character', 255, '$context.$creditKey');
+        _number(credit, fields, 'order', '$context.$creditKey', required: true, integer: true, min: 0);
+      } else {
+        for (final key in ['department', 'job']) {
+          _text(credit, fields, key, 100, '$context.$creditKey', required: true);
+        }
+      }
+      if (rows.containsKey(creditKey)) {
+        throw McuImportException('$context.$kind: duplicate credit_id $creditKey.');
+      }
+      rows[creditKey] = McuImportRow('movie_$kind', creditKey, fields);
+    }
+    return rows.values.toList();
   }
 
   McuImportRow person(Map<String, dynamic> source, String expectedId) {
@@ -358,9 +336,7 @@ class McuImportMapper {
     final homepage = data['homepage'];
     if (homepage is String && homepage.isNotEmpty) {
       final uri = Uri.tryParse(homepage);
-      if (uri == null ||
-          !['http', 'https'].contains(uri.scheme) ||
-          uri.host.isEmpty) {
+      if (uri == null || !['http', 'https'].contains(uri.scheme) || uri.host.isEmpty) {
         throw McuImportException('$context.homepage: invalid HTTP URL.');
       }
     }
@@ -373,8 +349,7 @@ class McuImportMapper {
         data['also_known_as'] = null;
       } else {
         final aliases = <String>[];
-        for (final item
-            in array(source['also_known_as'], '$context.also_known_as')) {
+        for (final item in array(source['also_known_as'], '$context.also_known_as')) {
           final field = <String, dynamic>{};
           _text({'alias': item}, field, 'alias', 255, '$context.also_known_as');
           if (field['alias'] is! String) {
