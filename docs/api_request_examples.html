@@ -504,14 +504,17 @@ imgUrl = /t/p/w500/sample-poster.jpg</pre></section>
     <article class="example" id="mcu-import">
       <header class="example-heading"><h2>MCU import: fetch and upload</h2><span class="helpers">TmdbMcuImportService / AppwriteMcuImportService</span></header>
       <p>Use the local Marvel seed IDs, not the example movie ID below. Fetch movie details
-        with full credits, then full profiles for all distinct credited people. Responses below
+        with full credits, then select up to the configured unique cast and crew counts
+        (default 15 each; 0 skips a group). Cast follows TMDB order, crew response order,
+        and all roles/jobs of selected people are retained. Fetch profiles only for selected
+        people missing from Appwrite. Responses below
         are illustrative; actual credit arrays are not capped.</p>
       <div class="fields">
         <section class="field url"><h3>Movie request</h3><pre>GET https://api.themoviedb.org/3/movie/1726?api_key={{API_KEY}}&amp;append_to_response=credits&amp;language=en-US
 accept: application/json
 content-type: application/json
 Body: none</pre></section>
-        <section class="field url"><h3>Each credited person's request</h3><pre>GET https://api.themoviedb.org/3/person/3223?api_key={{API_KEY}}&amp;language=en-US
+        <section class="field url"><h3>Selected person missing from Appwrite</h3><pre>GET https://api.themoviedb.org/3/person/3223?api_key={{API_KEY}}&amp;language=en-US
 accept: application/json
 content-type: application/json
 Body: none</pre></section>
@@ -544,14 +547,18 @@ Database ID = 6ae9d8f70009a29b3b5b
 No authentication or API key for Appwrite
 Administrator temporarily allows Any create/read/update on all five tables
 
-1. Upsert genres (table genres; row IDs "28" and "878") and
-   people (table people; row IDs "3223", "15277"; fetch both full profiles).
+1. Upsert genres (table genres; row IDs "28" and "878").
+   Check selected people by TMDB row ID in table people.
+   Reuse existing profiles without rewriting. Fetch full profiles and create
+   only missing people; concurrent-create conflicts reuse existing rows.
 2. Upsert movie (table 6aeeda38001f609f0ca2; row ID "1726").
 3. Upsert cast (table movie_cast; row ID "sample-cast-credit") and
    crew (table movie_crew; row ID "sample-crew-credit").
 4. Read back and verify fields and native relationship references.
 
 Dates: valid YYYY-MM-DD becomes UTC ISO 8601 midnight; empty/null becomes null.
+Franchise: optional user value; blank writes null and clears an existing value.
+The movie example below assumes the user explicitly entered mcu.
 Absent optional fields are not overwritten. Explicit nulls may clear fields.
 Store relative image paths, not downloaded images or full image URLs.</pre></section>
         <section class="field response"><h3>Movie upsert data (no server metadata)</h3><pre>{
@@ -576,9 +583,10 @@ Store relative image paths, not downloaded images or full image URLs.</pre></sec
         relationship columns, not added string foreign keys. Credits use stable TMDB
         <code>credit_id</code> row IDs (an intentional deviation from the external guide's
         random IDs) so a rerun refreshes rather than duplicates them. Legacy random-ID
-        duplicates block the movie with a migration warning. Stale credits are retained.</p>
+        duplicates block the movie with a migration warning. Credits outside the selected
+        import are retained; lowering limits does not delete previous uploads.</p>
       <p>No permissions or schema are changed by this screen. Confirm the existing
-        <code>franchise</code> String column and sufficient budget/revenue integer ranges.
+        optional <code>franchise</code> String column sized for the supplied value and sufficient budget/revenue integer ranges.
         Preflight read checks do not prove write permission. Public create/update permits
         anyone to change the database: revoke those Any grants after importing.
         Permission/schema failures stop the run; partial uploads remain visible and retryable.

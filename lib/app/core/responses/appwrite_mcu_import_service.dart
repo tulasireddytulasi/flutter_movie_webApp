@@ -8,6 +8,9 @@ abstract class McuImportStore {
   Future<List<McuImportRow>> credits(
       String table, String movieId, McuImportCancellation cancellation);
   Future<void> upsert(McuImportRow row, McuImportCancellation cancellation);
+  Future<bool> personExists(String id, McuImportCancellation cancellation);
+  Future<bool> createPersonIfMissing(
+      McuImportRow row, McuImportCancellation cancellation);
 }
 
 class AppwriteMcuImportService implements McuImportStore {
@@ -32,11 +35,69 @@ class AppwriteMcuImportService implements McuImportStore {
       'Register this app hostname in Appwrite. Existing rows must also allow '
       'read/update when row security is enabled. Revoke temporary public writes '
       'after importing. Column metadata cannot be inspected by this client SDK: '
-      'confirm franchise is a writable String (at least 3 characters), all '
+      'confirm franchise is an optional writable String sized for your value, all '
       'schema columns/relationships exist, and budget/revenue support values '
       'above 2,147,483,647. Schema or permission failures stop the run.';
 
   final TablesDB _tables;
+
+  @override
+  Future<bool> personExists(String id, McuImportCancellation cancellation) =>
+      _request('Check people/$id', () async {
+        try {
+          await _tables.getRow(
+            databaseId: databaseId,
+            tableId: tableIds['people']!,
+            rowId: id,
+            queries: [
+              Query.select(['\$id'])
+            ],
+          );
+          return true;
+        } on AppwriteException catch (error) {
+          if (error.code == 404 && error.type == 'row_not_found') return false;
+          rethrow;
+        }
+      }, cancellation);
+
+  @override
+  Future<bool> createPersonIfMissing(
+      McuImportRow row, McuImportCancellation cancellation) async {
+    if (row.table != 'people') {
+      throw const McuImportException('Expected a people row.');
+    }
+    if (await personExists(row.id, cancellation)) return false;
+    final created = await _request('Create people/${row.id}', () async {
+      try {
+        await _tables.createRow(
+          databaseId: databaseId,
+          tableId: tableIds['people']!,
+          rowId: row.id,
+          data: row.data,
+        );
+        return true;
+      } on AppwriteException catch (error) {
+        // A concurrent importer may have created the person after our read.
+        if (error.code == 409 && await personExists(row.id, cancellation)) {
+          return false;
+        }
+        rethrow;
+      }
+    }, cancellation);
+    cancellation.check();
+    if (created) {
+      final stored = await _request(
+          'Verify people/${row.id}',
+          () => _tables.getRow(
+                databaseId: databaseId,
+                tableId: tableIds['people']!,
+                rowId: row.id,
+              ),
+          cancellation);
+      verify(row, stored.data);
+    }
+    return created;
+  }
 
   List<String> _select(String table) => [
         '*',

@@ -236,13 +236,20 @@
       <div class="section-heading"><h2 id="mcu-heading">MCU import</h2><span>Separate screen, full-schema ingestion</span></div>
       <p>Open <strong>Import &gt; MCU import</strong>. Select from the 22 actual results in
         <code>MoviesRepo.marvelMovies</code>; seed titles/posters are previews, not the source
-        of uploaded movie details. Every movie writes <code>franchise: "mcu"</code>.</p>
+        of uploaded movie details. Franchise is user-entered and optional: blank stores
+        <code>null</code> (and clears a previous value on refresh); enter <code>mcu</code>
+        or another value if desired. The column must be optional and sized for the entered value.</p>
+      <p>Cast and crew limits default to 15 unique people each, per movie; 0 skips that group.
+        Cast people are chosen by ascending TMDB order, crew by TMDB response order.
+        All roles/jobs for chosen people are retained, including later credits, so credit
+        row counts can exceed the limits. A person selected for both groups is created only once.
+        Previously stored credits outside the selected import are kept with warnings, not deleted.</p>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Import source</th><th>GET request</th><th>Data used</th></tr></thead>
           <tbody>
             <tr><td><code>TmdbMcuImportService.movie</code></td><td><code>movie/{id}?append_to_response=credits&amp;language=en-US</code></td><td>All 15 movie fields, genres (ID/name), complete cast and crew credits.</td></tr>
-            <tr><td><code>TmdbMcuImportService.person</code></td><td><code>person/{id}?language=en-US</code></td><td>All 13 person profile fields, for every distinct cast/crew person. Successful profiles are cached for the screen session.</td></tr>
+            <tr><td><code>TmdbMcuImportService.person</code></td><td><code>person/{id}?language=en-US</code></td><td>All 13 profile fields, only for selected people missing from Appwrite. Existing people are reused without fetching or rewriting their profiles. Successful responses are cached for the screen session.</td></tr>
           </tbody>
         </table>
       </div>
@@ -254,7 +261,10 @@
       <p>Upload order: <strong>genres + people, then movies with native genre links, then
         movie_cast + movie_crew</strong>. Movies, genres, and people use TMDB IDs as row IDs;
         credits use stable TMDB <code>credit_id</code> values. Different roles/jobs are retained.
-        Upserts refresh existing rows. Readback checks all supplied fields and relationship IDs.
+        Upserts refresh movies, genres, and selected credits. People are checked by TMDB row ID
+        before enrichment and created only if missing; a concurrent-create conflict reuses the
+        existing row without overwriting it. Permission/network failures are not treated as
+        missing people. Readback checks newly created profiles and supplied movie/credit fields and relationship IDs.
         Missing required data/invalid dates fail explicitly. Overlong optional prose/aliases
         are truncated with field-specific warnings; IDs, dates, URLs, and image paths are
         never silently shortened. Null optional dates are preserved; real dates become UTC
@@ -294,7 +304,7 @@
       </article>
       <p>The client SDK cannot inspect column metadata. Preflight checks anonymous table reads
         and relationship selections, not write grants or schema availability. Confirm that
-        <code>franchise</code> is a writable String of at least three characters and that all
+        <code>franchise</code> is an optional writable String sized for the entered value and that all
         expected attributes exist. Check integer storage supports revenue/budget above
         <code>2147483647</code>; the screen reports actual write/schema errors instead of changing
         columns or permissions. Appwrite transport/5xx failures get bounded retries; SDK 429

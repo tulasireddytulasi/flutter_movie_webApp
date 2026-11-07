@@ -52,6 +52,30 @@ class McuImportRow {
   final Map<String, dynamic> data;
 }
 
+class McuImportOptions {
+  const McuImportOptions({
+    this.castLimit = 15,
+    this.crewLimit = 15,
+    this.franchise,
+  });
+
+  final int castLimit;
+  final int crewLimit;
+  final String? franchise;
+
+  String? get normalizedFranchise {
+    final value = franchise?.trim();
+    return value == null || value.isEmpty ? null : value;
+  }
+
+  void validate() {
+    if (castLimit < 0 || crewLimit < 0) {
+      throw const McuImportException(
+          'Cast and crew limits must be non-negative integers.');
+    }
+  }
+}
+
 class McuMovieBundle {
   const McuMovieBundle({
     required this.movie,
@@ -216,13 +240,15 @@ class McuImportMapper {
     }
   }
 
-  McuMovieBundle movie(Map<String, dynamic> source, String expectedId) {
+  McuMovieBundle movie(Map<String, dynamic> source, String expectedId,
+      {McuImportOptions options = const McuImportOptions()}) {
+    options.validate();
     final id = entityId(source['id'], 'Movie');
     if (id != expectedId) {
       throw McuImportException('TMDB returned the wrong movie ID.');
     }
     final context = 'Movie $id';
-    final data = <String, dynamic>{'franchise': 'mcu'};
+    final data = <String, dynamic>{'franchise': options.normalizedFranchise};
     _text(source, data, 'title', 500, context, required: true);
     for (final key in ['original_title', 'tagline']) {
       _text(source, data, key, 500, context);
@@ -254,12 +280,37 @@ class McuImportMapper {
     final credits = object(source['credits'], '$context.credits');
     List<McuImportRow> mapCredits(String kind) {
       final rows = <String, McuImportRow>{};
-      for (final item in array(credits[kind], '$context.credits.$kind')) {
-        final credit = object(item, '$context.$kind');
+      final limit = kind == 'cast' ? options.castLimit : options.crewLimit;
+      if (limit == 0) return [];
+      final entries = array(credits[kind], '$context.credits.$kind')
+          .map((item) => object(item, '$context.$kind'))
+          .toList();
+      if (kind == 'cast') {
+        for (final credit in entries) {
+          _number(credit, <String, dynamic>{}, 'order', '$context.cast',
+              required: true, integer: true, min: 0);
+        }
+        // Preserve response order for ties while ranking cast by TMDB order.
+        final positions = {
+          for (var i = 0; i < entries.length; i++) entries[i]: i
+        };
+        entries.sort((a, b) {
+          final order = (a['order'] as int).compareTo(b['order'] as int);
+          return order != 0 ? order : positions[a]!.compareTo(positions[b]!);
+        });
+      }
+      final selectedPeople = <String>{};
+      for (final credit in entries) {
+        final personId = entityId(credit['id'], '$context.$kind');
+        if (selectedPeople.length < limit) selectedPeople.add(personId);
+      }
+      for (final credit in entries) {
+        final personId = entityId(credit['id'], '$context.$kind');
+        if (!selectedPeople.contains(personId)) continue;
         final creditKey = creditId(credit['credit_id'], '$context.$kind');
         final fields = <String, dynamic>{
           'movie': id,
-          'person': entityId(credit['id'], '$context.$kind.$creditKey'),
+          'person': personId,
         };
         if (kind == 'cast') {
           _text(credit, fields, 'character', 255, '$context.$creditKey');

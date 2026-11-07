@@ -35,6 +35,7 @@ class McuImportController extends ChangeNotifier {
   final Map<String, McuImportRow> _people = {};
   final Set<String> _writtenPeople = {};
   final Set<String> _knownPeople = {};
+  final Set<String> _existingPeople = {};
   McuImportCancellation? _cancellation;
   bool busy = false;
   bool _disposed = false;
@@ -44,6 +45,7 @@ class McuImportController extends ChangeNotifier {
   int total = 0;
   int get peopleFetched => _people.length;
   int get peopleKnown => _knownPeople.length;
+  int get peopleReused => _existingPeople.length;
 
   void _notify() {
     if (!_disposed) notifyListeners();
@@ -83,7 +85,7 @@ class McuImportController extends ChangeNotifier {
   Future<void> _profiles(Set<String> ids, McuImportMapper mapper,
       McuImportCancellation cancellation) async {
     _knownPeople.addAll(ids);
-    final missing = ids.where((id) => !_people.containsKey(id)).toList();
+    final missing = ids.where((id) => !_existingPeople.contains(id)).toList();
     var next = 0;
     Object? failure;
     Future<void> worker() async {
@@ -91,6 +93,12 @@ class McuImportController extends ChangeNotifier {
           next < missing.length && failure == null && !cancellation.requested) {
         final id = missing[next++];
         try {
+          if (await _store.personExists(id, cancellation)) {
+            _existingPeople.add(id);
+            _notify();
+            continue;
+          }
+          if (_people.containsKey(id)) continue;
           final data = await _source.person(id, cancellation);
           cancellation.check();
           _people[id] = mapper.person(data, id);
@@ -135,7 +143,7 @@ class McuImportController extends ChangeNotifier {
             'Migrate existing credits before retrying; no rows were deleted.');
       }
       warnings.add(
-          '${old.table}/${old.id} is no longer in TMDB credits; kept unchanged.');
+          '${old.table}/${old.id} is outside this selected import; kept unchanged.');
     }
   }
 
@@ -147,8 +155,18 @@ class McuImportController extends ChangeNotifier {
     _notify();
   }
 
-  Future<void> run({Set<String>? ids}) async {
+  Future<void> run({
+    Set<String>? ids,
+    McuImportOptions options = const McuImportOptions(),
+  }) async {
     if (busy || _disposed) return;
+    try {
+      options.validate();
+    } on McuImportException catch (e) {
+      error = e.message;
+      _notify();
+      return;
+    }
     final requested = Set<String>.of(ids ?? selectedIds);
     final selected =
         movies.where((movie) => requested.contains(movie.id)).toList();
@@ -166,6 +184,9 @@ class McuImportController extends ChangeNotifier {
     warnings.clear();
     writes.clear();
     _writtenPeople.clear();
+    _existingPeople.clear();
+    _knownPeople.clear();
+    _people.clear();
     for (final movie in selected) {
       results.remove(movie.id);
     }
@@ -181,7 +202,8 @@ class McuImportController extends ChangeNotifier {
               '${movie.title}: fetching TMDB details and complete credits...',
               cancellation);
           final bundle = mapper.movie(
-              await _source.movie(movie.id, cancellation), movie.id);
+              await _source.movie(movie.id, cancellation), movie.id,
+              options: options);
           _stage('${movie.title}: checking existing credits...', cancellation);
           _checkLegacy(
               await _store.credits('movie_cast', movie.id, cancellation),
@@ -190,7 +212,7 @@ class McuImportController extends ChangeNotifier {
               await _store.credits('movie_crew', movie.id, cancellation),
               bundle.crew);
           _stage(
-              '${movie.title}: fetching full profiles for ${bundle.personIds.length} people...',
+              '${movie.title}: checking ${bundle.personIds.length} people; fetching missing profiles...',
               cancellation);
           await _profiles(bundle.personIds, mapper, cancellation);
           _stage(
@@ -201,13 +223,23 @@ class McuImportController extends ChangeNotifier {
             await _write(row, cancellation);
           }
           for (final id in bundle.personIds) {
-            if (_writtenPeople.contains(id)) continue;
+            if (_writtenPeople.contains(id) || _existingPeople.contains(id)) {
+              continue;
+            }
             cancellation.check();
             startedWriting = true;
-            await _write(_people[id]!, cancellation);
+            final created =
+                await _store.createPersonIfMissing(_people[id]!, cancellation);
+            if (created) {
+              writes.update('people', (value) => value + 1, ifAbsent: () => 1);
+            } else {
+              _existingPeople.add(id);
+            }
             _writtenPeople.add(id);
+            _notify();
           }
-          _stage('${movie.title}: uploading movie with franchise=mcu...',
+          _stage(
+              '${movie.title}: uploading movie with franchise=${options.normalizedFranchise ?? "null"}...',
               cancellation);
           startedWriting = true;
           await _write(bundle.movie, cancellation);
@@ -221,7 +253,8 @@ class McuImportController extends ChangeNotifier {
               McuMovieImportStatus.complete,
               'Verified movie, ${bundle.genres.length} genres, '
               '${bundle.personIds.length} people, ${bundle.cast.length} cast, '
-              '${bundle.crew.length} crew; franchise=mcu.');
+              '${bundle.crew.length} crew credits; '
+              'franchise=${options.normalizedFranchise ?? "null"}.');
         } on McuImportCancelled {
           results[movie.id] = McuMovieImportResult(
               movie,

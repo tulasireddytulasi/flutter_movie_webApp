@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/core/responses/appwrite_mcu_import_service.dart';
 import 'package:moviewebapp/app/providers/mcu_import_controller.dart';
+import 'package:moviewebapp/app/models/mcu_import_models.dart';
 
 class McuImportScreen extends StatefulWidget {
   const McuImportScreen({Key? key, this.controller}) : super(key: key);
@@ -15,6 +16,10 @@ class _McuImportScreenState extends State<McuImportScreen> {
   late final McuImportController _controller;
   bool _allowPop = false;
   bool _confirming = false;
+  final _castLimitController = TextEditingController(text: '15');
+  final _crewLimitController = TextEditingController(text: '15');
+  final _franchiseController = TextEditingController();
+  String? _optionsError;
 
   @override
   void initState() {
@@ -24,6 +29,9 @@ class _McuImportScreenState extends State<McuImportScreen> {
 
   @override
   void dispose() {
+    _castLimitController.dispose();
+    _crewLimitController.dispose();
+    _franchiseController.dispose();
     if (widget.controller == null) {
       _controller.dispose();
     } else if (_controller.busy) {
@@ -67,17 +75,37 @@ class _McuImportScreenState extends State<McuImportScreen> {
     final ids =
         Set<String>.of(retry ? _controller.retryIds : _controller.selectedIds);
     if (ids.isEmpty) return;
+    final castLimit = int.tryParse(_castLimitController.text.trim());
+    final crewLimit = int.tryParse(_crewLimitController.text.trim());
+    if (castLimit == null ||
+        castLimit < 0 ||
+        crewLimit == null ||
+        crewLimit < 0) {
+      setState(() => _optionsError =
+          'Enter non-negative whole numbers for cast and crew limits. Use 0 to skip.');
+      return;
+    }
+    final options = McuImportOptions(
+      castLimit: castLimit,
+      crewLimit: crewLimit,
+      franchise: _franchiseController.text,
+    );
+    setState(() => _optionsError = null);
     _confirming = true;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(
             'Import ${ids.length} MCU movie${ids.length == 1 ? '' : 's'}?'),
-        content: const Text(
-          'Fetch current TMDB details, complete cast and crew, and full profiles '
-          'for every credited person. Upload genres and people first, movies '
-          'with franchise=mcu second, then cast and crew.\n\n'
-          'Existing rows are refreshed. No rows are deleted. Start with one '
+        content: Text(
+          'Per movie: up to $castLimit unique cast people and $crewLimit unique '
+          'crew people, keeping all their roles/jobs. Cast is ranked by TMDB order; '
+          'crew follows TMDB response order.\n\n'
+          'Franchise: ${options.normalizedFranchise ?? "null (blank clears any existing value)"}.\n\n'
+          'Existing people are reused without profile uploads. Only missing '
+          'people are fetched and created. Genres and people first, movies '
+          'second, then selected cast and crew.\n\n'
+          'Existing movies and credits are refreshed. No rows are deleted. Start with one '
           'movie to verify your setup. Anonymous create/read/update permissions '
           'must already be configured in Appwrite.',
         ),
@@ -92,7 +120,9 @@ class _McuImportScreenState extends State<McuImportScreen> {
       ),
     );
     _confirming = false;
-    if (confirmed == true && mounted) await _controller.run(ids: ids);
+    if (confirmed == true && mounted) {
+      await _controller.run(ids: ids, options: options);
+    }
   }
 
   @override
@@ -118,13 +148,12 @@ class _McuImportScreenState extends State<McuImportScreen> {
                       style: theme.textTheme.headlineSmall),
                   const SizedBox(height: 8),
                   Text('${_controller.movies.length} local seed movies. '
-                      'All cast/crew and full people profiles are included.'),
+                      'Choose cast/crew limits and an optional franchise below.'),
                   const SizedBox(height: 12),
                   const Wrap(
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      Chip(label: Text('franchise = mcu')),
                       Chip(label: Text('No authentication')),
                     ],
                   ),
@@ -138,8 +167,7 @@ class _McuImportScreenState extends State<McuImportScreen> {
                       child: Text(
                         'Temporary public access: anyone can insert or change your data. '
                         'Revoke Any create/update permissions after importing.',
-                        style: TextStyle(
-                            color: theme.colorScheme.onErrorContainer),
+                        style: TextStyle(color: theme.colorScheme.onPrimary),
                       ),
                     ),
                   ),
@@ -148,6 +176,58 @@ class _McuImportScreenState extends State<McuImportScreen> {
                     childrenPadding: EdgeInsets.all(16),
                     children: [Text(AppwriteMcuImportService.setupNotice)],
                   ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: [
+                      SizedBox(
+                        width: 200,
+                        child: TextField(
+                          controller: _castLimitController,
+                          enabled: !busy && !_confirming,
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(
+                            labelText: 'Cast people per movie',
+                            helperText: 'Unique people; 0 skips cast',
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 200,
+                        child: TextField(
+                          controller: _crewLimitController,
+                          enabled: !busy && !_confirming,
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(
+                            labelText: 'Crew people per movie',
+                            helperText: 'Unique people; 0 skips crew',
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 260,
+                        child: TextField(
+                          controller: _franchiseController,
+                          enabled: !busy && !_confirming,
+                          decoration: const InputDecoration(
+                            labelText: 'Franchise (optional)',
+                            helperText: 'Blank stores null, e.g. enter mcu',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Limits count unique people per movie, not credits. All roles/jobs '
+                    'for selected people are included, so credit row counts may be higher. '
+                    'Existing people profiles are not modified. Previously uploaded '
+                    'credits outside your limits are kept.',
+                  ),
+                  if (_optionsError != null)
+                    Text(_optionsError!,
+                        style: TextStyle(color: theme.colorScheme.error)),
                   const SizedBox(height: 12),
                   Wrap(
                     spacing: 12,
@@ -186,7 +266,9 @@ class _McuImportScreenState extends State<McuImportScreen> {
                   Text(_controller.stage, key: const ValueKey('mcu-stage')),
                   Text(
                       'Movies processed: ${_controller.processed}/${_controller.total} • '
-                      'People fetched: ${_controller.peopleFetched}/${_controller.peopleKnown}'),
+                      'People selected: ${_controller.peopleKnown}; '
+                      'profiles fetched: ${_controller.peopleFetched}; '
+                      'existing people reused: ${_controller.peopleReused}'),
                   if (_controller.writes.isNotEmpty)
                     Text(
                         'Verified writes this run: ${_controller.writes.entries.map((e) => '${e.key}: ${e.value}').join(', ')}'),
