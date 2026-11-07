@@ -242,7 +242,7 @@
         read-only text fields; they have no matching database columns and are not uploaded.
         Fetching another movie replaces the editor; failed fetches keep the prior movie
         explicitly labeled with its own ID. Changes remain in the editor across tab switches.</p>
-      <p><strong>Movie Info upload</strong> validates edited fields, upserts genres first and
+      <p><strong>Movie Info upload</strong> validates edited fields, ensures genres exist first and
         the edited movie second, and verifies the written fields by readback. It does not
         upload profiles or credits. Invalid numbers, dates, booleans, genre JSON, and required
         values report explicit errors; optional text truncation warnings remain visible.
@@ -298,7 +298,11 @@
       <p>Upload order: <strong>genres + people, then movies with native genre links, then
         movie_cast + movie_crew</strong>. Movies, genres, and people use TMDB IDs as row IDs;
         credits use stable TMDB <code>credit_id</code> values. Different roles/jobs are retained.
-        Upserts refresh movies, genres, and selected credits. People are checked by TMDB row ID
+        Movies use create/update; selected credits use upserts. Genres are checked by TMDB
+        row ID, created only when missing, and updated only if their name changes. Genre
+        updates send only the name, never the inverse movies relationship; unchanged genres
+        are read and verified without writes. This avoids genre upserts replaying existing
+        movie links and duplicating relationships on other movies. People are checked by TMDB row ID
         before enrichment and created only if missing; a concurrent-create conflict reuses the
         existing row without overwriting it. Permission/network failures are not treated as
         missing people. Readback checks newly created profiles and supplied movie/credit fields and relationship IDs.

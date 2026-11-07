@@ -260,6 +260,63 @@ class AppwriteMcuImportService implements McuImportStore {
     }
   }
 
+  Future<void> _writeGenre(McuImportRow row, McuImportCancellation cancellation) async {
+    final tableId = tableIds['genres']!;
+    final name = row.data['name'];
+    if (name is! String || name.trim().isEmpty) {
+      throw McuImportException('genres/${row.id}: a nonempty name is required.');
+    }
+    await _request('Write genres/${row.id}', () async {
+      Map<String, dynamic>? existing;
+      try {
+        final stored = await _tables.getRow(
+          databaseId: databaseId,
+          tableId: tableId,
+          rowId: row.id,
+          queries: [
+            Query.select(['name'])
+          ],
+        );
+        existing = stored.data;
+      } on AppwriteException catch (error) {
+        if (error.code != 404 || error.type != 'row_not_found') rethrow;
+      }
+      cancellation.check();
+      if (existing == null) {
+        try {
+          await _tables.createRow(
+            databaseId: databaseId,
+            tableId: tableId,
+            rowId: row.id,
+            data: {'name': name},
+          );
+          return;
+        } on AppwriteException catch (error) {
+          if (error.code != 409) rethrow;
+          final stored = await _tables.getRow(
+            databaseId: databaseId,
+            tableId: tableId,
+            rowId: row.id,
+            queries: [
+              Query.select(['name'])
+            ],
+          );
+          existing = stored.data;
+        }
+      }
+      cancellation.check();
+      if (existing['name'] != name) {
+        // Genre upserts can replay inverse movie links. Update only the name.
+        await _tables.updateRow(
+          databaseId: databaseId,
+          tableId: tableId,
+          rowId: row.id,
+          data: {'name': name},
+        );
+      }
+    }, cancellation);
+  }
+
   Future<void> _writeMovie(McuImportRow row, McuImportCancellation cancellation) async {
     final tableId = tableIds['movies']!;
     final desired = _genreIds(row.data['genres']).toSet().toList();
@@ -368,6 +425,8 @@ class AppwriteMcuImportService implements McuImportStore {
     }
     if (row.table == 'movies') {
       await _writeMovie(row, cancellation);
+    } else if (row.table == 'genres') {
+      await _writeGenre(row, cancellation);
     } else {
       await _request(
           'Write ${row.table}/${row.id}',

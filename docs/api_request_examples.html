@@ -514,7 +514,8 @@ imgUrl = /t/p/w500/sample-poster.jpg</pre></section>
    budget, revenue, status, adult, popularity, vote_average, vote_count,
    poster_path, backdrop_path, optional franchise, genres JSON.
 3. Click Upload edited movie and genres.
-4. Upsert genre rows, then movie row "1726"; verify readback.
+4. Read/create genre rows (update only changed names), then create/update
+   movie row "1726"; verify readback. Never upsert shared genre rows.
    No people or cast/crew credits are uploaded by this tab.
 
 Genres input: [{"id":28,"name":"Action"}] (use [] for no genres).
@@ -589,7 +590,8 @@ Database ID = 6ae9d8f70009a29b3b5b
 No authentication or API key for Appwrite
 Administrator temporarily allows Any create/read/update on all five tables
 
-1. Upsert genres (table genres; row IDs "28" and "878").
+1. Read genres (table genres; row IDs "28" and "878"), create missing rows,
+   and update only changed names. Never write their inverse movies links.
    Check selected people by TMDB row ID in table people.
    Reuse existing profiles without rewriting. Fetch full profiles and create
    only missing people; concurrent-create conflicts reuse existing rows.
