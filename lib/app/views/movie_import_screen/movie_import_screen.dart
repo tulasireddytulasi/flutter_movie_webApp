@@ -27,6 +27,7 @@ class MovieImportScreenState extends State<MovieImportScreen> {
   final TextEditingController _languageController = TextEditingController(text: 'en');
   final TextEditingController _searchLanguageController = TextEditingController(text: 'en-US');
   final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _franchiseController = TextEditingController();
   final TextEditingController _genresController = TextEditingController();
   final BulkMovieImportController _bulkController = BulkMovieImportController();
   final GlobalKey _workspaceKey = GlobalKey();
@@ -103,6 +104,7 @@ class MovieImportScreenState extends State<MovieImportScreen> {
     _languageController.dispose();
     _searchLanguageController.dispose();
     _searchController.dispose();
+    _franchiseController.dispose();
     _genresController.dispose();
     _bulkController.removeListener(_bulkChanged);
     _bulkController.dispose();
@@ -329,6 +331,19 @@ class MovieImportScreenState extends State<MovieImportScreen> {
                         decoration: const InputDecoration(labelText: 'Movie title'),
                       ),
                     ),
+                  if (isSearch)
+                    SizedBox(
+                      width: 240,
+                      child: TextField(
+                        key: const PageStorageKey<String>('movie-import-franchise-input'),
+                        controller: _franchiseController,
+                        enabled: !_isBusy,
+                        decoration: const InputDecoration(
+                          labelText: 'Franchise (optional)',
+                          helperText: 'Upload default; blank writes null',
+                        ),
+                      ),
+                    ),
                   if (!isSearch)
                     SizedBox(
                       width: 190,
@@ -488,6 +503,7 @@ class MovieImportScreenState extends State<MovieImportScreen> {
                     BulkMovieImportWorkspace(
                       key: _workspaceKey,
                       controller: _bulkController,
+                      franchiseController: _franchiseController,
                       embedded: true,
                       disabled: _isFetching || _leaving,
                       onConfirmationChanged: (value) {

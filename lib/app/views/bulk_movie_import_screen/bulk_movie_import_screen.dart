@@ -19,12 +19,14 @@ class BulkMovieImportWorkspace extends StatefulWidget {
   const BulkMovieImportWorkspace({
     Key? key,
     this.controller,
+    this.franchiseController,
     this.embedded = false,
     this.disabled = false,
     this.onConfirmationChanged,
   }) : super(key: key);
 
   final BulkMovieImportController? controller;
+  final TextEditingController? franchiseController;
   final bool embedded;
   final bool disabled;
   final ValueChanged<bool>? onConfirmationChanged;
@@ -38,7 +40,7 @@ class _BulkMovieImportWorkspaceState extends State<BulkMovieImportWorkspace> {
   final _ids = TextEditingController();
   final _castCount = TextEditingController(text: '15');
   final _crewCount = TextEditingController(text: '15');
-  final _franchise = TextEditingController();
+  late final TextEditingController _franchise;
   bool _includePeople = true;
   bool _allowPop = false;
   bool _confirming = false;
@@ -50,6 +52,7 @@ class _BulkMovieImportWorkspaceState extends State<BulkMovieImportWorkspace> {
   void initState() {
     super.initState();
     _controller = widget.controller ?? BulkMovieImportController();
+    _franchise = widget.franchiseController ?? TextEditingController();
   }
 
   void _setConfirming(bool value) {
@@ -62,7 +65,7 @@ class _BulkMovieImportWorkspaceState extends State<BulkMovieImportWorkspace> {
     _ids.dispose();
     _castCount.dispose();
     _crewCount.dispose();
-    _franchise.dispose();
+    if (widget.franchiseController == null) _franchise.dispose();
     if (widget.controller == null) _controller.dispose();
     super.dispose();
   }
@@ -269,18 +272,19 @@ class _BulkMovieImportWorkspaceState extends State<BulkMovieImportWorkspace> {
                 decoration: const InputDecoration(labelText: 'Crew people per movie', helperText: '0 skips crew'),
               ),
             ),
-            SizedBox(
-              width: 260,
-              child: TextField(
-                key: const PageStorageKey<String>('bulk-franchise-input'),
-                controller: _franchise,
-                enabled: !disabled,
-                decoration: const InputDecoration(
-                  labelText: 'Franchise (optional)',
-                  helperText: 'Blank uploads null',
+            if (widget.franchiseController == null)
+              SizedBox(
+                width: 260,
+                child: TextField(
+                  key: const PageStorageKey<String>('bulk-franchise-input'),
+                  controller: _franchise,
+                  enabled: !disabled,
+                  decoration: const InputDecoration(
+                    labelText: 'Franchise (optional)',
+                    helperText: 'Blank uploads null',
+                  ),
                 ),
               ),
-            ),
           ],
         ),
         if (_settingsError != null) _error(_settingsError!),
