@@ -253,7 +253,7 @@
         filters visible people without altering selection; count selection uses the full list.
         A person selected in both groups is processed once, with shared status in both lists.</p>
       <p>People upload requires the fetched movie ID to already exist in Appwrite. It never
-        implicitly uploads the movie or uses unsaved movie edits. Each of at most five parallel
+        implicitly uploads the movie or uses unsaved movie edits. Each of at most fifteen parallel
         workers checks the person, fetches and creates a full profile only when missing, then
         upserts and verifies that person's selected credits. Existing profiles are never
         overwritten. Stable TMDB credit IDs and legacy-duplicate checks make retries safe.

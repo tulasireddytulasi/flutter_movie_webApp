@@ -524,7 +524,7 @@ Optional blank inputs: null; franchise blank clears an existing value.</pre></se
         <section class="field"><h3>People Info upload</h3><pre>1. Select cast and crew people using separate checkboxes or first-N counts.
    Default counts: 15 cast and 15 crew unique people.
 2. Movie "1726" must already exist in Appwrite.
-3. Up to 5 people are processed concurrently:
+3. Up to 15 people are processed concurrently:
    check people/{TMDB person ID};
    if missing, GET person/{id} and create the full profile;
    if present, preserve it without fetching or rewriting;

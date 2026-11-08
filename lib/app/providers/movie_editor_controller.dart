@@ -11,7 +11,7 @@ class MovieEditorController extends ChangeNotifier {
       : _source = source ?? TmdbMcuImportService(),
         _store = store ?? AppwriteMcuImportService();
 
-  static const parallelUploads = 5;
+  static const parallelUploads = 15;
   final McuTmdbSource _source;
   final McuImportStore _store;
   Map<String, dynamic>? _movie;
