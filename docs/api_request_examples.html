@@ -100,6 +100,7 @@
       <ul class="index">
         <li><a href="#movie-list">Movie list</a></li>
         <li><a href="#search">Movie search</a></li>
+        <li><a href="#search-upload">Search full-detail upload</a></li>
         <li><a href="#movie-details">Movie details</a></li>
         <li><a href="#recommendations">Recommendations</a></li>
         <li><a href="#reviews">Reviews</a></li>
@@ -501,6 +502,43 @@ imgUrl = /t/p/w500/sample-poster.jpg</pre></section>
         <section class="field"><h3>Body</h3><p>None. This is a GET request.</p></section>
         <section class="field response"><h3>Response</h3><p>Binary image data (for example, <code>image/jpeg</code>). The helper returns the response bytes as a <code>Uint8List</code>; there is no JSON response body.</p></section>
       </div>
+    </article>
+
+    <article class="example" id="search-upload">
+      <header class="example-heading"><h2>Search: review and upload inline</h2><span class="helpers">MovieImportScreen / BulkMovieImportWorkspace</span></header>
+      <div class="fields">
+        <section class="field"><h3>Discovery and detail review</h3><pre>1. Choose Search API in Import.
+2. Search "Spider-Man: Far From Home", language en-US.
+3. Select result ID 429617.
+4. Click Fetch selected details:
+   GET movie/429617?append_to_response=credits&amp;language=en-US
+5. Review the full-detail queue on the same screen.
+   Search and detail fetching do not write Appwrite rows.
+   Search metadata supplies IDs, not database payloads.
+   New searches/clearing results preserve this queue.</pre></section>
+        <section class="field"><h3>Current-schema upload</h3><pre>Defaults:
+  include people and credits: true
+  cast unique people: 15
+  crew unique people: 15
+  franchise: optional, blank writes null
+
+Edit movie fields or override settings per movie.
+Queue checkboxes select which fetched movies upload.
+Click Upload selected and confirm:
+  ensure genres exist (read/create/name-only update);
+  create/update movies/429617 with native genre links;
+  reuse existing profiles; fetch/create missing people;
+  upsert and verify selected cast/crew credit IDs.
+
+Concurrency: 3 movies, one shared 15-person pool.
+Retry failed detail fetches separately from unfinished uploads.
+Retain verified work and original retry plans.
+Removing/clearing review items confirms loss of local retry state.
+No legacy movie-list table requests and no schema changes.</pre></section>
+      </div>
+      <p>Movie list fetching remains available but list uploads are disabled.
+        Search language affects discovery; full details and profiles use en-US.
+        See the <a href="api_documentation.html#search-upload-heading">search upload reference</a>.</p>
     </article>
 
     <article class="example" id="movie-editor">

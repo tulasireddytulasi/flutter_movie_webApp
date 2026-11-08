@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/app/core/responses/appwrite_movie_service.dart';
 import 'package:moviewebapp/app/core/responses/movie_apis.dart';
 import 'package:moviewebapp/app/models/get_movies_model.dart';
+import 'package:moviewebapp/app/providers/bulk_movie_import_controller.dart';
 import 'package:moviewebapp/app/views/bulk_movie_import_screen/bulk_movie_import_screen.dart';
 import 'package:moviewebapp/app/views/mcu_import_screen/mcu_import_screen.dart';
 import 'package:moviewebapp/app/views/movie_editor_screen/movie_editor_screen.dart';
@@ -12,10 +12,10 @@ class MovieImportScreen extends StatefulWidget {
   const MovieImportScreen({Key? key}) : super(key: key);
 
   @override
-  State<MovieImportScreen> createState() => _MovieImportScreenState();
+  State<MovieImportScreen> createState() => MovieImportScreenState();
 }
 
-class _MovieImportScreenState extends State<MovieImportScreen> {
+class MovieImportScreenState extends State<MovieImportScreen> {
   static const Map<String, String> _movieTypes = <String, String>{
     'popular': 'Popular',
     'top_rated': 'Top rated',
@@ -28,22 +28,74 @@ class _MovieImportScreenState extends State<MovieImportScreen> {
   final TextEditingController _searchLanguageController = TextEditingController(text: 'en-US');
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _genresController = TextEditingController();
-  final AppwriteMovieService _appwriteMovieService = AppwriteMovieService();
+  final BulkMovieImportController _bulkController = BulkMovieImportController();
+  final GlobalKey _workspaceKey = GlobalKey();
   final ValueNotifier<_MovieImportSource> _sourceNotifier = ValueNotifier<_MovieImportSource>(_MovieImportSource.list);
   final ValueNotifier<Set<int>> _selectedMovieIds = ValueNotifier<Set<int>>(<int>{});
 
   String _movieType = 'popular';
   List<Movies> _movies = <Movies>[];
   bool _isFetching = false;
-  bool _isUploading = false;
-  int _uploadedCount = 0;
-  int _failedCount = 0;
-  int _uploadTotal = 0;
+  bool _workspaceConfirming = false;
+  bool _leaving = false;
+  bool _allowPop = false;
   String? _errorMessage;
   String? _statusMessage;
-  final List<String> _uploadErrors = <String>[];
 
-  bool get _isBusy => _isFetching || _isUploading;
+  bool get _isBusy => _isFetching || _bulkController.busy || _workspaceConfirming || _leaving;
+
+  @override
+  void initState() {
+    super.initState();
+    _bulkController.addListener(_bulkChanged);
+  }
+
+  void _bulkChanged() {
+    if (mounted) setState(() {});
+  }
+
+  Future<bool> confirmLeave() async {
+    if (_isBusy) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Finish or cancel the current operation before leaving Import.')),
+      );
+      return false;
+    }
+    if (_bulkController.movies.isEmpty) return true;
+    setState(() => _leaving = true);
+    final leave = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Leave Import?'),
+        content: const Text('The review queue contains local edits or retry progress. Switching tabs '
+            'keeps it in this app session; leaving or restarting the app discards it. '
+            'Stored Appwrite rows are not deleted.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Stay')),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Leave')),
+        ],
+      ),
+    );
+    if (!mounted) return false;
+    setState(() => _leaving = false);
+    return leave == true;
+  }
+
+  Future<void> _leaveRoute() async {
+    if (await confirmLeave() && mounted) {
+      setState(() => _allowPop = true);
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (!mounted) return;
+        await Navigator.of(context).maybePop();
+        if (mounted) setState(() => _allowPop = false);
+      });
+    }
+  }
+
+  Future<void> _openImporter(Widget screen) async {
+    if (_isBusy || !await confirmLeave() || !mounted) return;
+    await Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => screen));
+  }
 
   @override
   void dispose() {
@@ -52,19 +104,19 @@ class _MovieImportScreenState extends State<MovieImportScreen> {
     _searchLanguageController.dispose();
     _searchController.dispose();
     _genresController.dispose();
+    _bulkController.removeListener(_bulkChanged);
+    _bulkController.dispose();
     _sourceNotifier.dispose();
     _selectedMovieIds.dispose();
     super.dispose();
   }
 
   void _clearResults() {
+    if (_isBusy) return;
     setState(() {
       _movies = <Movies>[];
       _errorMessage = null;
       _statusMessage = null;
-      _uploadedCount = 0;
-      _failedCount = 0;
-      _uploadErrors.clear();
     });
     _selectedMovieIds.value = <int>{};
   }
@@ -88,6 +140,7 @@ class _MovieImportScreenState extends State<MovieImportScreen> {
   }
 
   Future<void> _fetchMovies(_MovieImportSource source) async {
+    if (_isBusy) return;
     final int? page = int.tryParse(_pageController.text.trim());
     if (page == null || page < 1) {
       setState(() {
@@ -122,9 +175,6 @@ class _MovieImportScreenState extends State<MovieImportScreen> {
       _errorMessage = null;
       _statusMessage = null;
       _movies = <Movies>[];
-      _uploadedCount = 0;
-      _failedCount = 0;
-      _uploadErrors.clear();
     });
     _selectedMovieIds.value = <int>{};
 
@@ -145,7 +195,8 @@ class _MovieImportScreenState extends State<MovieImportScreen> {
       setState(() {
         _movies = movies;
         _statusMessage = isSearch
-            ? 'Found ${movies.length} results for "$searchQuery" on page $page. Select titles to upload.'
+            ? 'Found ${movies.length} results for "$searchQuery" on page $page. '
+                'Select titles, then fetch full details for review.'
             : 'Fetched ${movies.length} movies from page $page.';
       });
     } catch (error) {
@@ -156,44 +207,14 @@ class _MovieImportScreenState extends State<MovieImportScreen> {
     }
   }
 
-  Future<void> _uploadMovies(_MovieImportSource source) async {
-    final Set<int> selectedIds = _selectedMovieIds.value;
-    final List<Movies> moviesToUpload = source == _MovieImportSource.search
-        ? _movies.where((movie) => movie.id != null && selectedIds.contains(movie.id)).toList()
-        : List<Movies>.of(_movies);
-    if (moviesToUpload.isEmpty || _isBusy) return;
-
-    setState(() {
-      _isUploading = true;
-      _uploadedCount = 0;
-      _failedCount = 0;
-      _uploadTotal = moviesToUpload.length;
-      _uploadErrors.clear();
-      _errorMessage = null;
-      _statusMessage = null;
-    });
-
-    for (final Movies movie in moviesToUpload) {
-      try {
-        await _appwriteMovieService.upsertMovie(movie);
-        _uploadedCount++;
-      } catch (error) {
-        _failedCount++;
-        if (_uploadErrors.length < 3) {
-          _uploadErrors.add('${movie.title ?? movie.id}: $error');
-        }
-      }
-      if (mounted) setState(() {});
-    }
-
-    if (!mounted) return;
-    setState(() {
-      _isUploading = false;
-      _statusMessage = 'Uploaded $_uploadedCount of ${moviesToUpload.length} rows.';
-      if (_failedCount > 0) {
-        _errorMessage = '$_failedCount rows failed. Check Appwrite table permissions and column types.';
-      }
-    });
+  Future<void> _fetchSelectedDetails() async {
+    if (_isBusy || _sourceNotifier.value != _MovieImportSource.search) return;
+    final ids = _movies
+        .where((movie) => movie.id != null && movie.id! > 0 && _selectedMovieIds.value.contains(movie.id))
+        .map((movie) => movie.id!)
+        .toSet();
+    if (ids.isEmpty) return;
+    await _bulkController.fetch(ids.join(','));
   }
 
   @override
@@ -221,248 +242,263 @@ class _MovieImportScreenState extends State<MovieImportScreen> {
     final int uploadCount =
         isSearch ? _movies.where((movie) => movie.id != null && selectedIds.contains(movie.id)).length : _movies.length;
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(24, 22, 24, 18),
-          children: <Widget>[
-            Text('Movie data import', style: theme.textTheme.headlineSmall),
-            const SizedBox(height: 4),
-            Text(
-              'Fetch a TMDB list or search for specific titles, then upload them to Appwrite.',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: OutlinedButton.icon(
-                onPressed: _isBusy
-                    ? null
-                    : () => Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => const McuImportScreen(),
-                          ),
-                        ),
-                icon: const Icon(Icons.cloud_upload_outlined),
-                label: const Text('MCU import'),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: OutlinedButton.icon(
-                onPressed: _isBusy
-                    ? null
-                    : () => Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => const MovieEditorScreen(),
-                          ),
-                        ),
-                icon: const Icon(Icons.edit_note_outlined),
-                label: const Text('Movie ID editor'),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: OutlinedButton.icon(
-                onPressed: _isBusy
-                    ? null
-                    : () => Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => const BulkMovieImportScreen(),
-                          ),
-                        ),
-                icon: const Icon(Icons.playlist_add_outlined),
-                label: const Text('Bulk movie upload'),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: <Widget>[
-                SizedBox(
-                  width: 190,
-                  child: DropdownButtonFormField<_MovieImportSource>(
-                    initialValue: source,
-                    decoration: const InputDecoration(labelText: 'TMDB API'),
-                    items: const <DropdownMenuItem<_MovieImportSource>>[
-                      DropdownMenuItem(
-                        value: _MovieImportSource.list,
-                        child: Text('Movie list API'),
-                      ),
-                      DropdownMenuItem(
-                        value: _MovieImportSource.search,
-                        child: Text('Search API'),
-                      ),
-                    ],
-                    onChanged: _isBusy
-                        ? null
-                        : (value) {
-                            if (value != null) _changeSource(value);
-                          },
-                  ),
+    return PopScope(
+      canPop: _allowPop || (!_isBusy && _bulkController.movies.isEmpty),
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) _leaveRoute();
+      },
+      child: Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        body: SafeArea(
+          child: ListView(
+            key: const PageStorageKey<String>('movie-import-scroll'),
+            padding: const EdgeInsets.fromLTRB(24, 22, 24, 18),
+            children: <Widget>[
+              Text('Movie data import', style: theme.textTheme.headlineSmall),
+              const SizedBox(height: 4),
+              Text(
+                'Browse TMDB lists, or search titles and review full movie details before uploading.',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
                 ),
-                if (isSearch)
-                  SizedBox(
-                    width: 240,
-                    child: TextField(
-                      controller: _searchController,
-                      enabled: !_isBusy,
-                      textInputAction: TextInputAction.search,
-                      onSubmitted: (_) => _fetchMovies(source),
-                      decoration: const InputDecoration(labelText: 'Movie title'),
-                    ),
-                  ),
-                if (!isSearch)
+              ),
+              const SizedBox(height: 20),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: OutlinedButton.icon(
+                  onPressed: _isBusy ? null : () => _openImporter(const McuImportScreen()),
+                  icon: const Icon(Icons.cloud_upload_outlined),
+                  label: const Text('MCU import'),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: OutlinedButton.icon(
+                  onPressed: _isBusy ? null : () => _openImporter(const MovieEditorScreen()),
+                  icon: const Icon(Icons.edit_note_outlined),
+                  label: const Text('Movie ID editor'),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: OutlinedButton.icon(
+                  onPressed: _isBusy ? null : () => _openImporter(const BulkMovieImportScreen()),
+                  icon: const Icon(Icons.playlist_add_outlined),
+                  label: const Text('Bulk movie upload'),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: <Widget>[
                   SizedBox(
                     width: 190,
-                    child: DropdownButtonFormField<String>(
-                      initialValue: _movieType,
-                      decoration: const InputDecoration(labelText: 'Movie list'),
-                      items: _movieTypes.entries
-                          .map((entry) => DropdownMenuItem<String>(
-                                value: entry.key,
-                                child: Text(entry.value),
-                              ))
-                          .toList(),
+                    child: DropdownButtonFormField<_MovieImportSource>(
+                      initialValue: source,
+                      decoration: const InputDecoration(labelText: 'TMDB API'),
+                      items: const <DropdownMenuItem<_MovieImportSource>>[
+                        DropdownMenuItem(
+                          value: _MovieImportSource.list,
+                          child: Text('Movie list API'),
+                        ),
+                        DropdownMenuItem(
+                          value: _MovieImportSource.search,
+                          child: Text('Search API'),
+                        ),
+                      ],
                       onChanged: _isBusy
                           ? null
                           : (value) {
-                              if (value != null) {
-                                setState(() => _movieType = value);
-                              }
+                              if (value != null) _changeSource(value);
                             },
                     ),
                   ),
-                SizedBox(
-                  width: 110,
-                  child: TextField(
-                    controller: _pageController,
-                    enabled: !_isBusy,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(labelText: 'Page'),
-                  ),
-                ),
-                SizedBox(
-                  width: 155,
-                  child: TextField(
-                    controller: isSearch ? _searchLanguageController : _languageController,
-                    enabled: !_isBusy,
-                    decoration: InputDecoration(labelText: isSearch ? 'Search language' : 'Original language'),
-                  ),
-                ),
-                if (!isSearch)
+                  if (isSearch)
+                    SizedBox(
+                      width: 240,
+                      child: TextField(
+                        key: const PageStorageKey<String>('movie-import-search-input'),
+                        controller: _searchController,
+                        enabled: !_isBusy,
+                        textInputAction: TextInputAction.search,
+                        onSubmitted: (_) => _fetchMovies(source),
+                        decoration: const InputDecoration(labelText: 'Movie title'),
+                      ),
+                    ),
+                  if (!isSearch)
+                    SizedBox(
+                      width: 190,
+                      child: DropdownButtonFormField<String>(
+                        initialValue: _movieType,
+                        decoration: const InputDecoration(labelText: 'Movie list'),
+                        items: _movieTypes.entries
+                            .map((entry) => DropdownMenuItem<String>(
+                                  value: entry.key,
+                                  child: Text(entry.value),
+                                ))
+                            .toList(),
+                        onChanged: _isBusy
+                            ? null
+                            : (value) {
+                                if (value != null) {
+                                  setState(() => _movieType = value);
+                                }
+                              },
+                      ),
+                    ),
                   SizedBox(
-                    width: 170,
+                    width: 110,
                     child: TextField(
-                      controller: _genresController,
+                      key: const PageStorageKey<String>('movie-import-page-input'),
+                      controller: _pageController,
                       enabled: !_isBusy,
                       keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(labelText: 'Genre IDs (optional)'),
+                      decoration: const InputDecoration(labelText: 'Page'),
                     ),
                   ),
-                FilledButton.icon(
-                  onPressed: _isBusy ? null : () => _fetchMovies(source),
-                  icon: Icon(isSearch ? Icons.search : Icons.download_outlined),
-                  label: Text(isSearch ? 'Search movies' : 'Fetch movies'),
-                ),
-                FilledButton.icon(
-                  onPressed: _isBusy || uploadCount == 0 ? null : () => _uploadMovies(source),
-                  icon: const Icon(Icons.cloud_upload_outlined),
-                  label: Text(_isUploading
-                      ? 'Uploading...'
-                      : isSearch
-                          ? 'Upload selected ($uploadCount)'
-                          : 'Upload all ($uploadCount)'),
-                ),
-              ],
-            ),
-            if (_isUploading) ...<Widget>[
-              const SizedBox(height: 14),
-              LinearProgressIndicator(
-                value: _uploadTotal == 0 ? null : (_uploadedCount + _failedCount) / _uploadTotal,
-              ),
-            ],
-            if (_statusMessage != null || _errorMessage != null) ...<Widget>[
-              const SizedBox(height: 14),
-              if (_statusMessage != null) Text(_statusMessage!, style: theme.textTheme.bodyMedium),
-              if (_errorMessage != null) ...<Widget>[
-                const SizedBox(height: 4),
-                Text(
-                  _errorMessage!,
-                  style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.error),
-                ),
-                for (final String uploadError in _uploadErrors)
-                  Text(uploadError, style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.error)),
-              ],
-            ],
-            const SizedBox(height: 16),
-            Row(
-              children: <Widget>[
-                Text(isSearch ? 'Search results' : 'Fetched movies', style: theme.textTheme.titleMedium),
-                const SizedBox(width: 8),
-                Text('${_movies.length}', style: theme.textTheme.bodyMedium),
-                const Spacer(),
-                if (_movies.isNotEmpty)
-                  IconButton(
-                    tooltip: 'Clear results',
-                    onPressed: _isBusy ? null : _clearResults,
-                    icon: const Icon(Icons.delete_outline),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            if (_movies.isEmpty)
-              SizedBox(
-                height: 180,
-                child: Center(
-                  child: Text(
-                    isSearch
-                        ? 'Search for a movie title to choose movies for upload.'
-                        : 'Choose a movie list and fetch a page to begin.',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
+                  SizedBox(
+                    width: 155,
+                    child: TextField(
+                      key: PageStorageKey<String>(
+                          isSearch ? 'movie-import-search-language-input' : 'movie-import-language-input'),
+                      controller: isSearch ? _searchLanguageController : _languageController,
+                      enabled: !_isBusy,
+                      decoration: InputDecoration(labelText: isSearch ? 'Search language' : 'Original language'),
                     ),
-                    textAlign: TextAlign.center,
                   ),
-                ),
-              ),
-            for (int index = 0; index < _movies.length; index++) ...<Widget>[
-              ListTile(
-                dense: true,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                leading: isSearch
-                    ? Checkbox(
-                        value: _movies[index].id != null && selectedIds.contains(_movies[index].id),
-                        onChanged: _movies[index].id == null || _isBusy
-                            ? null
-                            : (selected) => _setMovieSelected(_movies[index], selected ?? false),
-                      )
-                    : CircleAvatar(
-                        backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                        child: Text('${index + 1}'),
+                  if (!isSearch)
+                    SizedBox(
+                      width: 170,
+                      child: TextField(
+                        key: const PageStorageKey<String>('movie-import-genres-input'),
+                        controller: _genresController,
+                        enabled: !_isBusy,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(labelText: 'Genre IDs (optional)'),
                       ),
-                title: Text(_movies[index].title ?? 'Untitled movie'),
-                subtitle: Text(
-                  'ID ${_movies[index].id ?? 'n/a'}  ·  '
-                  '${_movies[index].releaseDate?.toIso8601String().split('T').first ?? 'No release date'}  ·  '
-                  'Popularity ${_movies[index].popularity?.toStringAsFixed(1) ?? 'n/a'}',
-                ),
-                trailing: isSearch
-                    ? null
-                    : _isUploading
-                        ? const Icon(Icons.more_horiz)
-                        : const Icon(Icons.movie_outlined),
+                    ),
+                  FilledButton.icon(
+                    onPressed: _isBusy ? null : () => _fetchMovies(source),
+                    icon: Icon(isSearch ? Icons.search : Icons.download_outlined),
+                    label: Text(isSearch ? 'Search movies' : 'Fetch movies'),
+                  ),
+                  if (isSearch)
+                    FilledButton.icon(
+                      onPressed: _isBusy || uploadCount == 0 ? null : _fetchSelectedDetails,
+                      icon: const Icon(Icons.download_outlined),
+                      label: Text('Fetch selected details ($uploadCount)'),
+                    )
+                  else
+                    const OutlinedButton(
+                      onPressed: null,
+                      child: Text('List upload unavailable'),
+                    ),
+                ],
               ),
-              if (index < _movies.length - 1) const Divider(height: 1),
+              if (!isSearch) ...[
+                const SizedBox(height: 8),
+                const Text('Movie list browsing is available, but its legacy upload table was removed. '
+                    'Use Search API or Bulk movie upload for full movie, genre, people and credit uploads.'),
+              ],
+              if (_isFetching) ...<Widget>[
+                const SizedBox(height: 14),
+                LinearProgressIndicator(),
+              ],
+              if (_statusMessage != null || _errorMessage != null) ...<Widget>[
+                const SizedBox(height: 14),
+                if (_statusMessage != null) Text(_statusMessage!, style: theme.textTheme.bodyMedium),
+                if (_errorMessage != null) ...<Widget>[
+                  const SizedBox(height: 4),
+                  Text(
+                    _errorMessage!,
+                    style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.error),
+                  ),
+                ],
+              ],
+              const SizedBox(height: 16),
+              Row(
+                children: <Widget>[
+                  Text(isSearch ? 'Search results' : 'Fetched movies', style: theme.textTheme.titleMedium),
+                  const SizedBox(width: 8),
+                  Text('${_movies.length}', style: theme.textTheme.bodyMedium),
+                  const Spacer(),
+                  if (_movies.isNotEmpty)
+                    IconButton(
+                      tooltip: 'Clear discovery results (keeps review queue)',
+                      onPressed: _isBusy ? null : _clearResults,
+                      icon: const Icon(Icons.delete_outline),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              if (_movies.isEmpty)
+                SizedBox(
+                  height: 180,
+                  child: Center(
+                    child: Text(
+                      isSearch
+                          ? 'Search for a movie title, select results, then fetch full details below.'
+                          : 'Choose a movie list and fetch a page to begin.',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              for (int index = 0; index < _movies.length; index++) ...<Widget>[
+                ListTile(
+                  dense: true,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                  leading: isSearch
+                      ? Checkbox(
+                          value: _movies[index].id != null && selectedIds.contains(_movies[index].id),
+                          onChanged: _movies[index].id == null || _movies[index].id! <= 0 || _isBusy
+                              ? null
+                              : (selected) => _setMovieSelected(_movies[index], selected ?? false),
+                        )
+                      : CircleAvatar(
+                          backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                          child: Text('${index + 1}'),
+                        ),
+                  title: Text(_movies[index].title ?? 'Untitled movie'),
+                  subtitle: Text(
+                    'ID ${_movies[index].id ?? 'n/a'}  ·  '
+                    '${_movies[index].releaseDate?.toIso8601String().split('T').first ?? 'No release date'}  ·  '
+                    'Popularity ${_movies[index].popularity?.toStringAsFixed(1) ?? 'n/a'}',
+                  ),
+                  trailing: isSearch ? null : const Icon(Icons.movie_outlined),
+                ),
+                if (index < _movies.length - 1) const Divider(height: 1),
+              ],
+              Offstage(
+                offstage: !isSearch,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 24),
+                    Text('Full-detail review and upload queue', style: theme.textTheme.titleLarge),
+                    const Text('Result checkboxes choose IDs to fetch. Queue checkboxes below choose what to upload. '
+                        'New searches keep this queue, edits and retry progress. Details and profiles use en-US.'),
+                    const SizedBox(height: 12),
+                    BulkMovieImportWorkspace(
+                      key: _workspaceKey,
+                      controller: _bulkController,
+                      embedded: true,
+                      disabled: _isFetching || _leaving,
+                      onConfirmationChanged: (value) {
+                        if (mounted) setState(() => _workspaceConfirming = value);
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ],
-          ],
+          ),
         ),
       ),
     );

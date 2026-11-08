@@ -232,6 +232,40 @@
       </article>
     </section>
 
+    <section aria-labelledby="search-upload-heading">
+      <div class="section-heading"><h2 id="search-upload-heading">Search movie upload</h2><span>Full-detail review and uploads inside Import</span></div>
+      <p>Choose <strong>Import &gt; Search API</strong>, search a title, select result
+        checkboxes, and click <strong>Fetch selected details</strong>. Search results
+        provide TMDB IDs only; their sparse metadata is never used as an Appwrite
+        payload. Complete movie details and credits are fetched into the inline
+        review queue, without writing database rows or opening another route.
+        Search language controls discovery; detail and profile requests use en-US.</p>
+      <p>The inline queue uses the same <code>BulkMovieImportWorkspace</code> and
+        <code>BulkMovieImportController</code> as the standalone bulk screen.
+        Set franchise (blank writes null), cast/crew unique-person counts (15 each
+        by default), and whether to include people/credits. Review and edit movie
+        fields or override settings per movie, then explicitly confirm
+        <strong>Upload selected</strong>. Result checkboxes choose IDs to fetch;
+        queue checkboxes choose fetched movies to upload.</p>
+      <p>Uploads use the current movies, genres, people, movie_cast and movie_crew
+        tables: three movie workers share one pool of 15 people. Existing profiles
+        are reused, missing profiles are coordinated across movies, genre writes
+        never upsert inverse relationships, and readback verifies stored values.
+        Failed detail fetches and unfinished uploads have separate retry actions;
+        successful work is kept, with per-movie and per-person statuses.</p>
+      <p>New searches, page changes, and clearing discovery results keep the review
+        queue, settings, edits and retry state. Switching API modes keeps the queue
+        but hides it in Movie list mode. Removing a queue item or clearing the queue
+        requires confirmation; no Appwrite rows are deleted. Active work or dialogs
+        block search/source changes and navigation. Leaving Import with a queue
+        warns about local state; navigation tabs retain it during the app session,
+        but closing/restarting the app loses it. Cancel requests finish in flight.</p>
+      <p><strong>Movie list API is browse-only.</strong> Its obsolete upload action is
+        disabled because the legacy table was removed. Use Search API, Movie ID
+        editor, or Bulk movie upload for current-schema ingestion. The legacy sparse
+        uploader has been removed; no importer recreates the deleted table.</p>
+    </section>
+
     <section aria-labelledby="movie-editor-heading">
       <div class="section-heading"><h2 id="movie-editor-heading">Movie ID editor</h2><span>Independent Movie Info and People Info tabs</span></div>
       <p>Open <strong>Import &gt; Movie ID editor</strong>. Enter any positive TMDB movie ID
@@ -246,7 +280,8 @@
         the edited movie second, and verifies the written fields by readback. It does not
         upload profiles or credits. Invalid numbers, dates, booleans, genre JSON, and required
         values report explicit errors; optional text truncation warnings remain visible.
-        The existing MCU/list/search importers are unchanged.</p>
+        The MCU importer and standalone bulk importer remain available; Search API
+        now uses the shared inline full-detail workflow described above.</p>
       <p><strong>People Info</strong> has separate unique cast and crew lists. Select checkboxes
         or enter independent counts (default 15; 0 clears a group). Cast is ranked by TMDB order;
         crew follows response order. All roles/jobs in selected sections are retained. Search
@@ -369,8 +404,9 @@
       </div>
       <p>Endpoint: <code>https://nyc.cloud.appwrite.io/v1</code>; project:
         <code>6a566f7e0020a7ca4f55</code>; database: <code>6ae9d8f70009a29b3b5b</code>
-        (The Friday Movies). The old list/search importer still targets
-        <code>movie_list</code> (<code>6ae9d976001eff727511</code>) and is unchanged.</p>
+        (The Friday Movies). Search uploads use these current tables after fetching
+        full details. The deleted legacy movie-list table is no longer targeted;
+        Movie list API supports fetching only.</p>
       <p>The external architecture guide's literal database/movie IDs and inverse people keys
         differ from the actual database. Actual movie/genre and credit/person deletion rules
         are Restrict; movie-to-credit deletion is Cascade. Six movie/people indexes exist;

@@ -5,15 +5,36 @@ import 'package:moviewebapp/app/models/mcu_import_models.dart';
 import 'package:moviewebapp/app/models/movie_editor_models.dart';
 import 'package:moviewebapp/app/providers/bulk_movie_import_controller.dart';
 
-class BulkMovieImportScreen extends StatefulWidget {
+class BulkMovieImportScreen extends StatelessWidget {
   const BulkMovieImportScreen({Key? key}) : super(key: key);
 
   @override
-  State<BulkMovieImportScreen> createState() => _BulkMovieImportScreenState();
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(title: const Text('Bulk movie upload')),
+        body: const SafeArea(child: BulkMovieImportWorkspace()),
+      );
 }
 
-class _BulkMovieImportScreenState extends State<BulkMovieImportScreen> {
-  final _controller = BulkMovieImportController();
+class BulkMovieImportWorkspace extends StatefulWidget {
+  const BulkMovieImportWorkspace({
+    Key? key,
+    this.controller,
+    this.embedded = false,
+    this.disabled = false,
+    this.onConfirmationChanged,
+  }) : super(key: key);
+
+  final BulkMovieImportController? controller;
+  final bool embedded;
+  final bool disabled;
+  final ValueChanged<bool>? onConfirmationChanged;
+
+  @override
+  State<BulkMovieImportWorkspace> createState() => _BulkMovieImportWorkspaceState();
+}
+
+class _BulkMovieImportWorkspaceState extends State<BulkMovieImportWorkspace> {
+  late final BulkMovieImportController _controller;
   final _ids = TextEditingController();
   final _castCount = TextEditingController(text: '15');
   final _crewCount = TextEditingController(text: '15');
@@ -23,13 +44,26 @@ class _BulkMovieImportScreenState extends State<BulkMovieImportScreen> {
   bool _confirming = false;
   String? _settingsError;
 
+  bool get _disabled => widget.disabled || _controller.busy || _confirming;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = widget.controller ?? BulkMovieImportController();
+  }
+
+  void _setConfirming(bool value) {
+    setState(() => _confirming = value);
+    widget.onConfirmationChanged?.call(value);
+  }
+
   @override
   void dispose() {
     _ids.dispose();
     _castCount.dispose();
     _crewCount.dispose();
     _franchise.dispose();
-    _controller.dispose();
+    if (widget.controller == null) _controller.dispose();
     super.dispose();
   }
 
@@ -46,6 +80,7 @@ class _BulkMovieImportScreenState extends State<BulkMovieImportScreen> {
   }
 
   Future<void> _upload({bool retry = false}) async {
+    if (_disabled) return;
     BulkMovieSettings settings;
     try {
       settings = _settings();
@@ -54,7 +89,7 @@ class _BulkMovieImportScreenState extends State<BulkMovieImportScreen> {
       setState(() => _settingsError = failure.message);
       return;
     }
-    setState(() => _confirming = true);
+    _setConfirming(true);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -78,11 +113,12 @@ class _BulkMovieImportScreenState extends State<BulkMovieImportScreen> {
       ),
     );
     if (!mounted) return;
-    setState(() => _confirming = false);
+    _setConfirming(false);
     if (confirmed == true) await _controller.upload(settings, retry: retry);
   }
 
   Future<void> _edit(BulkMovieEntry movie) async {
+    if (_disabled) return;
     BulkMovieSettings settings;
     try {
       settings = _settings();
@@ -91,22 +127,25 @@ class _BulkMovieImportScreenState extends State<BulkMovieImportScreen> {
       setState(() => _settingsError = failure.message);
       return;
     }
+    _setConfirming(true);
     final result = await showDialog<_BulkMovieEditResult>(
       context: context,
       builder: (_) => _BulkMovieEditDialog(movie: movie, defaults: settings),
     );
-    if (result != null && mounted) {
+    if (!mounted) return;
+    _setConfirming(false);
+    if (result != null) {
       _controller.edit(movie, result.data, result.settings);
     }
   }
 
   Future<void> _leave() async {
     if (_confirming) return;
-    setState(() => _confirming = true);
+    _setConfirming(true);
     final leave = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Cancel the batch and leave?'),
+        title: const Text('Leave the bulk workspace?'),
         content: const Text(
           'In-flight requests will finish and stored rows are kept. This screen holds the '
           'retry progress and unsaved edits in memory; leaving discards that local progress.',
@@ -118,7 +157,7 @@ class _BulkMovieImportScreenState extends State<BulkMovieImportScreen> {
       ),
     );
     if (!mounted) return;
-    setState(() => _confirming = false);
+    _setConfirming(false);
     if (leave != true) return;
     _controller.cancel();
     setState(() => _allowPop = true);
@@ -127,46 +166,75 @@ class _BulkMovieImportScreenState extends State<BulkMovieImportScreen> {
     });
   }
 
+  Future<void> _remove({BulkMovieEntry? movie}) async {
+    if (_disabled) return;
+    _setConfirming(true);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(movie == null ? 'Clear review queue?' : 'Remove ${movie.title}?'),
+        content: const Text('Local edits and retry progress for these movies will be discarded. '
+            'No stored Appwrite rows will be deleted.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Remove')),
+        ],
+      ),
+    );
+    if (!mounted) return;
+    _setConfirming(false);
+    if (confirmed == true) {
+      if (movie == null) {
+        _controller.clear();
+      } else {
+        _controller.remove(movie);
+      }
+    }
+  }
+
   Widget _error(String text) => Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Text(text, style: TextStyle(color: Theme.of(context).colorScheme.error)),
       );
 
   Widget _controls() {
-    final disabled = _controller.busy || _confirming;
+    final disabled = _disabled;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Paste IDs separated by commas, spaces, or newlines. Duplicate IDs are removed.'),
-        const SizedBox(height: 8),
-        TextField(
-          key: const PageStorageKey<String>('bulk-movie-ids-input'),
-          controller: _ids,
-          enabled: !disabled,
-          minLines: 2,
-          maxLines: 5,
-          decoration: const InputDecoration(
-            labelText: 'TMDB movie IDs',
-            hintText: '1726, 10138, 68721',
-            border: OutlineInputBorder(),
+        if (!widget.embedded) ...[
+          const Text('Paste IDs separated by commas, spaces, or newlines. Duplicate IDs are removed.'),
+          const SizedBox(height: 8),
+          TextField(
+            key: const PageStorageKey<String>('bulk-movie-ids-input'),
+            controller: _ids,
+            enabled: !disabled,
+            minLines: 2,
+            maxLines: 5,
+            decoration: const InputDecoration(
+              labelText: 'TMDB movie IDs',
+              hintText: '1726, 10138, 68721',
+              border: OutlineInputBorder(),
+            ),
           ),
-        ),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 12,
-          runSpacing: 8,
-          children: [
-            FilledButton.icon(
-              onPressed: disabled ? null : () => _controller.fetch(_ids.text),
-              icon: const Icon(Icons.download_outlined),
-              label: const Text('Fetch movies'),
-            ),
-            OutlinedButton(
-              onPressed: disabled || !_controller.hasFetchFailures ? null : () => _controller.fetch('', retry: true),
-              child: const Text('Retry failed fetches'),
-            ),
-          ],
-        ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 12,
+            runSpacing: 8,
+            children: [
+              FilledButton.icon(
+                onPressed: disabled ? null : () => _controller.fetch(_ids.text),
+                icon: const Icon(Icons.download_outlined),
+                label: const Text('Fetch movies'),
+              ),
+            ],
+          ),
+        ],
+        if (_controller.hasFetchFailures)
+          OutlinedButton(
+            onPressed: disabled ? null : () => _controller.fetch('', retry: true),
+            child: const Text('Retry failed detail fetches'),
+          ),
         const SizedBox(height: 20),
         Text('Shared upload settings', style: Theme.of(context).textTheme.titleMedium),
         const Text('Apply to new upload plans. Existing retry plans keep their original settings.'),
@@ -259,6 +327,7 @@ class _BulkMovieImportScreenState extends State<BulkMovieImportScreen> {
                   onPressed: disabled ? null : () => _controller.selectAll(true), child: const Text('Select all')),
               TextButton(
                   onPressed: disabled ? null : () => _controller.selectAll(false), child: const Text('Deselect all')),
+              TextButton(onPressed: disabled ? null : () => _remove(), child: const Text('Clear review queue')),
             ],
           ),
       ],
@@ -266,7 +335,7 @@ class _BulkMovieImportScreenState extends State<BulkMovieImportScreen> {
   }
 
   Widget _movieCard(BulkMovieEntry movie) {
-    final disabled = _controller.busy || _confirming;
+    final disabled = _disabled;
     final poster = movie.posterPath;
     return Card(
       child: Column(
@@ -318,7 +387,7 @@ class _BulkMovieImportScreenState extends State<BulkMovieImportScreen> {
                             label: const Text('Edit / override settings'),
                           ),
                           TextButton(
-                            onPressed: disabled ? null : () => _controller.remove(movie),
+                            onPressed: disabled ? null : () => _remove(movie: movie),
                             child: const Text('Remove from queue'),
                           ),
                         ],
@@ -359,28 +428,32 @@ class _BulkMovieImportScreenState extends State<BulkMovieImportScreen> {
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
         animation: _controller,
-        builder: (context, _) => PopScope(
-          canPop: (!_controller.busy && !_confirming) || _allowPop,
-          onPopInvokedWithResult: (didPop, result) {
-            if (!didPop) _leave();
-          },
-          child: Scaffold(
-            appBar: AppBar(title: const Text('Bulk movie upload')),
-            body: SafeArea(
-              child: ListView.builder(
-                key: const PageStorageKey<String>('bulk-movies-scroll'),
-                padding: const EdgeInsets.all(24),
-                itemCount: _controller.movies.length + 1,
-                itemBuilder: (_, index) => index == 0
-                    ? _controls()
-                    : KeyedSubtree(
-                        key: ValueKey<String>(_controller.movies[index - 1].id),
-                        child: _movieCard(_controller.movies[index - 1]),
-                      ),
+        builder: (context, _) => widget.embedded
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _controls(),
+                  for (final movie in _controller.movies)
+                    KeyedSubtree(key: ValueKey<String>(movie.id), child: _movieCard(movie)),
+                ],
+              )
+            : PopScope(
+                canPop: (!_controller.busy && !_confirming && _controller.movies.isEmpty) || _allowPop,
+                onPopInvokedWithResult: (didPop, result) {
+                  if (!didPop) _leave();
+                },
+                child: ListView.builder(
+                  key: const PageStorageKey<String>('bulk-movies-scroll'),
+                  padding: const EdgeInsets.all(24),
+                  itemCount: _controller.movies.length + 1,
+                  itemBuilder: (_, index) => index == 0
+                      ? _controls()
+                      : KeyedSubtree(
+                          key: ValueKey<String>(_controller.movies[index - 1].id),
+                          child: _movieCard(_controller.movies[index - 1]),
+                        ),
+                ),
               ),
-            ),
-          ),
-        ),
       );
 }
 

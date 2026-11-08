@@ -7,6 +7,7 @@ class MovieAppBar extends StatefulWidget {
   final Function(int) onChange;
   final List<String> titles;
   final Color backGroundColor;
+  final Future<bool> Function(int)? canChange;
 
   const MovieAppBar({
     Key? key,
@@ -14,6 +15,7 @@ class MovieAppBar extends StatefulWidget {
     required this.onChange,
     required this.titles,
     required this.backGroundColor,
+    this.canChange,
   }) : super(key: key);
 
   @override
@@ -23,6 +25,21 @@ class MovieAppBar extends StatefulWidget {
 class _MovieAppBarState extends State<MovieAppBar> {
   late final ValueNotifier<int> _selectedIndexNotifier;
   late final List<String> _titles;
+  bool _changing = false;
+
+  Future<void> _select(int index) async {
+    if (_changing) return;
+    _changing = true;
+    try {
+      final guard = widget.canChange;
+      if (guard != null && !await guard(index)) return;
+      if (!mounted) return;
+      widget.onChange(index);
+      _selectedIndexNotifier.value = index;
+    } finally {
+      _changing = false;
+    }
+  }
 
   @override
   void initState() {
@@ -81,10 +98,7 @@ class _MovieAppBarState extends State<MovieAppBar> {
               ),
               const Spacer(),
               InkWell(
-                onTap: () {
-                  widget.onChange(1);
-                  _selectedIndexNotifier.value = 1;
-                },
+                onTap: () => _select(1),
                 child: Padding(
                   padding: const EdgeInsets.only(left: 14, right: 14),
                   child: SvgPicture.asset(
@@ -110,10 +124,7 @@ class _MovieAppBarState extends State<MovieAppBar> {
 
   Widget appBarLabelItem({required int index, required String title, required int selectedIndex}) {
     return InkWell(
-      onTap: () {
-        widget.onChange(index);
-        _selectedIndexNotifier.value = index;
-      },
+      onTap: () => _select(index),
       child: Container(
         margin: const EdgeInsets.only(right: 20),
         child: Text(

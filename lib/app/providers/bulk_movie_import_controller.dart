@@ -99,6 +99,18 @@ class BulkMovieImportController extends ChangeNotifier {
     _notify();
   }
 
+  void clear() {
+    if (busy) return;
+    movies.clear();
+    _profiles.clear();
+    _genres.clear();
+    completed = 0;
+    total = 0;
+    error = null;
+    message = 'Review queue cleared. Fetch movie details to build a new batch.';
+    _notify();
+  }
+
   void edit(BulkMovieEntry movie, Map<String, dynamic> data, BulkMovieSettings? settings) {
     if (busy) return;
     movie.data = data;

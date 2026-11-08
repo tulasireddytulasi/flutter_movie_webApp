@@ -22,7 +22,8 @@ class NavigationMenu extends StatefulWidget {
 
 class _NavigationMenuState extends State<NavigationMenu> {
   late ValueNotifier<int> _currentScreenNo;
-  final _screens = [
+  final _importKey = GlobalKey<MovieImportScreenState>();
+  late final _screens = [
     const Dashboard(),
     // const TwitterFeedScreen(),
     const MovieListScreen(
@@ -35,7 +36,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
     ),
     const AllActorsPage(showAppBar: false, showLeadingIcon: false),
     const BlogsScreen(showAppBar: false),
-    const MovieImportScreen(),
+    MovieImportScreen(key: _importKey),
   ];
   final List<String> appBarTitles = ["Home", "Movies", "People", "Blogs", "Import"];
   final List<String> bottomBarTitles = ["Dashboard", "Movies", "People", "Blogs", "Import"];
@@ -46,6 +47,12 @@ class _NavigationMenuState extends State<NavigationMenu> {
   void initState() {
     super.initState();
     _currentScreenNo = ValueNotifier<int>(0);
+  }
+
+  Future<bool> _canChangeScreen(int index) async {
+    if (index == _currentScreenNo.value || _currentScreenNo.value != 4) return true;
+    final importState = _importKey.currentState;
+    return importState == null || await importState.confirmLeave();
   }
 
   setMovies({required int screenNo, required bool showAppBar, required bool showLeadingIcon}) {
@@ -80,6 +87,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
                 preferredSize: const Size.fromHeight(60.0),
                 child: MovieAppBar(
                   defaultSelectedIndex: 0,
+                  canChange: _canChangeScreen,
                   backGroundColor:
                       Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).colorScheme.surface,
                   onChange: (value) {
@@ -107,6 +115,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
         bottomNavigationBar: (screenWidth <= 750)
             ? CustomBottomNavigationBar(
                 defaultSelectedIndex: 0,
+                canChange: _canChangeScreen,
                 onChange: (value) {
                   setMovies(screenNo: value, showAppBar: true, showLeadingIcon: false);
                   _currentScreenNo.value = value;
