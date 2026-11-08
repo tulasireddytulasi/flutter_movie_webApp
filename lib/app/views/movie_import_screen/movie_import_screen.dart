@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/core/responses/appwrite_movie_service.dart';
 import 'package:moviewebapp/app/core/responses/movie_apis.dart';
 import 'package:moviewebapp/app/models/get_movies_model.dart';
+import 'package:moviewebapp/app/views/bulk_movie_import_screen/bulk_movie_import_screen.dart';
 import 'package:moviewebapp/app/views/mcu_import_screen/mcu_import_screen.dart';
 import 'package:moviewebapp/app/views/movie_editor_screen/movie_editor_screen.dart';
 
@@ -262,6 +263,21 @@ class _MovieImportScreenState extends State<MovieImportScreen> {
                         ),
                 icon: const Icon(Icons.edit_note_outlined),
                 label: const Text('Movie ID editor'),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: OutlinedButton.icon(
+                onPressed: _isBusy
+                    ? null
+                    : () => Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const BulkMovieImportScreen(),
+                          ),
+                        ),
+                icon: const Icon(Icons.playlist_add_outlined),
+                label: const Text('Bulk movie upload'),
               ),
             ),
             const SizedBox(height: 12),

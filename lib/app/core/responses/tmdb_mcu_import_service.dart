@@ -114,7 +114,8 @@ class TmdbMcuImportService implements McuTmdbSource {
         }
         if (wait > const Duration(minutes: 2)) {
           throw McuImportException(
-              'TMDB $path: rate limited; retry after $retryAfter.');
+              'TMDB $path: rate limited; retry after $retryAfter.',
+              global: true);
         }
         await _wait(wait, cancellation);
         continue;
@@ -122,7 +123,9 @@ class TmdbMcuImportService implements McuTmdbSource {
       throw McuImportException(
         'TMDB $path: HTTP ${response.statusCode}. '
         '${response.statusCode == 404 ? 'Resource not found.' : 'Check API access or retry later.'}',
-        global: response.statusCode == 401 || response.statusCode == 403,
+        global: response.statusCode == 401 ||
+            response.statusCode == 403 ||
+            response.statusCode == 429,
       );
     }
     throw McuImportException('TMDB $path: retries exhausted.');

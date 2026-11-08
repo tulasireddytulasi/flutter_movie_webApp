@@ -269,6 +269,43 @@
         Appwrite table IDs described below; it never creates schema or grants permissions.</p>
     </section>
 
+    <section aria-labelledby="bulk-movie-heading">
+      <div class="section-heading"><h2 id="bulk-movie-heading">Bulk movie upload</h2><span>Multi-ID previews and bounded batch uploads</span></div>
+      <p>Open <strong>Import &gt; Bulk movie upload</strong>. Paste positive TMDB movie IDs
+        separated by commas, spaces, semicolons, or newlines. IDs are validated and
+        deduplicated before fetching. Up to three movie requests run concurrently.
+        Adding IDs preserves already fetched movies, their edits, and upload progress;
+        failed fetches can be retried independently. Preview cards show title, poster,
+        release date, selection, and status.</p>
+      <p>Set shared franchise (blank writes null), cast/crew unique-person counts
+        (default 15 each; zero skips a section), and whether to include people/credits.
+        <strong>Edit / override settings</strong> opens the supported movie fields,
+        including genre JSON, and optional per-movie counts, franchise, and upload mode.
+        Saving edits creates a new local upload plan without deleting stored rows.
+        Conflicting names for one shared genre ID in a batch are reported before writes.</p>
+      <p>One upload action processes at most <strong>three movies</strong> at a time.
+        All movie workers share a single <strong>15-person pool</strong>, not 15 per movie.
+        Each movie ensures genres exist and verifies its movie row before uploading
+        selected profiles and credits. All jobs/roles for selected unique people are kept.
+        Genre writes reuse the safe read/create/name-only update service; movie writes
+        retain strict unique-link verification and duplicate-link repair.</p>
+      <p>Concurrent movies share a single in-flight profile operation per person ID.
+        Existing profiles are reused without fetching or overwriting; missing profiles
+        are fetched, created, and verified once per batch. Genre writes are also
+        shared by ID/name. Profile/credit failures are visible inside each movie's
+        people statuses. TMDB uses bounded retries and Retry-After; exhausted rate limits
+        and shared permission/schema failures pause new work while in-flight work settles.</p>
+      <p>Movie statuses are <strong>Queued, Fetching, Ready, Uploading, Success, Partial,
+        Failed</strong>. Retry selected unfinished movies retains the original mapped
+        data/settings and skips verified genre rows, movie rows, people, and credits.
+        Changing shared defaults does not change a previous retry plan; edit that movie
+        to start a new plan. Successful movies are excluded from upload until edited.
+        Progress and edits live in memory while the screen is open, not across app restarts.
+        Cancellation preserves completed rows. This is an anonymous client importer,
+        not a background server job; keep the screen open until it finishes and revoke
+        temporary public writes afterwards. Existing single-movie and MCU screens remain available.</p>
+    </section>
+
     <section aria-labelledby="mcu-heading">
       <div class="section-heading"><h2 id="mcu-heading">MCU import</h2><span>Separate screen, full-schema ingestion</span></div>
       <p>Open <strong>Import &gt; MCU import</strong>. Select from the 22 actual results in

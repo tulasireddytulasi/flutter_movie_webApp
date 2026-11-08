@@ -112,6 +112,7 @@
         <li><a href="#image-bytes">Image bytes</a></li>
         <li><a href="#mcu-import">MCU import</a></li>
         <li><a href="#movie-editor">Movie ID editor</a></li>
+        <li><a href="#bulk-movie-import">Bulk movie upload</a></li>
       </ul>
     </nav>
 
@@ -542,6 +543,44 @@ Movie Info edits do not alter the fetched credits or People Info uploads.</pre><
         in-flight operations finish before disposal. No stored rows are deleted.
         See the <a href="api_documentation.html#movie-editor-heading">Movie ID editor reference</a>
         and <a href="api_documentation.html#mcu-heading">anonymous upload setup</a>.</p>
+    </article>
+
+    <article class="example" id="bulk-movie-import">
+      <header class="example-heading"><h2>Bulk movie upload</h2><span class="helpers">BulkMovieImportController / BulkMovieImportScreen</span></header>
+      <div class="fields">
+        <section class="field"><h3>Fetch and review</h3><pre>1. Open Import &gt; Bulk movie upload.
+2. Paste IDs: 1726, 10138, 68721, 1724, 10195
+3. Fetch movies (up to 3 concurrently):
+   GET movie/{id}?append_to_response=credits&amp;language=en-US
+4. Review preview cards, select movies, and optionally edit fields.
+   Retry failed fetches keeps previously fetched movies and edits.</pre></section>
+        <section class="field"><h3>Upload settings and execution</h3><pre>Shared defaults:
+  franchise: user value or null
+  cast unique people per movie: 15
+  crew unique people per movie: 15
+  include people and credits: true
+Override these per movie with Edit / override settings.
+
+Upload selected:
+  up to 3 movie workers;
+  one shared pool of 15 people across all movies;
+  ensure genres exist, then verify each movie row;
+  check/reuse existing people; create missing full profiles;
+  coordinate shared people so overlapping movies fetch/create once;
+  upload and verify all selected roles/jobs using stable credit IDs.
+
+Retry selected unfinished:
+  preserve the original upload plan;
+  skip verified genres, movie, people, and credits;
+  retry failed profiles and remaining credits;
+  show per-movie and per-person failures.
+Edit a movie to change a previous plan or refresh a successful movie.
+Keep the screen open: retry progress is local, not persisted.</pre></section>
+      </div>
+      <p>Genre rows are never relationship-upserted. Conflicting genre names are rejected
+        before batch writes. Shared permission/schema failures and exhausted rate limits
+        pause scheduling; completed rows remain stored.
+        See the <a href="api_documentation.html#bulk-movie-heading">bulk upload reference</a>.</p>
     </article>
 
     <article class="example" id="mcu-import">
