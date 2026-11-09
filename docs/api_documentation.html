@@ -235,7 +235,9 @@
     <section aria-labelledby="search-upload-heading">
       <div class="section-heading"><h2 id="search-upload-heading">Search movie upload</h2><span>Full-detail review and uploads inside Import</span></div>
       <p>Choose <strong>Import &gt; Search API</strong>, search a title, select result
-        checkboxes, and click <strong>Fetch selected details</strong>. Search results
+        checkboxes, and click <strong>Fetch selected details</strong>. Each search result
+        shows a poster thumbnail beside its checkbox, with a placeholder when the
+        poster is missing or cannot load. Search results
         provide TMDB IDs only; their sparse metadata is never used as an Appwrite
         payload. Complete movie details and credits are fetched into the inline
         review queue, without writing database rows or opening another route.

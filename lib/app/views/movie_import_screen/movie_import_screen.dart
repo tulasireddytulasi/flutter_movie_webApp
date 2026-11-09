@@ -219,6 +219,30 @@ class MovieImportScreenState extends State<MovieImportScreen> {
     await _bulkController.fetch(ids.join(','));
   }
 
+  Widget _searchPoster(Movies movie) {
+    final path = movie.posterPath;
+    final placeholder = ColoredBox(
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+      child: const Center(child: Icon(Icons.movie_outlined, size: 24)),
+    );
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(4),
+      child: SizedBox(
+        width: 36,
+        height: 54,
+        child: path == null || !path.startsWith('/') || path.startsWith('//')
+            ? Tooltip(message: 'No poster available', child: placeholder)
+            : Image.network(
+                'https://image.tmdb.org/t/p/w92$path',
+                fit: BoxFit.cover,
+                semanticLabel: '${movie.title ?? "Movie"} poster',
+                loadingBuilder: (_, child, progress) => progress == null ? child : placeholder,
+                errorBuilder: (_, __, ___) => Tooltip(message: 'Could not load poster', child: placeholder),
+              ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<_MovieImportSource>(
@@ -468,13 +492,21 @@ class MovieImportScreenState extends State<MovieImportScreen> {
               for (int index = 0; index < _movies.length; index++) ...<Widget>[
                 ListTile(
                   dense: true,
+                  minTileHeight: isSearch ? 76 : null,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 8),
                   leading: isSearch
-                      ? Checkbox(
-                          value: _movies[index].id != null && selectedIds.contains(_movies[index].id),
-                          onChanged: _movies[index].id == null || _movies[index].id! <= 0 || _isBusy
-                              ? null
-                              : (selected) => _setMovieSelected(_movies[index], selected ?? false),
+                      ? Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Checkbox(
+                              value: _movies[index].id != null && selectedIds.contains(_movies[index].id),
+                              onChanged: _movies[index].id == null || _movies[index].id! <= 0 || _isBusy
+                                  ? null
+                                  : (selected) => _setMovieSelected(_movies[index], selected ?? false),
+                            ),
+                            const SizedBox(width: 8),
+                            _searchPoster(_movies[index]),
+                          ],
                         )
                       : CircleAvatar(
                           backgroundColor: theme.colorScheme.surfaceContainerHighest,
