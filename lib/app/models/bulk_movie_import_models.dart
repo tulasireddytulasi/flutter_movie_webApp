@@ -28,10 +28,12 @@ class BulkMovieSettings {
   const BulkMovieSettings({
     this.options = const McuImportOptions(),
     this.includePeople = true,
+    this.movieAttributes = const {},
   });
 
   final McuImportOptions options;
   final bool includePeople;
+  final Map<String, String?> movieAttributes;
 
   McuImportOptions get mappingOptions => McuImportOptions(
         castLimit: includePeople ? options.castLimit : 0,

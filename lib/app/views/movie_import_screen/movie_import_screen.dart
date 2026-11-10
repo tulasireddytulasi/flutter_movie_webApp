@@ -28,6 +28,11 @@ class MovieImportScreenState extends State<MovieImportScreen> {
   final TextEditingController _searchLanguageController = TextEditingController(text: 'en-US');
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _franchiseController = TextEditingController();
+  final Map<String, TextEditingController> _metadataControllers = {
+    'country': TextEditingController(),
+    'language': TextEditingController(),
+    'theme': TextEditingController(),
+  };
   final TextEditingController _genresController = TextEditingController();
   final BulkMovieImportController _bulkController = BulkMovieImportController();
   final GlobalKey _workspaceKey = GlobalKey();
@@ -105,6 +110,9 @@ class MovieImportScreenState extends State<MovieImportScreen> {
     _searchLanguageController.dispose();
     _searchController.dispose();
     _franchiseController.dispose();
+    for (final controller in _metadataControllers.values) {
+      controller.dispose();
+    }
     _genresController.dispose();
     _bulkController.removeListener(_bulkChanged);
     _bulkController.dispose();
@@ -368,6 +376,20 @@ class MovieImportScreenState extends State<MovieImportScreen> {
                         ),
                       ),
                     ),
+                  if (isSearch)
+                    for (final entry in _metadataControllers.entries)
+                      SizedBox(
+                        width: 200,
+                        child: TextField(
+                          key: PageStorageKey<String>('movie-import-${entry.key}-input'),
+                          controller: entry.value,
+                          enabled: !_isBusy,
+                          decoration: InputDecoration(
+                            labelText: '${entry.key[0].toUpperCase()}${entry.key.substring(1)} (optional)',
+                            helperText: 'Upload value; blank writes null',
+                          ),
+                        ),
+                      ),
                   if (!isSearch)
                     SizedBox(
                       width: 190,
@@ -536,6 +558,7 @@ class MovieImportScreenState extends State<MovieImportScreen> {
                       key: _workspaceKey,
                       controller: _bulkController,
                       franchiseController: _franchiseController,
+                      movieAttributeControllers: _metadataControllers,
                       embedded: true,
                       disabled: _isFetching || _leaving,
                       onConfirmationChanged: (value) {

@@ -215,6 +215,7 @@ class BulkMovieImportController extends ChangeNotifier {
     final data = movie.data;
     if (data == null) throw const McuImportException('Fetch this movie before uploading.');
     final bundle = McuImportMapper(movie.warnings).movie(data, movie.id, options: settings.mappingOptions);
+    bundle.movie.data.addAll(settings.movieAttributes);
     final credits = McuImportMapper.object(data['credits'], 'Movie credits');
     for (final kind in ['cast', 'crew']) {
       for (final value in McuImportMapper.array(credits[kind], '$kind credits')) {
@@ -354,7 +355,14 @@ class BulkMovieImportController extends ChangeNotifier {
       final genreNames = <String, String>{};
       for (final movie in queue) {
         try {
-          _prepare(movie, movie.overrideSettings ?? settings);
+          final effective = movie.overrideSettings ?? settings;
+          _prepare(
+              movie,
+              BulkMovieSettings(
+                options: effective.options,
+                includePeople: effective.includePeople,
+                movieAttributes: settings.movieAttributes,
+              ));
           runnable.add(movie);
         } on McuImportException catch (failure) {
           _failure(movie, failure);

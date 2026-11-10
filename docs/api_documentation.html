@@ -245,7 +245,15 @@
       <p>The inline queue uses the same <code>BulkMovieImportWorkspace</code> and
         <code>BulkMovieImportController</code> as the standalone bulk screen.
         Set franchise beside the search title field (blank writes null); it is the
-        shared upload default, not a TMDB search filter. Set cast/crew unique-person counts (15 each
+        shared upload default, not a TMDB search filter. Search also provides optional
+        country, language, and theme text fields alongside franchise. These trimmed
+        strings are uploaded to the corresponding movie columns; blank writes null
+        and clears a previous value. They are not TMDB search filters (the separate
+        Search language field still controls discovery). Values apply to new Search
+        upload plans; retries retain their original values, and other import screens
+        omit these columns. Confirm these three Appwrite columns are optional Strings
+        with sufficient sizes; schema errors are reported without truncation.
+        Set cast/crew unique-person counts (15 each
         by default), and whether to include people/credits. Review and edit movie
         fields or override settings per movie, then explicitly confirm
         <strong>Upload selected</strong>. Result checkboxes choose IDs to fetch;

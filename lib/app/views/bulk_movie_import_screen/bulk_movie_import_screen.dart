@@ -20,6 +20,7 @@ class BulkMovieImportWorkspace extends StatefulWidget {
     Key? key,
     this.controller,
     this.franchiseController,
+    this.movieAttributeControllers = const {},
     this.embedded = false,
     this.disabled = false,
     this.onConfirmationChanged,
@@ -27,6 +28,7 @@ class BulkMovieImportWorkspace extends StatefulWidget {
 
   final BulkMovieImportController? controller;
   final TextEditingController? franchiseController;
+  final Map<String, TextEditingController> movieAttributeControllers;
   final bool embedded;
   final bool disabled;
   final ValueChanged<bool>? onConfirmationChanged;
@@ -79,6 +81,10 @@ class _BulkMovieImportWorkspaceState extends State<BulkMovieImportWorkspace> {
     return BulkMovieSettings(
       includePeople: _includePeople,
       options: McuImportOptions(castLimit: cast, crewLimit: crew, franchise: _franchise.text),
+      movieAttributes: Map.unmodifiable(widget.movieAttributeControllers.map((key, controller) {
+        final value = controller.text.trim();
+        return MapEntry(key, value.isEmpty ? null : value);
+      })),
     );
   }
 
@@ -103,6 +109,8 @@ class _BulkMovieImportWorkspaceState extends State<BulkMovieImportWorkspace> {
           'Defaults: ${settings.includePeople ? "${settings.options.castLimit} cast and "
               "${settings.options.crewLimit} crew unique people per movie, keeping all their roles/jobs" : "movies and genres only"}.\n'
           'Franchise: ${settings.options.normalizedFranchise ?? "null (blank clears existing values)"}.\n\n'
+          '${settings.movieAttributes.entries.map((entry) => "${entry.key}: ${entry.value ?? "null"}").join("\n")}'
+          '${settings.movieAttributes.isEmpty ? "" : "\n\n"}'
           'Per-movie overrides take priority. Previously attempted movies retain their original '
           'data/settings for retries; successful rows are skipped. Edit a movie to start a new '
           'upload plan. Existing profiles are reused and no rows are deleted.\n\n'
