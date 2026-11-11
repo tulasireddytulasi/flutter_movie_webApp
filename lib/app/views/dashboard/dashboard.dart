@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/core/utils/constants.dart';
 import 'package:moviewebapp/app/views/all_movies_screen/movies_list.dart';
 // import 'package:moviewebapp/app/views/dashboard/main_banner_widget/main_banner.dart';
-import 'package:moviewebapp/app/views/dashboard/widgets/appwrite_mcu_movies_section.dart';
+import 'package:moviewebapp/app/views/dashboard/widgets/appwrite_movies_sections.dart';
 import 'package:moviewebapp/app/views/dashboard/widgets/movie_label.dart';
 import 'package:moviewebapp/app/views/dashboard/widgets/movies_list.dart';
 import 'package:moviewebapp/app/providers/dashboard_provider.dart';
@@ -99,7 +99,7 @@ class _DashboardState extends State<Dashboard> {
             children: [
               const MainBanner(),
               // const MovieBannerCard(),
-              const AppwriteMcuMoviesSection(),
+              const AppwriteMoviesSections(),
               ListView.builder(
                 itemCount: dashBoardProvider.moviesDataMapObject.length,
                 shrinkWrap: true,

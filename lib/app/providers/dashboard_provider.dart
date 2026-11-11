@@ -82,7 +82,23 @@ class DashBoardProvider extends ChangeNotifier {
 
   Map<String, dynamic> get moviesDataMapObject => _moviesDataMapObject;
 
-  Future<List<Movies>> getMcuMovies() => _appwriteMoviesService.getMcuMovies();
+  Future<List<Movies>> getMoviesByFranchise(
+    int franchiseId, {
+    bool latestFirst = false,
+  }) =>
+      _appwriteMoviesService.getMoviesByFranchise(franchiseId, latestFirst: latestFirst);
+
+  Future<List<Movies>> getMoviesByGenre(
+    int genreId, {
+    bool latestFirst = true,
+  }) =>
+      _appwriteMoviesService.getMoviesByGenre(genreId, latestFirst: latestFirst);
+
+  Future<List<Movies>> getMoviesByTheme(
+    String theme, {
+    bool latestFirst = true,
+  }) =>
+      _appwriteMoviesService.getMoviesByTheme(theme, latestFirst: latestFirst);
 
   setAppBarColorAndElevation({required Color color, required double elevation}) {
     _appBarBackgroundColor = color;

@@ -1,26 +1,76 @@
 import 'package:flutter/material.dart';
+import 'package:moviewebapp/app/core/responses/appwrite_movies_service.dart';
+import 'package:moviewebapp/app/core/utils/navigation/navigation.dart';
 import 'package:moviewebapp/app/models/get_movies_model.dart';
 import 'package:moviewebapp/app/providers/dashboard_provider.dart';
 import 'package:moviewebapp/app/views/dashboard/widgets/movie_label.dart';
 import 'package:moviewebapp/app/views/widgets/movies_card.dart';
-import 'package:moviewebapp/app/core/utils/navigation/navigation.dart';
 import 'package:provider/provider.dart';
 
-class AppwriteMcuMoviesSection extends StatefulWidget {
-  const AppwriteMcuMoviesSection({super.key});
+class AppwriteMoviesSections extends StatefulWidget {
+  const AppwriteMoviesSections({super.key});
 
   @override
-  State<AppwriteMcuMoviesSection> createState() => _AppwriteMcuMoviesSectionState();
+  State<AppwriteMoviesSections> createState() => _AppwriteMoviesSectionsState();
 }
 
-class _AppwriteMcuMoviesSectionState extends State<AppwriteMcuMoviesSection> {
-  late final Future<List<Movies>> _movies;
+class _AppwriteMoviesSectionsState extends State<AppwriteMoviesSections> {
+  late final List<_MoviesSectionData> _sections;
 
   @override
   void initState() {
     super.initState();
-    _movies = context.read<DashBoardProvider>().getMcuMovies();
+    final provider = context.read<DashBoardProvider>();
+    _sections = [
+      _MoviesSectionData(
+        title: 'MCU Movies',
+        movies: provider.getMoviesByFranchise(AppwriteMoviesService.mcuFranchiseId),
+      ),
+      _MoviesSectionData(
+        title: 'The Conjuring Universe',
+        movies: provider.getMoviesByFranchise(
+          AppwriteMoviesService.conjuringFranchiseId,
+          latestFirst: true,
+        ),
+      ),
+      _MoviesSectionData(
+        title: 'Latest Horror Movies',
+        movies: provider.getMoviesByGenre(
+          AppwriteMoviesService.horrorGenreId,
+          latestFirst: true,
+        ),
+      ),
+      _MoviesSectionData(
+        title: 'Latest Monster Movies',
+        movies: provider.getMoviesByTheme(
+          AppwriteMoviesService.monsterTheme,
+          latestFirst: true,
+        ),
+      ),
+    ];
   }
+
+  @override
+  Widget build(BuildContext context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (final section in _sections)
+            _AppwriteMoviesSection(data: section),
+        ],
+      );
+}
+
+class _MoviesSectionData {
+  const _MoviesSectionData({required this.title, required this.movies});
+
+  final String title;
+  final Future<List<Movies>> movies;
+}
+
+class _AppwriteMoviesSection extends StatelessWidget {
+  const _AppwriteMoviesSection({required this.data});
+
+  final _MoviesSectionData data;
 
   @override
   Widget build(BuildContext context) {
@@ -32,11 +82,11 @@ class _AppwriteMcuMoviesSectionState extends State<AppwriteMcuMoviesSection> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const MovieLabel(movieLabel: 'Marvel Cinematic Universe'),
+          MovieLabel(movieLabel: data.title),
           SizedBox(
             height: MoviesCard.widthFor(screenWidth) * 1.5 + 12,
             child: FutureBuilder<List<Movies>>(
-              future: _movies,
+              future: data.movies,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return ListView.separated(
@@ -58,12 +108,12 @@ class _AppwriteMcuMoviesSectionState extends State<AppwriteMcuMoviesSection> {
                 }
 
                 if (snapshot.hasError) {
-                  return const Center(child: Text('Unable to load MCU movies.'));
+                  return Center(child: Text('Unable to load ${data.title}.'));
                 }
 
                 final movies = snapshot.data ?? const <Movies>[];
                 if (movies.isEmpty) {
-                  return const Center(child: Text('No MCU movies found.'));
+                  return Center(child: Text('No ${data.title.toLowerCase()} found.'));
                 }
 
                 return ListView.separated(
