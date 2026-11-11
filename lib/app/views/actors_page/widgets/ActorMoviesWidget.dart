@@ -67,7 +67,9 @@ class _ActorMoviesWidgetState extends State<ActorMoviesWidget> {
           } else if (snapshot.hasData) {
             clearData();
             processData(moviesModel: snapshot.data!);
-            return ListView.builder(
+            return ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                separatorBuilder: (_, __) => const SizedBox(width: 8),
                 itemCount: _title.length,
                 scrollDirection: Axis.horizontal,
                 shrinkWrap: true,

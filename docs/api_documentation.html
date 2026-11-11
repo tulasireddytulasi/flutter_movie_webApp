@@ -232,6 +232,21 @@
       </article>
     </section>
 
+    <section aria-labelledby="movie-rails-heading">
+      <div class="section-heading"><h2 id="movie-rails-heading">Dashboard movie rails</h2><span>Poster-first browsing</span></div>
+      <p>Dashboard rows use responsive 2:3 poster cards with compact gaps, rounded
+        corners and aligned section headings. Titles remain available through
+        tooltips and accessibility labels rather than separate captions. Chevron
+        buttons retain the existing View More navigation. Missing or failed posters
+        display a title placeholder rather than a different movie's artwork.</p>
+      <p>Movie cards shrink on press and spring back before opening the existing
+        detail route. Cancelled gestures reset without navigation; duplicate taps
+        are ignored during activation. Hover and keyboard focus highlight the card.
+        Reduced-motion preferences disable scaling. Row requests are retained across
+        rebuilds and refreshed only when the row's query parameters change.
+        The shared card styling and bounce also apply to actor movie rails.</p>
+    </section>
+
     <section aria-labelledby="search-upload-heading">
       <div class="section-heading"><h2 id="search-upload-heading">Search movie upload</h2><span>Full-detail review and uploads inside Import</span></div>
       <p>Choose <strong>Import &gt; Search API</strong>, search a title, select result

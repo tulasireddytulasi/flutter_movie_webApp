@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/core/utils/constants.dart';
-import 'package:moviewebapp/app/core/utils/styles.dart';
 import 'package:moviewebapp/app/views/all_movies_screen/movies_list.dart';
 // import 'package:moviewebapp/app/views/dashboard/main_banner_widget/main_banner.dart';
 import 'package:moviewebapp/app/views/dashboard/widgets/movie_label.dart';
@@ -9,7 +8,7 @@ import 'package:moviewebapp/app/providers/dashboard_provider.dart';
 import 'package:moviewebapp/app/core/utils/common_functions.dart';
 import 'package:provider/provider.dart';
 import 'main_banner_widget/main_banner.dart';
-import 'main_banner_widget/movie_banner_card.dart';
+import 'package:moviewebapp/app/views/widgets/movies_card.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -59,7 +58,7 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       // appBar: screenWidth < 750 ? AppBar(
@@ -98,7 +97,7 @@ class _DashboardState extends State<Dashboard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const MainBanner(),
-             // const MovieBannerCard(),
+              // const MovieBannerCard(),
               ListView.builder(
                 itemCount: dashBoardProvider.moviesDataMapObject.length,
                 shrinkWrap: true,
@@ -107,43 +106,46 @@ class _DashboardState extends State<Dashboard> {
                 scrollDirection: Axis.vertical,
                 itemBuilder: (context, index) {
                   final Map<String, dynamic> movieData = dashBoardProvider.moviesDataMapObject["$index"];
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      MovieLabel(
-                        movieLabel: movieData["movieLabel"],
-                        onTap: () {
-                          String movieType = movieData["movieType"];
-                          // Todo: In future will remove this comparison
-                          if (movieType == Constants.marvelMovies) {
-                            movieType = Constants.popular;
-                          }
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MovieListScreen(
-                                showAppBar: true,
-                                screenTitle: movieData["movieLabel"],
-                                movieType: movieType,
-                                withOriginalLanguage: movieData["withOriginalLanguage"],
-                                withGenres: movieData["withGenres"],
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 14, bottom: 6),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        MovieLabel(
+                          movieLabel: movieData["movieLabel"],
+                          onTap: () {
+                            String movieType = movieData["movieType"];
+                            // Todo: In future will remove this comparison
+                            if (movieType == Constants.marvelMovies) {
+                              movieType = Constants.popular;
+                            }
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MovieListScreen(
+                                  showAppBar: true,
+                                  screenTitle: movieData["movieLabel"],
+                                  movieType: movieType,
+                                  withOriginalLanguage: movieData["withOriginalLanguage"],
+                                  withGenres: movieData["withGenres"],
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                      Container(
-                        height: getSimilarMoviesSectionHeight(screenSize: screenWidth),
-                        margin: const EdgeInsets.only(top: 16),
-                        child: MoviesList(
-                          movieType: dashBoardProvider.moviesDataMapObject["$index"]["movieType"],
-                          withOriginalLanguage: dashBoardProvider.moviesDataMapObject["$index"]["withOriginalLanguage"],
-                          withGenres: dashBoardProvider.moviesDataMapObject["$index"]["withGenres"],
+                            );
+                          },
                         ),
-                      ),
-                    ],
+                        SizedBox(
+                          height: MoviesCard.widthFor(screenWidth) * 1.5 + 12,
+                          child: MoviesList(
+                            movieType: dashBoardProvider.moviesDataMapObject["$index"]["movieType"],
+                            withOriginalLanguage: dashBoardProvider.moviesDataMapObject["$index"]
+                                ["withOriginalLanguage"],
+                            withGenres: dashBoardProvider.moviesDataMapObject["$index"]["withGenres"],
+                          ),
+                        ),
+                      ],
+                    ),
                   );
                 },
               ),
