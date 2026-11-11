@@ -63,7 +63,7 @@ class _MoviesListState extends State<MoviesList> {
             scrollDirection: Axis.horizontal,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: 8,
-            separatorBuilder: (_, __) => const SizedBox(width: 8),
+            separatorBuilder: (_, __) => const SizedBox(width: 4),
             itemBuilder: (_, __) => SizedBox(
               width: MoviesCard.widthFor(screenWidth),
               child: DecoratedBox(
@@ -85,7 +85,7 @@ class _MoviesListState extends State<MoviesList> {
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 5),
             itemCount: movies.length,
             scrollDirection: Axis.horizontal,
-            separatorBuilder: (_, __) => const SizedBox(width: 8),
+            separatorBuilder: (_, __) => const SizedBox(width: 2),
             itemBuilder: (BuildContext context, int index) {
               final movie = movies[index];
               return MoviesCard(
