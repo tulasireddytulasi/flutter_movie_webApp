@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class MovieLabel extends StatelessWidget {
-  const MovieLabel({Key? key, required this.movieLabel, required this.onTap}) : super(key: key);
+  const MovieLabel({Key? key, required this.movieLabel, this.onTap}) : super(key: key);
   final String movieLabel;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -28,14 +28,15 @@ class MovieLabel extends StatelessWidget {
               ),
             ),
           ),
-          InkWell(
-            onTap: onTap,
-            child: Icon(
-              Icons.chevron_right_rounded,
-              size: 24,
-              color: theme.colorScheme.onSurfaceVariant,
+          if (onTap != null)
+            InkWell(
+              onTap: onTap,
+              child: Icon(
+                Icons.chevron_right_rounded,
+                size: 24,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
             ),
-          ),
         ],
       ),
     );

@@ -3,11 +3,17 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/core/repository/json_objects/marvel_movies_json.dart';
+import 'package:moviewebapp/app/core/responses/appwrite_movies_service.dart';
 import 'package:moviewebapp/app/models/get_movies_model.dart';
 import 'package:moviewebapp/app/core/responses/movie_apis.dart';
 import 'package:moviewebapp/app/core/utils/constants.dart';
 
 class DashBoardProvider extends ChangeNotifier {
+  DashBoardProvider({AppwriteMoviesService? appwriteMoviesService})
+      : _appwriteMoviesService = appwriteMoviesService ?? AppwriteMoviesService();
+
+  final AppwriteMoviesService _appwriteMoviesService;
+
   Color _appBarBackgroundColor = Colors.transparent;
 
   Color get appBarBackgroundColor => _appBarBackgroundColor;
@@ -75,6 +81,8 @@ class DashBoardProvider extends ChangeNotifier {
   };
 
   Map<String, dynamic> get moviesDataMapObject => _moviesDataMapObject;
+
+  Future<List<Movies>> getMcuMovies() => _appwriteMoviesService.getMcuMovies();
 
   setAppBarColorAndElevation({required Color color, required double elevation}) {
     _appBarBackgroundColor = color;

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:appwrite/appwrite.dart';
+import 'package:moviewebapp/app/core/config/appwrite_config.dart';
 import 'package:moviewebapp/app/models/mcu_import_models.dart';
 
 abstract class McuImportStore {
@@ -21,14 +22,14 @@ class AppwriteMcuImportService implements McuImportStore {
   AppwriteMcuImportService({TablesDB? tables})
       : _tables = tables ??
             TablesDB(Client()
-              ..setEndpoint(endpoint)
-              ..setProject(projectId));
+              ..setEndpoint(AppwriteConfig.endpoint)
+              ..setProject(AppwriteConfig.projectId));
 
-  static const endpoint = 'https://nyc.cloud.appwrite.io/v1';
-  static const projectId = '6a566f7e0020a7ca4f55';
-  static const databaseId = '6ae9d8f70009a29b3b5b';
+  static const endpoint = AppwriteConfig.endpoint;
+  static const projectId = AppwriteConfig.projectId;
+  static const databaseId = AppwriteConfig.databaseId;
   static const tableIds = {
-    'movies': '6aeeda38001f609f0ca2',
+    'movies': AppwriteConfig.moviesTableId,
     'genres': 'genres',
     'people': 'people',
     'movie_cast': 'movie_cast',
