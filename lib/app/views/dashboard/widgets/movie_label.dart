@@ -28,11 +28,13 @@ class MovieLabel extends StatelessWidget {
               ),
             ),
           ),
-          IconButton(
-            onPressed: onTap,
-            tooltip: 'View all $movieLabel',
-            icon: const Icon(Icons.chevron_right_rounded),
-            color: theme.colorScheme.onSurfaceVariant,
+          InkWell(
+            onTap: onTap,
+            child: Icon(
+              Icons.chevron_right_rounded,
+              size: 24,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),

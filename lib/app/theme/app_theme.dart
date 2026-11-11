@@ -346,7 +346,7 @@ class AppTheme {
       // Bottom Navigation Bar Theme
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: _darkSurfaceDark,
-        selectedItemColor: _primaryDark,
+        selectedItemColor: _darkTextSecondary,
         unselectedItemColor: _darkTextSecondary,
         elevation: 8,
       ),

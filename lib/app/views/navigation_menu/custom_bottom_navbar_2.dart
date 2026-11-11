@@ -64,7 +64,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         color: Theme.of(context).bottomNavigationBarTheme.backgroundColor,
         border: Border(
           top: BorderSide(
-            color: Theme.of(context).colorScheme.outlineVariant,
+            color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
             width: 1.0,
           ),
         ),
@@ -93,8 +93,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
               CircleAvatar(
                 radius: 20,
                 backgroundColor: index == _selectedIndex
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.surfaceContainerHighest,
+                    ? Theme.of(context).colorScheme.onSurface
+                    : Theme.of(context).scaffoldBackgroundColor,
                 child: icon == null
                     ? Image.asset(
                         imgUrl,

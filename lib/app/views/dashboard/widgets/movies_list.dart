@@ -59,7 +59,7 @@ class _MoviesListState extends State<MoviesList> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 5),
             scrollDirection: Axis.horizontal,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: 8,
@@ -82,7 +82,7 @@ class _MoviesListState extends State<MoviesList> {
           final movies = snapshot.data!.results ?? <Movies>[];
           if (movies.isEmpty) return const Center(child: Text('No movies found.'));
           return ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 5),
             itemCount: movies.length,
             scrollDirection: Axis.horizontal,
             separatorBuilder: (_, __) => const SizedBox(width: 8),
