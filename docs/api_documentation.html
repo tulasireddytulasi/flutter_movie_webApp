@@ -232,6 +232,17 @@
       </article>
     </section>
 
+    <section aria-labelledby="movie-logo-heading">
+      <div class="section-heading"><h2 id="movie-logo-heading">Movie detail title logo</h2></div>
+      <p>Movie Info overlays a TMDB title logo near the lower-left of the backdrop
+        only when screen width is strictly greater than 600 logical pixels.
+        It reuses the movie images request, prefers an English logo and then a
+        language-neutral logo, and fades/scales the artwork in after loading.
+        Reduced-motion preferences disable the animation. Movie changes reset
+        the logo; missing or failed artwork is omitted while the text title remains.
+        Logo failures are logged and do not prevent viewing movie details.</p>
+    </section>
+
     <section aria-labelledby="movie-rails-heading">
       <div class="section-heading"><h2 id="movie-rails-heading">Dashboard movie rails</h2><span>Poster-first browsing</span></div>
       <p>Dashboard rows use responsive 2:3 poster cards with compact gaps, rounded

@@ -5,12 +5,15 @@ import 'package:moviewebapp/app/core/responses/api_constants.dart';
 import 'package:moviewebapp/app/core/utils/assets_path.dart';
 import 'package:moviewebapp/app/core/utils/common_functions.dart';
 import 'package:provider/provider.dart';
+import 'package:moviewebapp/app/views/movie_info_screen/widgets/movie_title_logo.dart';
 
 class MovieBannerWidget extends StatefulWidget {
   final String movieBannerImage;
   final bool showBanner;
+  final String movieId;
 
-  const MovieBannerWidget({Key? key, required this.movieBannerImage, required this.showBanner}) : super(key: key);
+  const MovieBannerWidget({Key? key, required this.movieBannerImage, required this.showBanner, this.movieId = ''})
+      : super(key: key);
 
   @override
   State<MovieBannerWidget> createState() => _MovieBannerWidgetState();
@@ -65,6 +68,16 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
               ),
             ),
           ),
+          if (screenWidth > 600 && widget.movieId.isNotEmpty)
+            Positioned(
+              bottom: 24,
+              left: 40,
+              right: 40,
+              child: Align(
+                alignment: Alignment.bottomLeft,
+                child: MovieTitleLogo(key: ValueKey(widget.movieId), movieId: widget.movieId),
+              ),
+            ),
           Positioned(
             top: isVisible ? 0 : 30,
             right: 0,

@@ -72,6 +72,7 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   MovieBannerWidget(
+                    movieId: movieInfoProvider.currentMovieId,
                     movieBannerImage: movieInfoProvider.backdropPath,
                     showBanner: true,
                   ),
