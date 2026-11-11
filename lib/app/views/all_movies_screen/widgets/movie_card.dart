@@ -1,84 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/app/providers/movies_provider.dart';
-import 'package:moviewebapp/app/core/responses/api_constants.dart';
-import 'package:moviewebapp/app/core/utils/assets_path.dart';
-import 'package:provider/provider.dart';
+import 'package:moviewebapp/app/views/widgets/movies_card.dart';
 
 class MovieCard extends StatelessWidget {
+  const MovieCard({
+    Key? key,
+    required this.imageURL,
+    required this.movieName,
+    required this.movieId,
+    required this.onTap,
+  }) : super(key: key);
+
   final String imageURL;
   final String movieName;
-  final String movieReleaseDate;
-  final bool isMovieTitleVisible;
+  final String movieId;
+  final VoidCallback onTap;
 
-  const MovieCard(
-      {Key? key,
-      required this.imageURL,
-      required this.movieName,
-      required this.movieReleaseDate,
-      required this.isMovieTitleVisible})
-      : super(key: key);
+  static int columnsFor(double width) {
+    if (width < 300) return 2;
+    if (width < 600) return 3;
+    return (width / 160).floor().clamp(4, 10).toInt();
+  }
 
   @override
-  Widget build(BuildContext context) {
-    return Consumer<MoviesProvider>(builder: (context, movieProvider, child) {
-      return Card(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: Image.network(
-                ApiConstants.movieImageBaseUrlw500 + imageURL,
-                errorBuilder: (context, error, stackTrace) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(movieThumbnail, fit: BoxFit.cover),
-                        const SizedBox(height: 10),
-                        Text(
-                          'Error: $error',
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Theme.of(context).colorScheme.error,
-                                  ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                fit: BoxFit.cover,
-              ),
-            ),
-            Visibility(
-              visible: isMovieTitleVisible,
-              child: Container(
-                alignment: Alignment.topLeft,
-                margin: const EdgeInsets.only(top: 10, left: 0),
-                child: Text(
-                  movieName,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-              ),
-            ),
-            Visibility(
-              visible: isMovieTitleVisible,
-              child: Container(
-                alignment: Alignment.topLeft,
-                margin: const EdgeInsets.only(top: 0, left: 0),
-                child: Text(
-                  movieReleaseDate,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              ),
-            ),
-          ],
-        ),
+  Widget build(BuildContext context) => MoviesCard(
+        poster: imageURL,
+        movieName: movieName,
+        movieId: movieId,
+        voidCallback: onTap,
+        fillWidth: true,
       );
-    });
-  }
 }

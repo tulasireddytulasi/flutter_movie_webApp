@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:moviewebapp/app/models/get_movies_model.dart';
 import 'package:moviewebapp/app/views/all_movies_screen/widgets/movie_card.dart';
-import 'package:moviewebapp/app/providers/movies_provider.dart';
 import 'package:moviewebapp/app/core/responses/movie_apis.dart';
-import 'package:moviewebapp/app/core/utils/common_functions.dart';
-import 'package:moviewebapp/app/core/utils/constants.dart';
 import 'package:moviewebapp/app/core/utils/navigation/navigation.dart';
-import 'package:provider/provider.dart';
 
 class MovieHomePage extends StatefulWidget {
   const MovieHomePage({
@@ -17,6 +12,7 @@ class MovieHomePage extends StatefulWidget {
     this.withGenres,
     required this.screenTitle,
   }) : super(key: key);
+
   final String withOriginalLanguage;
   final String movieType;
   final String? withGenres;
@@ -27,53 +23,9 @@ class MovieHomePage extends StatefulWidget {
 }
 
 class _MovieHomePageState extends State<MovieHomePage> {
-  double cardHeight = 0;
-  double _childAspectRatio = 9 / 16;
-  double leftPadding = 0;
-  double rightPadding = 0;
-  double crossAxisSpacing = 5;
-  double maxBottomSheetWidth = 0;
-  int columns = 5;
-  List<double> screenValues = [];
-  Map<String, dynamic> layoutData = {};
-  bool isMovieTitleVisible = true;
-
-  MoviesModel _moviesModel = MoviesModel();
   late Future<MoviesModel> _moviesData;
 
-  final List<String> _title = [];
-  final List<String> _movieId = [];
-  final List<String> _img = [];
-  final List<String> _date = [];
-
-  clearData() {
-    _title.clear();
-    _movieId.clear();
-    _img.clear();
-    _date.clear();
-  }
-
-  processData({required MoviesModel moviesModel}) {
-    _moviesModel = moviesModel;
-    _moviesModel.results?.forEach((element) {
-      _title.add(element.title ?? "");
-      _img.add(element.posterPath ?? "");
-      _movieId.add(element.id.toString());
-      final String movieReleaseDate =
-          element.releaseDate?.toIso8601String() ?? Constants.time00;
-      if (movieReleaseDate.isNotEmpty && movieReleaseDate != Constants.time00) {
-        String movieReleaseDateValue =
-            DateFormat("yyyy-MM-dd").format(element.releaseDate!).toString();
-        _date.add(movieReleaseDateValue);
-      } else {
-        _date.add(Constants.time00);
-      }
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
+  void _load() {
     _moviesData = getPopularMoviesList(
       movieType: widget.movieType,
       pageNo: 1,
@@ -82,96 +34,81 @@ class _MovieHomePageState extends State<MovieHomePage> {
     );
   }
 
-  Widget messageText({required String text}) {
-    return Center(
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.bodyMedium,
-      ),
-    );
+  @override
+  void initState() {
+    super.initState();
+    _load();
   }
 
   @override
-  Widget build(BuildContext context) {
-    final double _screenWidth = MediaQuery.of(context).size.width;
-    final bool _screenWidth600 = _screenWidth >= 600;
-    layoutData = getMovieCardWidth(screenWidth: _screenWidth);
-    cardHeight = layoutData["cardHeight"];
-    columns = layoutData["columns"].toInt();
-    _childAspectRatio = layoutData["childAspectRatio"];
-    isMovieTitleVisible = layoutData["isMovieTitleVisible"];
-    leftPadding = layoutData["leftPadding"];
-    rightPadding = layoutData["rightPadding"];
-    crossAxisSpacing = layoutData["crossAxisSpacing"];
-    maxBottomSheetWidth = layoutData["maxBottomSheetWidth"];
+  void didUpdateWidget(covariant MovieHomePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.movieType != widget.movieType ||
+        oldWidget.withOriginalLanguage != widget.withOriginalLanguage ||
+        oldWidget.withGenres != widget.withGenres) {
+      _load();
+    }
+  }
 
-    return Consumer<MoviesProvider>(builder: (context, movieProvider, child) {
-      return Scaffold(
-        appBar: _screenWidth600
-            ? null
-            : AppBar(
-                leading: IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(
-                    Icons.arrow_back,
-                  ),
-                ),
-                title: Text(
-                  widget.screenTitle,
-                  style: Theme.of(context).appBarTheme.titleTextStyle,
-                ),
-              ),
-        body: FutureBuilder(
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: AppBar(
+          title: Text(widget.screenTitle),
+          titleTextStyle: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+        ),
+        body: SafeArea(
+          child: FutureBuilder<MoviesModel>(
             future: _moviesData,
-            builder:
-                (BuildContext context, AsyncSnapshot<MoviesModel> snapshot) {
+            builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.hasError) {
-                  return messageText(text: "Error");
-                } else if (snapshot.hasData) {
-                  clearData();
-                  processData(moviesModel: snapshot.data!);
-                  return Container(
-                    padding:
-                        EdgeInsets.only(left: leftPadding, right: rightPadding),
-                    child: GridView.builder(
-                        scrollDirection: Axis.vertical,
-                        physics: const ScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          childAspectRatio: _childAspectRatio,
-                          crossAxisCount: columns,
-                          // mainAxisSpacing: 20,
-                          crossAxisSpacing: crossAxisSpacing,
-                        ),
-                        itemBuilder: (BuildContext context, int index) {
-                          return InkWell(
-                            onTap: () {
-                              Navigation().navigateToMoviesInfoPage(
-                                context: context,
-                                movieId: _movieId[index],
-                                screenWidth: _screenWidth,
-                              );
-                            },
-                            child: MovieCard(
-                              movieName: _title[index],
-                              imageURL: _img[index],
-                              movieReleaseDate: _date[index],
-                              isMovieTitleVisible: isMovieTitleVisible,
-                            ),
-                          );
-                        },
-                        itemCount: _title.length),
-                  );
-                } else {
-                  return messageText(text: "No Movies");
-                }
-              } else {
-                return messageText(text: 'State: ${snapshot.connectionState}');
               }
-            }),
+              if (snapshot.hasError) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('Could not load movies: ${snapshot.error}', textAlign: TextAlign.center),
+                        const SizedBox(height: 12),
+                        OutlinedButton(onPressed: () => setState(_load), child: const Text('Retry')),
+                      ],
+                    ),
+                  ),
+                );
+              }
+              final movies = snapshot.data?.results ?? <Movies>[];
+              if (movies.isEmpty) return const Center(child: Text('No movies found.'));
+              return LayoutBuilder(
+                builder: (context, constraints) => GridView.builder(
+                  padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: MovieCard.columnsFor(constraints.maxWidth),
+                    childAspectRatio: 2 / 3,
+                    crossAxisSpacing: 4,
+                    mainAxisSpacing: 4,
+                  ),
+                  itemCount: movies.length,
+                  itemBuilder: (context, index) {
+                    final movie = movies[index];
+                    return MovieCard(
+                      key: ValueKey(movie.id ?? index),
+                      movieName: movie.title ?? 'Untitled movie',
+                      imageURL: movie.posterPath ?? '',
+                      movieId: movie.id?.toString() ?? '',
+                      onTap: () => Navigation().navigateToMoviesInfoPage(
+                        context: context,
+                        movieId: movie.id?.toString() ?? '',
+                        screenWidth: MediaQuery.of(context).size.width,
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        ),
       );
-    });
-  }
 }

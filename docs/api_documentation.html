@@ -245,6 +245,13 @@
         Reduced-motion preferences disable scaling. Row requests are retained across
         rebuilds and refreshed only when the row's query parameters change.
         The shared card styling and bounce also apply to actor movie rails.</p>
+      <p>MovieHomePage and the paginated MovieListScreen reuse the same poster
+        interaction in compact 2:3 grids: three columns on phones, expanding
+        columns on wider layouts, consistent narrow gutters, and no separate title
+        or date captions. Titles remain accessible through labels and tooltips.
+        No promotional badges are fabricated; artwork comes from existing TMDB posters.
+        The paginated screen retains its loading/error/retry behavior and stops
+        requesting pages when the server returns an empty page.</p>
     </section>
 
     <section aria-labelledby="search-upload-heading">

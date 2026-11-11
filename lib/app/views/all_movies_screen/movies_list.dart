@@ -2,16 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:intl/intl.dart';
 import 'package:moviewebapp/app/models/get_movies_model.dart';
 import 'package:moviewebapp/app/views/all_movies_screen/widgets/movie_card.dart';
-import 'package:moviewebapp/app/providers/movies_provider.dart';
 
 import 'package:moviewebapp/app/core/responses/movie_apis.dart';
-import 'package:moviewebapp/app/core/utils/common_functions.dart';
-import 'package:moviewebapp/app/core/utils/constants.dart';
 import 'package:moviewebapp/app/core/utils/navigation/navigation.dart';
-import 'package:provider/provider.dart';
 
 class MovieListScreen extends StatefulWidget {
   const MovieListScreen({
@@ -35,12 +30,7 @@ class MovieListScreen extends StatefulWidget {
 }
 
 class _MovieListScreenState extends State<MovieListScreen> {
-  final PagingController<int, Movies> _pagingController =
-      PagingController(firstPageKey: 1);
-
-  int columns = 5;
-  Map<String, dynamic> layoutData = {};
-  bool isMovieTitleVisible = true;
+  final PagingController<int, Movies> _pagingController = PagingController(firstPageKey: 1);
 
   @override
   void initState() {
@@ -58,11 +48,16 @@ class _MovieListScreenState extends State<MovieListScreen> {
         withOriginalLanguage: widget.withOriginalLanguage,
         withGenres: widget.withGenres,
       );
-      _pagingController.appendPage(movies, pageKey + 1);
+      if (!mounted) return;
+      if (movies.isEmpty) {
+        _pagingController.appendLastPage(movies);
+      } else {
+        _pagingController.appendPage(movies, pageKey + 1);
+      }
     } catch (error, stackTrace) {
       log("fetchMovies error: $error");
       log("fetchMovies stackTrace: $stackTrace");
-      _pagingController.error = error;
+      if (mounted) _pagingController.error = error;
     }
   }
 
@@ -72,56 +67,43 @@ class _MovieListScreenState extends State<MovieListScreen> {
     super.dispose();
   }
 
-  String getReleaseDate({required DateTime? releaseDate}) {
-    String movieReleaseDateValue;
-    if (releaseDate != null) {
-      movieReleaseDateValue =
-          DateFormat("yyyy-MM-dd").format(releaseDate).toString();
-      return movieReleaseDateValue;
-    } else {
-      return Constants.time00;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    layoutData = getMovieCardWidth(screenWidth: screenWidth);
-    columns = layoutData["columns"];
-    isMovieTitleVisible = layoutData["isMovieTitleVisible"];
-
-    return Consumer<MoviesProvider>(builder: (context, movieProvider, child) {
-      return Scaffold(
-        appBar: widget.showAppBar
-            ? AppBar(
-                leading: widget.showLeadingIcon
-                    ? IconButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        icon: const Icon(
-                          Icons.arrow_back,
-                        ),
-                      )
-                    : null,
-                title: Text(
-                  widget.screenTitle,
-                  style: Theme.of(context).appBarTheme.titleTextStyle,
-                ),
-              )
-            : null,
-        body: SafeArea(
-          child: PagedGridView<int, Movies>(
+    return Scaffold(
+      appBar: widget.showAppBar
+          ? AppBar(
+              leading: widget.showLeadingIcon
+                  ? IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(
+                        Icons.arrow_back,
+                      ),
+                    )
+                  : null,
+              title: Text(
+                widget.screenTitle,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+              ),
+            )
+          : null,
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) => PagedGridView<int, Movies>(
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
             showNewPageProgressIndicatorAsGridChild: false,
             showNewPageErrorIndicatorAsGridChild: false,
             showNoMoreItemsIndicatorAsGridChild: false,
             pagingController: _pagingController,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              childAspectRatio: screenWidth >= 900 ? 0.56666 : 0.66666,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              crossAxisCount: columns,
+              childAspectRatio: 2 / 3,
+              crossAxisSpacing: 4,
+              mainAxisSpacing: 4,
+              crossAxisCount: MovieCard.columnsFor(constraints.maxWidth),
             ),
             builderDelegate: PagedChildBuilderDelegate<Movies>(
-              itemBuilder: (context, item, index) => InkWell(
+              itemBuilder: (context, item, index) => MovieCard(
+                key: ValueKey(item.id ?? index),
                 onTap: () {
                   Navigation().navigateToMoviesInfoPage(
                     context: context,
@@ -129,18 +111,14 @@ class _MovieListScreenState extends State<MovieListScreen> {
                     screenWidth: screenWidth,
                   );
                 },
-                child: MovieCard(
-                  movieName: item.title ?? "",
-                  imageURL: item.posterPath ?? "",
-                  movieReleaseDate:
-                      getReleaseDate(releaseDate: item.releaseDate),
-                  isMovieTitleVisible: isMovieTitleVisible,
-                ),
+                movieName: item.title ?? "",
+                imageURL: item.posterPath ?? "",
+                movieId: item.id?.toString() ?? '',
               ),
             ),
           ),
         ),
-      );
-    });
+      ),
+    );
   }
 }

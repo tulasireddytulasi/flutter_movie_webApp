@@ -8,12 +8,14 @@ class MoviesCard extends StatefulWidget {
     required this.movieName,
     required this.movieId,
     required this.voidCallback,
+    this.fillWidth = false,
   }) : super(key: key);
 
   final String poster;
   final String movieName;
   final String movieId;
   final VoidCallback voidCallback;
+  final bool fillWidth;
 
   static double widthFor(double screenWidth) =>
       ((screenWidth - 32) / (screenWidth < 600 ? 3.25 : 7.25)).clamp(88.0, 164.0).toDouble();
@@ -97,7 +99,7 @@ class _MoviesCardState extends State<MoviesCard> with SingleTickerProviderStateM
       ),
     );
     return SizedBox(
-      width: MoviesCard.widthFor(MediaQuery.of(context).size.width),
+      width: widget.fillWidth ? double.infinity : MoviesCard.widthFor(MediaQuery.of(context).size.width),
       child: Center(
         child: Tooltip(
           message: widget.movieName,
