@@ -5,6 +5,7 @@ import 'package:moviewebapp/app/providers/dashboard_provider.dart';
 import 'package:moviewebapp/app/providers/movie_info_provider.dart';
 import 'package:moviewebapp/app/providers/movies_provider.dart';
 import 'package:moviewebapp/app/providers/navigation_provider.dart';
+import 'package:moviewebapp/app/providers/people_provider.dart';
 import 'package:moviewebapp/app/providers/universal_provider.dart';
 import 'package:moviewebapp/app/theme/app_theme.dart';
 import 'package:moviewebapp/app/views/navigation_menu/navigation_menu.dart';
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider<PeopleProvider>(create: (_) => PeopleProvider()),
         ChangeNotifierProvider(create: (_) => DashBoardProvider()),
         ChangeNotifierProvider(create: (_) => MoviesProvider()),
         ChangeNotifierProvider(create: (_) => MovieInfoProvider()),
