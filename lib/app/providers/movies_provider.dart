@@ -53,26 +53,35 @@ class MoviesProvider extends ChangeNotifier {
   MovieBannerModel get movieBannerModel => _movieBannerModel;
 
   Future<MoviesPage> fetchMovies({String? cursorAfter}) async {
-    final page = await _appwriteService.fetchMoviesPage(cursorAfter: cursorAfter);
-    final movies = <Movies>[];
+    try {
+      final page = await _appwriteService.fetchMoviesPage(cursorAfter: cursorAfter);
+      final movies = <Movies>[];
 
-    for (final row in page.rows) {
-      final id = int.tryParse(row[r'$id']?.toString() ?? '');
-      if (id == null) continue;
+      for (final row in page.rows) {
+        final id = int.tryParse(row[r'$id']?.toString() ?? '');
+        if (id == null) continue;
 
-      final releaseDate = row['release_date'];
-      movies.add(
-        Movies(
-          id: id,
-          title: row['title'] as String?,
-          posterPath: row['poster_path'] as String?,
-          releaseDate: releaseDate is String ? DateTime.tryParse(releaseDate) : null,
-          popularity: (row['popularity'] as num?)?.toDouble(),
-        ),
+        final releaseDate = row['release_date'];
+        movies.add(
+          Movies(
+            id: id,
+            title: row['title'] as String?,
+            posterPath: row['poster_path'] as String?,
+            releaseDate: releaseDate is String ? DateTime.tryParse(releaseDate) : null,
+            popularity: (row['popularity'] as num?)?.toDouble(),
+          ),
+        );
+      }
+
+      return (movies: List<Movies>.unmodifiable(movies), nextCursor: page.nextCursor);
+    } catch (error, stackTrace) {
+      log(
+        'MoviesProvider.fetchMovies failed',
+        error: error,
+        stackTrace: stackTrace,
       );
+      rethrow;
     }
-
-    return (movies: List<Movies>.unmodifiable(movies), nextCursor: page.nextCursor);
   }
 
   Future<void> getMovieDetails({required int pageNo, required String movieType}) async {
