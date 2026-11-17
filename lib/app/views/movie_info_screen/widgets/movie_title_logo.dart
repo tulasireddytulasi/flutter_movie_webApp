@@ -46,43 +46,43 @@ class _MovieTitleLogoState extends State<MovieTitleLogo> {
   }
 
   @override
-  Widget build(BuildContext context) => FutureBuilder<String?>(
-        key: ValueKey(widget.movieId),
-        future: _logo,
-        builder: (context, snapshot) {
-          final path = snapshot.data;
-          if (snapshot.hasError || path == null) return const SizedBox.shrink();
-          return Image.network(
-            ApiConstants.movieImageBaseUrlw500 + path,
-            width: 220,
-            height: 100,
-            fit: BoxFit.contain,
-            alignment: Alignment.bottomLeft,
-            excludeFromSemantics: true,
-            errorBuilder: (_, error, stack) {
-              log('Could not display movie title logo', error: error, stackTrace: stack);
-              return const SizedBox.shrink();
-            },
-            frameBuilder: (context, child, frame, synchronous) {
-              if (frame == null) return const SizedBox.shrink();
-              if (MediaQuery.of(context).disableAnimations) return child;
-              return TweenAnimationBuilder<double>(
-                key: ValueKey('${widget.movieId}:$path'),
-                tween: Tween(begin: 0, end: 1),
-                duration: const Duration(milliseconds: 650),
-                curve: Curves.easeOutCubic,
-                child: child,
-                builder: (_, value, image) => Opacity(
-                  opacity: value,
-                  child: Transform.scale(
-                    scale: 1.15 - .15 * value,
-                    alignment: Alignment.bottomLeft,
-                    child: image,
-                  ),
-                ),
-              );
-            },
-          );
-        },
-      );
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final bool isDesktopOrTablet = screenWidth >= 600;
+    return FutureBuilder<String?>(
+      key: ValueKey(widget.movieId),
+      future: _logo,
+      builder: (context, snapshot) {
+        final path = snapshot.data;
+        if (snapshot.hasError || path == null) return const SizedBox.shrink();
+        return Image.network(
+          ApiConstants.movieImageBaseUrlw500 + path,
+          width: 220,
+          height: isDesktopOrTablet ? 100 : 50,
+          fit: BoxFit.contain,
+          alignment: isDesktopOrTablet ? Alignment.bottomLeft : Alignment.bottomCenter,
+          excludeFromSemantics: true,
+          errorBuilder: (_, error, stack) {
+            log('Could not display movie title logo', error: error, stackTrace: stack);
+            return const SizedBox.shrink();
+          },
+          frameBuilder: (context, child, frame, synchronous) {
+            if (frame == null) return const SizedBox.shrink();
+            if (MediaQuery.of(context).disableAnimations) return child;
+            return TweenAnimationBuilder<double>(
+              key: ValueKey('${widget.movieId}:$path'),
+              tween: Tween(begin: 0, end: 1),
+              duration: const Duration(milliseconds: 650),
+              curve: Curves.easeOutCubic,
+              child: child,
+              builder: (_, value, image) => Opacity(
+                opacity: value,
+                child: Transform.scale(scale: 1.15 - .15 * value, alignment: Alignment.bottomLeft, child: image),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 }

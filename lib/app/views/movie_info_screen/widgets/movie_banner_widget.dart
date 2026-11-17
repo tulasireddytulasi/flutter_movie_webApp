@@ -68,13 +68,13 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
               ),
             ),
           ),
-          if (screenWidth > 600 && widget.movieId.isNotEmpty)
+          if (widget.movieId.isNotEmpty)
             Positioned(
               bottom: 24,
-              left: 40,
-              right: 40,
+              left: screenWidth > 600 ? 40 : 0,
+              right: screenWidth > 600 ? 40 : 0,
               child: Align(
-                alignment: Alignment.bottomLeft,
+                alignment: screenWidth > 600 ? Alignment.bottomLeft : Alignment.bottomCenter,
                 child: MovieTitleLogo(key: ValueKey(widget.movieId), movieId: widget.movieId),
               ),
             ),
