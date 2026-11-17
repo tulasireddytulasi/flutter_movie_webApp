@@ -2,13 +2,20 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:moviewebapp/app/core/responses/appwrite_service.dart';
 import 'package:moviewebapp/app/models/get_movies_model.dart';
 import 'package:moviewebapp/app/models/movie_banner_model.dart';
 import 'package:moviewebapp/app/models/movie_logos_and_posters_model.dart';
 import 'package:moviewebapp/app/models/youtube_video_model.dart';
 import 'package:moviewebapp/app/core/responses/movie_apis.dart';
 
+typedef MoviesPage = ({List<Movies> movies, String? nextCursor});
+
 class MoviesProvider extends ChangeNotifier {
+  MoviesProvider({AppwriteService? appwriteService}) : _appwriteService = appwriteService ?? AppwriteService();
+
+  final AppwriteService _appwriteService;
+
   MoviesModel _getPopularMoviesModel = MoviesModel();
   MoviesModel get getPopularMoviesModel => _getPopularMoviesModel;
 
@@ -44,6 +51,29 @@ class MoviesProvider extends ChangeNotifier {
 
   MovieBannerModel _movieBannerModel = MovieBannerModel();
   MovieBannerModel get movieBannerModel => _movieBannerModel;
+
+  Future<MoviesPage> fetchMovies({String? cursorAfter}) async {
+    final page = await _appwriteService.fetchMoviesPage(cursorAfter: cursorAfter);
+    final movies = <Movies>[];
+
+    for (final row in page.rows) {
+      final id = int.tryParse(row[r'$id']?.toString() ?? '');
+      if (id == null) continue;
+
+      final releaseDate = row['release_date'];
+      movies.add(
+        Movies(
+          id: id,
+          title: row['title'] as String?,
+          posterPath: row['poster_path'] as String?,
+          releaseDate: releaseDate is String ? DateTime.tryParse(releaseDate) : null,
+          popularity: (row['popularity'] as num?)?.toDouble(),
+        ),
+      );
+    }
+
+    return (movies: List<Movies>.unmodifiable(movies), nextCursor: page.nextCursor);
+  }
 
   Future<void> getMovieDetails({required int pageNo, required String movieType}) async {
     try {

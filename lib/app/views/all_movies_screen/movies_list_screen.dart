@@ -3,10 +3,10 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:moviewebapp/app/models/get_movies_model.dart';
+import 'package:moviewebapp/app/providers/movies_provider.dart';
 import 'package:moviewebapp/app/views/all_movies_screen/widgets/movie_card.dart';
-
-import 'package:moviewebapp/app/core/responses/movie_apis.dart';
 import 'package:moviewebapp/app/core/utils/navigation/navigation.dart';
+import 'package:provider/provider.dart';
 
 class MovieListScreen extends StatefulWidget {
   const MovieListScreen({
@@ -31,28 +31,30 @@ class MovieListScreen extends StatefulWidget {
 
 class _MovieListScreenState extends State<MovieListScreen> {
   final PagingController<int, Movies> _pagingController = PagingController(firstPageKey: 1);
+  final Map<int, String> _cursorByPage = {};
+  late final MoviesProvider _moviesProvider;
 
   @override
   void initState() {
     super.initState();
+    _moviesProvider = context.read<MoviesProvider>();
     _pagingController.addPageRequestListener((pageKey) {
       _fetchMovies(pageKey: pageKey);
     });
   }
 
-  _fetchMovies({required int pageKey}) async {
+  Future<void> _fetchMovies({required int pageKey}) async {
     try {
-      final List<Movies> movies = await fetchMovies(
-        movieType: widget.movieType,
-        pageKey: pageKey,
-        withOriginalLanguage: widget.withOriginalLanguage,
-        withGenres: widget.withGenres,
+      final page = await _moviesProvider.fetchMovies(
+        cursorAfter: _cursorByPage[pageKey],
       );
       if (!mounted) return;
-      if (movies.isEmpty) {
-        _pagingController.appendLastPage(movies);
+
+      if (page.nextCursor == null) {
+        _pagingController.appendLastPage(page.movies);
       } else {
-        _pagingController.appendPage(movies, pageKey + 1);
+        _cursorByPage[pageKey + 1] = page.nextCursor!;
+        _pagingController.appendPage(page.movies, pageKey + 1);
       }
     } catch (error, stackTrace) {
       log("fetchMovies error: $error");

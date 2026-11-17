@@ -1,12 +1,36 @@
 import 'package:flutter/foundation.dart';
-import 'package:moviewebapp/app/core/responses/appwrite_people_service.dart';
+import 'package:moviewebapp/app/core/responses/appwrite_service.dart';
+import 'package:moviewebapp/app/models/popular_actors_model.dart';
+
+typedef PeoplePage = ({List<Actors> actors, String? nextCursor});
 
 class PeopleProvider extends ChangeNotifier {
-  PeopleProvider({AppwritePeopleService? peopleService})
-      : _peopleService = peopleService ?? AppwritePeopleService();
+  PeopleProvider({AppwriteService? appwriteService})
+      : _appwriteService = appwriteService ?? AppwriteService();
 
-  final AppwritePeopleService _peopleService;
+  final AppwriteService _appwriteService;
 
-  Future<AppwritePeoplePage> fetchPopularPeoplePage({String? cursorAfter}) =>
-      _peopleService.fetchPopularPage(cursorAfter: cursorAfter);
+    Future<PeoplePage> fetchPopularPeoplePage({String? cursorAfter}) async {
+        final page = await _appwriteService.fetchPopularPeoplePage(cursorAfter: cursorAfter);
+        final actors = <Actors>[];
+
+        for (final row in page.rows) {
+            final id = int.tryParse(row[r'$id']?.toString() ?? '');
+            if (id == null) continue;
+
+            actors.add(
+                Actors(
+                    adult: row['adult'] as bool?,
+                    gender: (row['gender'] as num?)?.toInt(),
+                    id: id,
+                    knownForDepartment: row['known_for_department'] as String?,
+                    name: row['name'] as String?,
+                    popularity: (row['popularity'] as num?)?.toDouble(),
+                    profilePath: row['profile_path'] as String?,
+                ),
+            );
+        }
+
+        return (actors: List<Actors>.unmodifiable(actors), nextCursor: page.nextCursor);
+    }
 }
