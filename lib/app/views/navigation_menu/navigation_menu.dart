@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/views/all_actors_page/all_actors_page.dart';
-import 'package:moviewebapp/app/views/all_movies_screen/movies_list.dart';
+import 'package:moviewebapp/app/views/all_movies_screen/movies_list_screen.dart';
 import 'package:moviewebapp/app/views/blogs_screen/blogs_screen.dart';
 import 'package:moviewebapp/app/views/dashboard/dashboard.dart';
 import 'package:moviewebapp/app/views/navigation_menu/custom_bottom_navbar_2.dart';
