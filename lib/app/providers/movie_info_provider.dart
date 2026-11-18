@@ -17,6 +17,14 @@ class MovieInfoProvider extends ChangeNotifier {
 
   final AppwriteService _appwriteService;
 
+  bool _isLoadingMovie = false;
+  bool get isLoadingMovie => _isLoadingMovie;
+
+  String? _movieError;
+  String? get movieError => _movieError;
+
+  int _movieRequestId = 0;
+
   GetMovieInfo _getMovieInfo = GetMovieInfo();
   GetMovieInfo get getMovieInfo => _getMovieInfo;
 
@@ -166,8 +174,31 @@ class MovieInfoProvider extends ChangeNotifier {
   }
 
   Future<void> getMoviesInfoAPI({required String movieId, required String appendToResponse}) async {
+    final requestId = ++_movieRequestId;
+    _isLoadingMovie = true;
+    _movieError = null;
+    _getMovieInfo = GetMovieInfo();
+    _currentMovieId = movieId;
+    _movieTitle = '';
+    _overview = '';
+    _backdropPath = '';
+    _releaseDate = '';
+    _releaseYear = '';
+    _releaseMonth = '';
+    _releaseDay = '';
+    _runtime = '';
+    _voteCount = '';
+    _rating = '';
+    _genre = '';
+    _genresList.clear();
+    _actorId.clear();
+    _actorImageUrl.clear();
+    _actorName.clear();
+    notifyListeners();
+
     try {
       final row = await _appwriteService.fetchMovieById(movieId);
+      if (requestId != _movieRequestId) return;
       final genreRows = row['genres'];
       final genres = <Genre>[];
       if (genreRows is List) {
@@ -266,12 +297,24 @@ class MovieInfoProvider extends ChangeNotifier {
         _actorId.add(castInfo.id?.toString() ?? '');
       }
 
-      notifyListeners();
     } catch (error, stackTrace) {
-      log('getMoviesInfoAPI error: $error');
-      log('getMoviesInfoAPI stackTrace: $stackTrace');
-      rethrow;
+      if (requestId != _movieRequestId) return;
+      log('getMoviesInfoAPI failed', error: error, stackTrace: stackTrace);
+      _movieError = error is AppwriteServiceException && error.code == 404
+          ? 'This movie is not available in our catalog yet.'
+          : 'Unable to load movie details. Please try again.';
+    } finally {
+      if (requestId == _movieRequestId) {
+        _isLoadingMovie = false;
+        notifyListeners();
+      }
     }
+  }
+
+  @override
+  void dispose() {
+    _movieRequestId++;
+    super.dispose();
   }
 
   void notify() => notifyListeners();

@@ -46,6 +46,38 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
   Widget build(BuildContext context) {
     final double _screenWidth = MediaQuery.of(context).size.width;
     return Consumer<MovieInfoProvider>(builder: (context, movieInfoProvider, child) {
+      if (movieInfoProvider.isLoadingMovie || movieInfoProvider.movieError != null) {
+        return Scaffold(
+          appBar: AppBar(
+            leading: BackButton(onPressed: () => Navigator.of(context).pop()),
+            title: const Text('Movie details'),
+          ),
+          body: SafeArea(
+            child: Center(
+              child: movieInfoProvider.isLoadingMovie
+                  ? const CircularProgressIndicator()
+                  : Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(movieInfoProvider.movieError!, textAlign: TextAlign.center),
+                          const SizedBox(height: 16),
+                          TextButton.icon(
+                            onPressed: () => movieInfoProvider.getMoviesInfoAPI(
+                              movieId: movieInfoProvider.currentMovieId,
+                              appendToResponse: 'credits',
+                            ),
+                            icon: const Icon(Icons.refresh),
+                            label: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    ),
+            ),
+          ),
+        );
+      }
       return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface.withValues(alpha: 0),
         extendBodyBehindAppBar: true,
