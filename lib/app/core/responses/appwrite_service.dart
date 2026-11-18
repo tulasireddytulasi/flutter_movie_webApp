@@ -137,6 +137,37 @@ class AppwriteService {
     }
   }
 
+  Future<Map<String, dynamic>> fetchPersonById(String personId) async {
+    try {
+      final row = await _tables.getRow(
+        databaseId: AppwriteConfig.databaseId,
+        tableId: AppwriteConfig.peopleTableId,
+        rowId: personId,
+        queries: [
+          Query.select([
+            'adult',
+            'also_known_as',
+            'biography',
+            'birthday',
+            'deathday',
+            'gender',
+            'homepage',
+            'imdb_id',
+            'known_for_department',
+            'name',
+            'place_of_birth',
+            'popularity',
+            'profile_path',
+          ]),
+        ],
+      );
+
+      return Map<String, dynamic>.unmodifiable({...row.data, r'$id': row.$id});
+    } catch (error, stackTrace) {
+      _throwRequestError('fetchPersonById/$personId', error, stackTrace);
+    }
+  }
+
   Future<List<Map<String, dynamic>>> fetchPersonMovieCredits(String personId) async {
     try {
       final credits = <Map<String, dynamic>>[];

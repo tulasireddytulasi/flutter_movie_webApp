@@ -20,6 +20,7 @@ class ActorsInfoProvider extends ChangeNotifier {
 
   final AppwriteService _appwriteService;
   int _moviesRequestId = 0;
+  int _actorInfoRequestId = 0;
 
   ActorImagesModel _actorImagesModel = ActorImagesModel();
 
@@ -160,22 +161,42 @@ class ActorsInfoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  getActorsInfoAPI({required String actorId}) async {
+  Future<void> getActorsInfoAPI({required String actorId}) async {
+    final requestId = ++_actorInfoRequestId;
     try {
-      _actorInfoModel = await getActorsInfo(actorId: actorId);
+      final row = await _appwriteService.fetchPersonById(actorId);
+      if (requestId != _actorInfoRequestId) return;
+
+      final birthday = row['birthday'];
+      final aliases = row['also_known_as'];
+      _actorInfoModel = ActorInfoModel(
+        id: int.tryParse(row[r'$id']?.toString() ?? actorId),
+        adult: row['adult'] as bool?,
+        alsoKnownAs: aliases is List ? List<String>.from(aliases) : null,
+        biography: row['biography'] as String?,
+        birthday: birthday is String ? DateTime.tryParse(birthday) : null,
+        deathday: row['deathday'],
+        gender: (row['gender'] as num?)?.toInt(),
+        homepage: row['homepage'] as String?,
+        imdbId: row['imdb_id'] as String?,
+        knownForDepartment: row['known_for_department'] as String?,
+        name: row['name'] as String?,
+        placeOfBirth: row['place_of_birth'] as String?,
+        popularity: (row['popularity'] as num?)?.toDouble(),
+        profilePath: row['profile_path'] as String?,
+      );
       _actorName = _actorInfoModel.name ?? "";
-      _actorId = _actorInfoModel.id.toString();
+      _actorId = _actorInfoModel.id?.toString() ?? actorId;
       _profilePic = _actorInfoModel.profilePath ?? "";
       _biography = _actorInfoModel.biography ?? "";
+      _gender = '';
       if (_actorInfoModel.gender == 1) {
         _gender = "Female";
       } else if (_actorInfoModel.gender == 2) {
         _gender = "Male";
       }
-      DateFormat dateFormat = DateFormat("yyyy-MM-dd");
-      if (_actorInfoModel.birthday != null && _actorInfoModel.birthday.toString().isNotEmpty) {
-        DateTime movieReleaseDate = dateFormat.parse(_actorInfoModel.birthday.toString());
-        _dob = DateFormat('yyyy-MM-dd').format(movieReleaseDate);
+      if (_actorInfoModel.birthday != null) {
+        _dob = DateFormat('yyyy-MM-dd').format(_actorInfoModel.birthday!);
       } else {
         _dob = Constants.time00;
       }
@@ -184,8 +205,18 @@ class ActorsInfoProvider extends ChangeNotifier {
       _role = _actorInfoModel.knownForDepartment ?? "";
       _homePage = _actorInfoModel.homepage ?? "";
     } catch (error, stackTrace) {
-      log("_actorsInfo error: $error");
-      log("_actorsInfo error: $stackTrace");
+      log('ActorsInfoProvider.getActorsInfoAPI failed', error: error, stackTrace: stackTrace);
+      if (requestId != _actorInfoRequestId) return;
+      _actorInfoModel = ActorInfoModel();
+      _actorName = '';
+      _actorId = '';
+      _profilePic = '';
+      _biography = '';
+      _gender = '';
+      _dob = Constants.time00;
+      _birthPlace = '';
+      _role = '';
+      _homePage = '';
     }
     notifyListeners();
   }
