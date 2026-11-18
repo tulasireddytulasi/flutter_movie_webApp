@@ -137,6 +137,43 @@ class AppwriteService {
     }
   }
 
+  Future<List<Map<String, dynamic>>> fetchPersonMovieCredits(String personId) async {
+    try {
+      final credits = <Map<String, dynamic>>[];
+      String? cursor;
+
+      do {
+        final page = await _tables.listRows(
+          databaseId: AppwriteConfig.databaseId,
+          tableId: AppwriteConfig.movieCastTableId,
+          ttl: 3600,
+          queries: [
+            Query.equal('person.\$id', [personId]),
+            Query.select([
+              r'$id',
+              'character',
+              'order',
+              'movie.\$id',
+              'movie.title',
+              'movie.poster_path',
+              'movie.release_date',
+              'movie.popularity',
+            ]),
+            Query.limit(pageSize),
+            if (cursor != null) Query.cursorAfter(cursor),
+          ],
+        );
+
+        credits.addAll(page.rows.map((row) => <String, dynamic>{...row.data, r'$id': row.$id}));
+        cursor = page.rows.length == pageSize ? page.rows.last.$id : null;
+      } while (cursor != null);
+
+      return List<Map<String, dynamic>>.unmodifiable(credits);
+    } catch (error, stackTrace) {
+      _throwRequestError('fetchPersonMovieCredits/$personId', error, stackTrace);
+    }
+  }
+
   Never _throwRequestError(String operation, Object error, StackTrace stackTrace) {
     final appwriteError = error is AppwriteException ? error : null;
     Error.throwWithStackTrace(

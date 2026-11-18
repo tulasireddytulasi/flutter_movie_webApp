@@ -5,4 +5,5 @@ class AppwriteConfig {
   static const moviesTableId = '6aeeda38001f609f0ca2';
   static const genresTableId = 'genres';
   static const peopleTableId = 'people';
+  static const movieCastTableId = 'movie_cast';
 }
