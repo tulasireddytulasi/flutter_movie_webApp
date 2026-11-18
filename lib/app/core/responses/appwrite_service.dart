@@ -36,6 +36,7 @@ class AppwriteService {
       final result = await _tables.listRows(
         databaseId: AppwriteConfig.databaseId,
         tableId: AppwriteConfig.peopleTableId,
+        ttl: 3600, // Caches identical query results in Appwrite memory for 1 hour (3600s)
         queries: [
           Query.orderDesc('popularity'),
           Query.select([
@@ -68,6 +69,7 @@ class AppwriteService {
       final result = await _tables.listRows(
         databaseId: AppwriteConfig.databaseId,
         tableId: AppwriteConfig.moviesTableId,
+        ttl: 3600, // Caches identical query results in Appwrite memory for 1 hour (3600s)
         queries: [
           Query.orderDesc('release_date'),
           Query.orderDesc('popularity'),
