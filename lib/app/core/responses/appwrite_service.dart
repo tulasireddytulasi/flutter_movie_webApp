@@ -94,6 +94,47 @@ class AppwriteService {
     }
   }
 
+  Future<Map<String, dynamic>> fetchMovieById(String movieId) async {
+    try {
+      final row = await _tables.getRow(
+        databaseId: AppwriteConfig.databaseId,
+        tableId: AppwriteConfig.moviesTableId,
+        rowId: movieId,
+        queries: [
+          Query.select([
+            'title',
+            'original_title',
+            'overview',
+            'release_date',
+            'runtime',
+            'budget',
+            'revenue',
+            'status',
+            'adult',
+            'popularity',
+            'vote_average',
+            'vote_count',
+            'poster_path',
+            'backdrop_path',
+            'language',
+            'genres.\$id',
+            'genres.name',
+            'cast.\$id',
+            'cast.character',
+            'cast.order',
+            'cast.person.\$id',
+            'cast.person.name',
+            'cast.person.profile_path',
+          ]),
+        ],
+      );
+
+      return Map<String, dynamic>.unmodifiable({r'$id': row.$id, ...row.data});
+    } catch (error, stackTrace) {
+      _throwRequestError('fetchMovieById/$movieId', error, stackTrace);
+    }
+  }
+
   Never _throwRequestError(String operation, Object error, StackTrace stackTrace) {
     final appwriteError = error is AppwriteException ? error : null;
     Error.throwWithStackTrace(

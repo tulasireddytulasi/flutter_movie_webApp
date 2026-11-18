@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:moviewebapp/app/core/responses/appwrite_service.dart';
 import 'package:moviewebapp/app/models/get_movie_info_model.dart';
 import 'package:moviewebapp/app/models/review_model.dart';
 import 'package:moviewebapp/app/models/youtube_video_model.dart';
@@ -12,6 +13,10 @@ import 'package:moviewebapp/app/core/responses/movie_apis.dart';
 import 'package:moviewebapp/app/core/utils/constants.dart';
 
 class MovieInfoProvider extends ChangeNotifier {
+  MovieInfoProvider({AppwriteService? appwriteService}) : _appwriteService = appwriteService ?? AppwriteService();
+
+  final AppwriteService _appwriteService;
+
   GetMovieInfo _getMovieInfo = GetMovieInfo();
   GetMovieInfo get getMovieInfo => _getMovieInfo;
 
@@ -161,50 +166,112 @@ class MovieInfoProvider extends ChangeNotifier {
   }
 
   Future<void> getMoviesInfoAPI({required String movieId, required String appendToResponse}) async {
-    _getMovieInfo = await getMoviesInfoData(movieId: movieId, appendToResponse: appendToResponse);
-    _movieTitle = _getMovieInfo.title ?? "";
-    _overview = _getMovieInfo.overview ?? "NA";
-    _currentMovieId = _getMovieInfo.id.toString();
-    _backdropPath = _getMovieInfo.backdropPath ?? "";
-    final String releaseDate = _getMovieInfo.releaseDate.toString();
-    if (releaseDate.isNotEmpty) {
-      DateFormat dateFormat = DateFormat("yyyy-MM-dd");
-      DateTime movieReleaseDate = dateFormat.parse(releaseDate);
-      String formattedDate = DateFormat('yyyy-MM-dd').format(movieReleaseDate);
-      _releaseDate = formattedDate;
-      _releaseYear = movieReleaseDate.year.toString();
-      _releaseMonth = movieReleaseDate.month.toString();
-      _releaseDay = movieReleaseDate.day.toString();
-    }
-
-    int t = _getMovieInfo.runtime!;
-    int hours = (t ~/ 60).toInt();
-    int minutes = t % 60;
-    _runtime = "${hours}h ${minutes}min";
-
-    _voteCount = _getMovieInfo.voteCount.toString();
-    _rating = (_getMovieInfo.voteAverage! / 2).toStringAsFixed(1);
-
-    _genresList.clear();
-    for (var element in _getMovieInfo.genres!) {
-      if (element.name != null && element.name!.isNotEmpty) {
-        _genresList.add(element.name!);
+    try {
+      final row = await _appwriteService.fetchMovieById(movieId);
+      final genreRows = row['genres'];
+      final genres = <Genre>[];
+      if (genreRows is List) {
+        for (final genreRow in genreRows.whereType<Map>()) {
+          final genreData = Map<String, dynamic>.from(genreRow);
+          genres.add(
+            Genre(
+              id: int.tryParse(genreData[r'$id']?.toString() ?? ''),
+              name: genreData['name'] as String?,
+            ),
+          );
+        }
       }
-    }
-    _genre = _genresList.join(", ");
-    _actorId.clear();
-    _actorImageUrl.clear();
-    _actorName.clear();
 
-    _getMovieInfo.credits?.cast?.forEach((castInfo) {
-      if (castInfo.profilePath != null && castInfo.profilePath!.isNotEmpty) {
-        _actorImageUrl.add(castInfo.profilePath ?? "");
-        _actorName.add(castInfo.name ?? "");
-        _actorId.add(castInfo.id.toString());
+      final castRows = row['cast'];
+      final cast = <Cast>[];
+      if (castRows is List) {
+        for (final castRow in castRows.whereType<Map>()) {
+          final castData = Map<String, dynamic>.from(castRow);
+          final personRow = castData['person'];
+          if (personRow is! Map) continue;
+
+          final personData = Map<String, dynamic>.from(personRow);
+          final personId = int.tryParse(personData[r'$id']?.toString() ?? '');
+          if (personId == null) continue;
+
+          cast.add(
+            Cast(
+              id: personId,
+              name: personData['name'] as String?,
+              profilePath: personData['profile_path'] as String?,
+              character: castData['character'] as String?,
+              order: (castData['order'] as num?)?.toInt(),
+            ),
+          );
+        }
       }
-    });
+      cast.sort((first, second) => (first.order ?? 0).compareTo(second.order ?? 0));
 
-    notifyListeners();
+      _getMovieInfo = GetMovieInfo(
+        adult: row['adult'] as bool?,
+        backdropPath: row['backdrop_path'] as String?,
+        budget: (row['budget'] as num?)?.toInt(),
+        genres: genres,
+        id: int.tryParse(row[r'$id']?.toString() ?? movieId),
+        originalLanguage: row['language'] as String?,
+        originalTitle: row['original_title'] as String?,
+        overview: row['overview'] as String?,
+        popularity: (row['popularity'] as num?)?.toDouble(),
+        posterPath: row['poster_path'] as String?,
+        releaseDate: row['release_date'] as String?,
+        revenue: (row['revenue'] as num?)?.toInt(),
+        runtime: (row['runtime'] as num?)?.toInt(),
+        status: row['status'] as String?,
+        tagline: row['tagline'] as String?,
+        title: row['title'] as String?,
+        voteAverage: (row['vote_average'] as num?)?.toDouble(),
+        voteCount: (row['vote_count'] as num?)?.toInt(),
+        credits: Credits(cast: cast),
+      );
+
+      _movieTitle = _getMovieInfo.title ?? '';
+      _overview = _getMovieInfo.overview ?? 'NA';
+      _currentMovieId = _getMovieInfo.id?.toString() ?? movieId;
+      _backdropPath = _getMovieInfo.backdropPath ?? '';
+
+      final movieReleaseDate = DateTime.tryParse(_getMovieInfo.releaseDate ?? '');
+      _releaseDate = '';
+      _releaseYear = '';
+      _releaseMonth = '';
+      _releaseDay = '';
+      if (movieReleaseDate != null) {
+        _releaseDate = DateFormat('yyyy-MM-dd').format(movieReleaseDate);
+        _releaseYear = movieReleaseDate.year.toString();
+        _releaseMonth = movieReleaseDate.month.toString();
+        _releaseDay = movieReleaseDate.day.toString();
+      }
+
+      final runtime = _getMovieInfo.runtime;
+      _runtime = runtime == null ? 'NA' : '${runtime ~/ 60}h ${runtime % 60}min';
+      _voteCount = _getMovieInfo.voteCount?.toString() ?? '0';
+      _rating = ((_getMovieInfo.voteAverage ?? 0) / 2).toStringAsFixed(1);
+
+      _genresList
+        ..clear()
+        ..addAll(genres.map((genre) => genre.name).whereType<String>().where((name) => name.isNotEmpty));
+      _genre = _genresList.join(', ');
+
+      _actorId.clear();
+      _actorImageUrl.clear();
+      _actorName.clear();
+      for (final castInfo in cast) {
+        if (castInfo.profilePath == null || castInfo.profilePath!.isEmpty) continue;
+        _actorImageUrl.add(castInfo.profilePath!);
+        _actorName.add(castInfo.name ?? '');
+        _actorId.add(castInfo.id?.toString() ?? '');
+      }
+
+      notifyListeners();
+    } catch (error, stackTrace) {
+      log('getMoviesInfoAPI error: $error');
+      log('getMoviesInfoAPI stackTrace: $stackTrace');
+      rethrow;
+    }
   }
 
   void notify() => notifyListeners();
