@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/providers/movie_info_provider.dart';
-import 'package:moviewebapp/app/providers/movies_provider.dart';
 import 'package:moviewebapp/app/core/responses/api_constants.dart';
 import 'package:moviewebapp/app/core/utils/assets_path.dart';
 import 'package:moviewebapp/app/core/utils/common_functions.dart';
@@ -12,8 +11,7 @@ class MovieBannerWidget extends StatefulWidget {
   final bool showBanner;
   final String movieId;
 
-  const MovieBannerWidget({Key? key, required this.movieBannerImage, required this.showBanner, this.movieId = ''})
-      : super(key: key);
+  const MovieBannerWidget({super.key, required this.movieBannerImage, required this.showBanner, this.movieId = ''});
 
   @override
   State<MovieBannerWidget> createState() => _MovieBannerWidgetState();
@@ -39,9 +37,7 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
                     Theme.of(context).colorScheme.surface,
                     Theme.of(context).colorScheme.surface.withValues(alpha: 0),
                   ],
-                ).createShader(
-                  Rect.fromLTRB(0, 1, rect.width, rect.height),
-                );
+                ).createShader(Rect.fromLTRB(0, 1, rect.width, rect.height));
               },
               blendMode: BlendMode.dstIn,
               child: ClipRRect(
@@ -94,10 +90,7 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
                 ),
                 padding: const EdgeInsets.all(2),
                 margin: const EdgeInsets.all(10),
-                child: Icon(
-                  Icons.clear,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
+                child: Icon(Icons.clear, color: Theme.of(context).colorScheme.onSurface),
               ),
             ),
           ),
@@ -107,11 +100,9 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
             child: InkWell(
               onTap: () {
                 final movieInfoProvider = Provider.of<MovieInfoProvider>(context, listen: false);
-                final movieProvider = Provider.of<MoviesProvider>(context, listen: false);
                 if (movieInfoProvider.previousMoviesIds.isNotEmpty) {
                   String movieId = movieInfoProvider.previousMoviesIds.elementAt(0);
                   movieInfoProvider.getMoviesInfoAPI(movieId: movieId, appendToResponse: "credits");
-                  movieProvider.getSimilarMoviesAPI(movieId: movieId);
                   movieInfoProvider.getMovieReviewsInfoAPI(movieId: movieId, pageNo: "1");
                   movieInfoProvider.getMovieVideos(movieId: movieId);
                   movieInfoProvider.removePreviousMoviesIds();
@@ -128,10 +119,7 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
                 ),
                 padding: const EdgeInsets.all(2),
                 margin: const EdgeInsets.all(10),
-                child: Icon(
-                  Icons.arrow_back,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
+                child: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
               ),
             ),
           ),

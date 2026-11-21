@@ -1,15 +1,11 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:moviewebapp/app/core/config/appwrite_config.dart';
+import 'package:moviewebapp/app/models/get_movies_model.dart';
 
 typedef AppwriteDataPage = ({List<Map<String, dynamic>> rows, String? nextCursor});
 
 class AppwriteServiceException implements Exception {
-  const AppwriteServiceException({
-    required this.operation,
-    required this.message,
-    this.code,
-    this.cause,
-  });
+  const AppwriteServiceException({required this.operation, required this.message, this.code, this.cause});
 
   final String operation;
   final String message;
@@ -22,10 +18,13 @@ class AppwriteServiceException implements Exception {
 
 class AppwriteService {
   AppwriteService({TablesDB? tables})
-      : _tables = tables ??
-            TablesDB(Client()
+    : _tables =
+          tables ??
+          TablesDB(
+            Client()
               ..setEndpoint(AppwriteConfig.endpoint)
-              ..setProject(AppwriteConfig.projectId));
+              ..setProject(AppwriteConfig.projectId),
+          );
 
   static const int pageSize = 20;
 
@@ -39,15 +38,7 @@ class AppwriteService {
         ttl: 3600, // Caches identical query results in Appwrite memory for 1 hour (3600s)
         queries: [
           Query.orderDesc('popularity'),
-          Query.select([
-            r'$id',
-            'adult',
-            'gender',
-            'known_for_department',
-            'name',
-            'popularity',
-            'profile_path',
-          ]),
+          Query.select([r'$id', 'adult', 'gender', 'known_for_department', 'name', 'popularity', 'profile_path']),
           Query.limit(pageSize),
           if (cursorAfter != null) Query.cursorAfter(cursorAfter),
         ],
@@ -73,13 +64,7 @@ class AppwriteService {
         queries: [
           Query.orderDesc('release_date'),
           Query.orderDesc('popularity'),
-          Query.select([
-            r'$id',
-            'title',
-            'poster_path',
-            'release_date',
-            'popularity',
-          ]),
+          Query.select([r'$id', 'title', 'poster_path', 'release_date', 'popularity']),
           Query.limit(pageSize),
           if (cursorAfter != null) Query.cursorAfter(cursorAfter),
         ],
@@ -119,6 +104,8 @@ class AppwriteService {
             'poster_path',
             'backdrop_path',
             'language',
+            'franchise',
+            'theme',
             'genres.\$id',
             'genres.name',
             'cast.\$id',
@@ -134,6 +121,62 @@ class AppwriteService {
       return Map<String, dynamic>.unmodifiable({r'$id': row.$id, ...row.data});
     } catch (error, stackTrace) {
       _throwRequestError('fetchMovieById/$movieId', error, stackTrace);
+    }
+  }
+
+  Future<List<Movies>> fetchSimilarMovies({
+    required String currentMovieId,
+    int? franchiseId,
+    String? theme,
+    List<String> genreIds = const [],
+    int limit = 15,
+  }) async {
+    try {
+      String? selectedQuery;
+
+      if (franchiseId != null) {
+        selectedQuery = Query.equal('franchise', [franchiseId]);
+      } else {
+        final themeValue = theme?.trim();
+        if (themeValue != null && themeValue.isNotEmpty) {
+          selectedQuery = Query.equal('theme', themeValue);
+        } else {
+          final validGenreIds = genreIds.where((id) => id.isNotEmpty).toList();
+          if (validGenreIds.isNotEmpty) {
+            selectedQuery = Query.equal(r'genres.$id', validGenreIds);
+          }
+        }
+      }
+
+      if (selectedQuery == null) return const [];
+
+      final response = await _tables.listRows(
+        databaseId: AppwriteConfig.databaseId,
+        tableId: AppwriteConfig.moviesTableId,
+        ttl: 3600,
+        queries: [
+          selectedQuery,
+          Query.notEqual(r'$id', currentMovieId),
+          Query.equal('adult', false),
+          Query.select([r'$id', 'title', 'poster_path', 'release_date', 'vote_average']),
+          Query.limit(limit),
+        ],
+      );
+
+      return List<Movies>.unmodifiable(
+        response.rows.map((row) {
+          final releaseDate = row.data['release_date']?.toString();
+          return Movies(
+            id: int.tryParse(row.$id),
+            title: row.data['title'] as String?,
+            posterPath: row.data['poster_path'] as String?,
+            releaseDate: releaseDate == null || releaseDate.isEmpty ? null : DateTime.tryParse(releaseDate),
+            voteAverage: (row.data['vote_average'] as num?)?.toDouble(),
+          );
+        }),
+      );
+    } catch (error, stackTrace) {
+      _throwRequestError('fetchSimilarMovies/$currentMovieId', error, stackTrace);
     }
   }
 

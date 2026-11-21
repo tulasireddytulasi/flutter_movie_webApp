@@ -13,7 +13,8 @@ import 'package:moviewebapp/app/core/responses/movie_apis.dart';
 import 'package:moviewebapp/app/core/utils/constants.dart';
 
 class MovieInfoProvider extends ChangeNotifier {
-  MovieInfoProvider({AppwriteService? appwriteService}) : _appwriteService = appwriteService ?? AppwriteService();
+  MovieInfoProvider({AppwriteService? appwriteService})
+    : _appwriteService = appwriteService ?? AppwriteService();
 
   final AppwriteService _appwriteService;
 
@@ -82,6 +83,12 @@ class MovieInfoProvider extends ChangeNotifier {
   final List<String> _genresList = [];
   String _genre = "";
   String get genre => _genre;
+  int? _franchiseId;
+  int? get franchiseId => _franchiseId;
+  String? _theme;
+  String? get theme => _theme;
+  List<String> _genreIds = const [];
+  List<String> get genreIds => _genreIds;
 
   String _voteCount = "";
   String get voteCount => _voteCount;
@@ -131,9 +138,7 @@ class MovieInfoProvider extends ChangeNotifier {
 
   /// Updating [_screensList] variable
   setActorsPage({required String actorId}) {
-    _screensList[1] = ActorsPage(
-      actorId: actorId,
-    );
+    _screensList[1] = ActorsPage(actorId: actorId);
   }
 
   addPreviousMoviesIds({required String movieId}) {
@@ -158,7 +163,9 @@ class MovieInfoProvider extends ChangeNotifier {
   Future<void> getMovieVideos({required String movieId}) async {
     bool newVideo = false;
     try {
-      YouTubeVideosModel _youTubeVideosModel = await getMovieVideosAPI(movieId: movieId);
+      YouTubeVideosModel _youTubeVideosModel = await getMovieVideosAPI(
+        movieId: movieId,
+      );
       for (var videosData in _youTubeVideosModel.results ?? []) {
         if (videosData.type == "Trailer" && videosData.official!) {
           newVideo = true;
@@ -173,7 +180,10 @@ class MovieInfoProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getMoviesInfoAPI({required String movieId, required String appendToResponse}) async {
+  Future<void> getMoviesInfoAPI({
+    required String movieId,
+    required String appendToResponse,
+  }) async {
     final requestId = ++_movieRequestId;
     _isLoadingMovie = true;
     _movieError = null;
@@ -191,6 +201,9 @@ class MovieInfoProvider extends ChangeNotifier {
     _rating = '';
     _genre = '';
     _genresList.clear();
+    _franchiseId = null;
+    _theme = null;
+    _genreIds = const [];
     _actorId.clear();
     _actorImageUrl.clear();
     _actorName.clear();
@@ -236,7 +249,9 @@ class MovieInfoProvider extends ChangeNotifier {
           );
         }
       }
-      cast.sort((first, second) => (first.order ?? 0).compareTo(second.order ?? 0));
+      cast.sort(
+        (first, second) => (first.order ?? 0).compareTo(second.order ?? 0),
+      );
 
       _getMovieInfo = GetMovieInfo(
         adult: row['adult'] as bool?,
@@ -265,7 +280,9 @@ class MovieInfoProvider extends ChangeNotifier {
       _currentMovieId = _getMovieInfo.id?.toString() ?? movieId;
       _backdropPath = _getMovieInfo.backdropPath ?? '';
 
-      final movieReleaseDate = DateTime.tryParse(_getMovieInfo.releaseDate ?? '');
+      final movieReleaseDate = DateTime.tryParse(
+        _getMovieInfo.releaseDate ?? '',
+      );
       _releaseDate = '';
       _releaseYear = '';
       _releaseMonth = '';
@@ -278,25 +295,43 @@ class MovieInfoProvider extends ChangeNotifier {
       }
 
       final runtime = _getMovieInfo.runtime;
-      _runtime = runtime == null ? 'NA' : '${runtime ~/ 60}h ${runtime % 60}min';
+      _runtime = runtime == null
+          ? 'NA'
+          : '${runtime ~/ 60}h ${runtime % 60}min';
       _voteCount = _getMovieInfo.voteCount?.toString() ?? '0';
       _rating = ((_getMovieInfo.voteAverage ?? 0) / 2).toStringAsFixed(1);
 
       _genresList
         ..clear()
-        ..addAll(genres.map((genre) => genre.name).whereType<String>().where((name) => name.isNotEmpty));
+        ..addAll(
+          genres
+              .map((genre) => genre.name)
+              .whereType<String>()
+              .where((name) => name.isNotEmpty),
+        );
       _genre = _genresList.join(', ');
+      _franchiseId = (row['franchise'] as num?)?.toInt();
+      final theme = row['theme']?.toString().trim();
+      _theme = theme == null || theme.isEmpty ? null : theme;
+      _genreIds = genreRows is List
+          ? genreRows
+                .whereType<Map>()
+                .map((genre) => genre[r'$id']?.toString())
+                .whereType<String>()
+                .where((id) => id.isNotEmpty)
+                .toList()
+          : const [];
 
       _actorId.clear();
       _actorImageUrl.clear();
       _actorName.clear();
       for (final castInfo in cast) {
-        if (castInfo.profilePath == null || castInfo.profilePath!.isEmpty) continue;
+        if (castInfo.profilePath == null || castInfo.profilePath!.isEmpty)
+          continue;
         _actorImageUrl.add(castInfo.profilePath!);
         _actorName.add(castInfo.name ?? '');
         _actorId.add(castInfo.id?.toString() ?? '');
       }
-
     } catch (error, stackTrace) {
       if (requestId != _movieRequestId) return;
       log('getMoviesInfoAPI failed', error: error, stackTrace: stackTrace);
@@ -319,9 +354,15 @@ class MovieInfoProvider extends ChangeNotifier {
 
   void notify() => notifyListeners();
 
-  Future<void> getMovieReviewsInfoAPI({required String movieId, required String pageNo}) async {
+  Future<void> getMovieReviewsInfoAPI({
+    required String movieId,
+    required String pageNo,
+  }) async {
     try {
-      ReviewModel _reviewModel = await getMovieReviews(movieId: movieId, pageNo: pageNo);
+      ReviewModel _reviewModel = await getMovieReviews(
+        movieId: movieId,
+        pageNo: pageNo,
+      );
       clearData();
       processReviewData(reviewModel: _reviewModel);
     } catch (error) {
@@ -349,12 +390,19 @@ class MovieInfoProvider extends ChangeNotifier {
           _avatarImg.add(avatarPath);
         }
       } else {
-        _avatarImg.add(avatarPath.isNotEmpty ? ApiConstants.movieImageBaseUrlw185 + avatarPath : avatarPath);
+        _avatarImg.add(
+          avatarPath.isNotEmpty
+              ? ApiConstants.movieImageBaseUrlw185 + avatarPath
+              : avatarPath,
+        );
       }
       _authorName.add(element.author ?? "");
-      final String reviewDate = element.updatedAt?.toIso8601String() ?? Constants.time00;
+      final String reviewDate =
+          element.updatedAt?.toIso8601String() ?? Constants.time00;
       if (reviewDate.isNotEmpty && reviewDate != Constants.time00) {
-        String reviewDateValue = DateFormat("yyyy-MM-dd").format(element.updatedAt!).toString();
+        String reviewDateValue = DateFormat(
+          "yyyy-MM-dd",
+        ).format(element.updatedAt!).toString();
         _reviewDate.add(reviewDateValue);
       } else {
         _reviewDate.add(Constants.time00);
