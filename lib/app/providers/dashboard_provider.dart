@@ -10,7 +10,7 @@ import 'package:moviewebapp/app/core/utils/constants.dart';
 
 class DashBoardProvider extends ChangeNotifier {
   DashBoardProvider({AppwriteMoviesService? appwriteMoviesService})
-      : _appwriteMoviesService = appwriteMoviesService ?? AppwriteMoviesService();
+    : _appwriteMoviesService = appwriteMoviesService ?? AppwriteMoviesService();
 
   final AppwriteMoviesService _appwriteMoviesService;
 
@@ -82,17 +82,24 @@ class DashBoardProvider extends ChangeNotifier {
 
   Map<String, dynamic> get moviesDataMapObject => _moviesDataMapObject;
 
+  Future<List<Movies>> getLatestMovies() =>
+      _appwriteMoviesService.getLatestMovies();
+
   Future<List<Movies>> getMoviesByFranchise(
     int franchiseId, {
     bool latestFirst = false,
-  }) =>
-      _appwriteMoviesService.getMoviesByFranchise(franchiseId, latestFirst: latestFirst);
+  }) => _appwriteMoviesService.getMoviesByFranchise(
+    franchiseId,
+    latestFirst: latestFirst,
+  );
 
   Future<List<Movies>> getMoviesByGenre(
     int genreId, {
     bool latestFirst = true,
-  }) =>
-      _appwriteMoviesService.getMoviesByGenre(genreId, latestFirst: latestFirst);
+  }) => _appwriteMoviesService.getMoviesByGenre(
+    genreId,
+    latestFirst: latestFirst,
+  );
 
   Future<List<Movies>> getMoviesByTheme(
     String theme, {
@@ -100,7 +107,10 @@ class DashBoardProvider extends ChangeNotifier {
   }) =>
       _appwriteMoviesService.getMoviesByTheme(theme, latestFirst: latestFirst);
 
-  setAppBarColorAndElevation({required Color color, required double elevation}) {
+  setAppBarColorAndElevation({
+    required Color color,
+    required double elevation,
+  }) {
     _appBarBackgroundColor = color;
     _appBarElevation = elevation;
     notifyListeners();
@@ -113,7 +123,7 @@ class DashBoardProvider extends ChangeNotifier {
   }) async {
     MoviesModel _movieModel = MoviesModel();
     try {
-      if(movieType == Constants.marvelMovies){
+      if (movieType == Constants.marvelMovies) {
         _movieModel = getMoviesFromJson(json.encode(MoviesRepo.marvelMovies));
         return _movieModel;
       }

@@ -23,8 +23,14 @@ class _AppwriteMoviesSectionsState extends State<AppwriteMoviesSections> {
     final provider = context.read<DashBoardProvider>();
     _sections = [
       _MoviesSectionData(
+        title: 'Latest Movies',
+        movies: provider.getLatestMovies(),
+      ),
+      _MoviesSectionData(
         title: 'MCU Movies',
-        movies: provider.getMoviesByFranchise(AppwriteMoviesService.mcuFranchiseId),
+        movies: provider.getMoviesByFranchise(
+          AppwriteMoviesService.mcuFranchiseId,
+        ),
       ),
       _MoviesSectionData(
         title: 'The Conjuring Universe',
@@ -52,12 +58,11 @@ class _AppwriteMoviesSectionsState extends State<AppwriteMoviesSections> {
 
   @override
   Widget build(BuildContext context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (final section in _sections)
-            _AppwriteMoviesSection(data: section),
-        ],
-      );
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      for (final section in _sections) _AppwriteMoviesSection(data: section),
+    ],
+  );
 }
 
 class _MoviesSectionData {
@@ -99,7 +104,9 @@ class _AppwriteMoviesSection extends StatelessWidget {
                       width: MoviesCard.widthFor(screenWidth),
                       child: DecoratedBox(
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.surfaceContainerHighest,
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
@@ -113,7 +120,9 @@ class _AppwriteMoviesSection extends StatelessWidget {
 
                 final movies = snapshot.data ?? const <Movies>[];
                 if (movies.isEmpty) {
-                  return Center(child: Text('No ${data.title.toLowerCase()} found.'));
+                  return Center(
+                    child: Text('No ${data.title.toLowerCase()} found.'),
+                  );
                 }
 
                 return ListView.separated(

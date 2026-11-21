@@ -4,52 +4,39 @@ import 'package:moviewebapp/app/models/get_movies_model.dart';
 
 class AppwriteMoviesService {
   AppwriteMoviesService({TablesDB? tables})
-      : _tables = tables ??
-            TablesDB(Client()
+    : _tables =
+          tables ??
+          TablesDB(
+            Client()
               ..setEndpoint(AppwriteConfig.endpoint)
-              ..setProject(AppwriteConfig.projectId));
+              ..setProject(AppwriteConfig.projectId),
+          );
 
   static const int mcuFranchiseId = 3010;
   static const int conjuringFranchiseId = 1030;
   static const int horrorGenreId = 27;
   static const String monsterTheme = 'monster';
-  static const int _pageSize = 100;
+  static const int _pageSize = 20;
 
   final TablesDB _tables;
 
-  Future<List<Movies>> getMoviesByFranchise(
-    int franchiseId, {
-    bool latestFirst = false,
-  }) =>
-      _listMovies(
-        [Query.equal('franchise', [franchiseId])],
-        latestFirst: latestFirst,
-      );
+  Future<List<Movies>> getLatestMovies() => _listMovies([Query.equal('adult', false)], latestFirst: true);
 
-  Future<List<Movies>> getMoviesByTheme(
-    String theme, {
-    bool latestFirst = true,
-  }) =>
-      _listMovies(
-        [Query.equal('theme', [theme])],
-        latestFirst: latestFirst,
-      );
+  Future<List<Movies>> getMoviesByFranchise(int franchiseId, {bool latestFirst = false}) => _listMovies([
+    Query.equal('franchise', [franchiseId]),
+  ], latestFirst: latestFirst);
 
-  Future<List<Movies>> getMoviesByGenre(
-    int genreId, {
-    bool latestFirst = true,
-  }) async {
+  Future<List<Movies>> getMoviesByTheme(String theme, {bool latestFirst = true}) => _listMovies([
+    Query.equal('theme', [theme]),
+  ], latestFirst: latestFirst);
+
+  Future<List<Movies>> getMoviesByGenre(int genreId, {bool latestFirst = true}) async {
     final genre = await _tables.getRow(
       databaseId: AppwriteConfig.databaseId,
       tableId: AppwriteConfig.genresTableId,
       rowId: '$genreId',
       queries: [
-        Query.select([
-          'movies.\$id',
-          'movies.title',
-          'movies.poster_path',
-          'movies.release_date',
-        ]),
+        Query.select(['movies.\$id', 'movies.title', 'movies.poster_path', 'movies.release_date']),
       ],
     );
 
@@ -66,33 +53,23 @@ class AppwriteMoviesService {
     }
 
     if (latestFirst) _sortLatestFirst(movies);
-    return List.unmodifiable(movies);
+    return List.unmodifiable(movies.take(_pageSize));
   }
 
-  Future<List<Movies>> _listMovies(
-    List<String> filters, {
-    required bool latestFirst,
-  }) async {
-    final movies = <Movies>[];
-    String? cursor;
+  Future<List<Movies>> _listMovies(List<String> filters, {required bool latestFirst}) async {
+    final page = await _tables.listRows(
+      databaseId: AppwriteConfig.databaseId,
+      tableId: AppwriteConfig.moviesTableId,
+      ttl: 3600,
+      queries: [
+        ...filters,
+        Query.select(['title', 'poster_path', 'release_date']),
+        if (latestFirst) Query.orderDesc('release_date') else Query.orderAsc('release_date'),
+        Query.limit(_pageSize),
+      ],
+    );
 
-    do {
-      final page = await _tables.listRows(
-        databaseId: AppwriteConfig.databaseId,
-        tableId: AppwriteConfig.moviesTableId,
-        queries: [
-          ...filters,
-          Query.select(['title', 'poster_path', 'release_date']),
-          if (latestFirst) Query.orderDesc('release_date') else Query.orderAsc('release_date'),
-          Query.limit(_pageSize),
-          if (cursor != null) Query.cursorAfter(cursor),
-        ],
-      );
-
-      movies.addAll(page.rows.map((row) => _movieFromRow(row.$id, row.data)));
-      cursor = page.rows.length == _pageSize ? page.rows.last.$id : null;
-    } while (cursor != null);
-
+    final movies = page.rows.map((row) => _movieFromRow(row.$id, row.data)).take(_pageSize).toList();
     return List.unmodifiable(movies);
   }
 
