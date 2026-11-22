@@ -39,7 +39,7 @@ class _ActorCardState extends State<ActorCard> {
         return InkWell(
           onTap: () {
             context.push(
-              '/person/${buildSeoSlug(widget.actorId, widget.actorName)}',
+              '/people/${buildSeoSlug(widget.actorId, widget.actorName)}',
               extra: const {detailPresentationExtra: detailPresentationModal},
             );
           },

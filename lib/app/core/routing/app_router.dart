@@ -155,7 +155,7 @@ final appRouter = GoRouter(
       },
     ),
     GoRoute(
-      path: '/person/:slug',
+      path: '/people/:slug',
       pageBuilder: (context, state) {
         final personId = extractRowId(state.pathParameters['slug']!);
         final screenWidth = MediaQuery.sizeOf(context).width;

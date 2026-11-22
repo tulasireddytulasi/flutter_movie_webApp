@@ -30,7 +30,7 @@ class _ActorCircularCardState extends State<ActorCircularCard> {
         InkWell(
           onTap: () {
             context.push(
-              '/person/${buildSeoSlug(widget.actorId, widget.actorName)}',
+              '/people/${buildSeoSlug(widget.actorId, widget.actorName)}',
               extra: const {detailPresentationExtra: detailPresentationModal},
             );
           },
