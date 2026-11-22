@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/app/providers/movie_info_provider.dart';
+import 'package:go_router/go_router.dart';
+import 'package:moviewebapp/app/core/routing/detail_navigation.dart';
 import 'package:moviewebapp/app/core/responses/api_constants.dart';
 import 'package:moviewebapp/app/core/utils/assets_path.dart';
 import 'package:moviewebapp/app/core/utils/common_functions.dart';
-import 'package:provider/provider.dart';
 import 'package:moviewebapp/app/views/movie_info_screen/widgets/movie_title_logo.dart';
 
 class MovieBannerWidget extends StatefulWidget {
@@ -11,7 +11,12 @@ class MovieBannerWidget extends StatefulWidget {
   final bool showBanner;
   final String movieId;
 
-  const MovieBannerWidget({super.key, required this.movieBannerImage, required this.showBanner, this.movieId = ''});
+  const MovieBannerWidget({
+    super.key,
+    required this.movieBannerImage,
+    required this.showBanner,
+    this.movieId = '',
+  });
 
   @override
   State<MovieBannerWidget> createState() => _MovieBannerWidgetState();
@@ -49,14 +54,19 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
                   duration: const Duration(milliseconds: 1200),
                   child: widget.movieBannerImage.isNotEmpty
                       ? Image.network(
-                          ApiConstants.movieImageBaseUrlw1280 + widget.movieBannerImage,
-                          width: getBottomSheetWidth(screenWidth: screenWidth) + 30,
+                          ApiConstants.movieImageBaseUrlw1280 +
+                              widget.movieBannerImage,
+                          width:
+                              getBottomSheetWidth(screenWidth: screenWidth) +
+                              30,
                           fit: BoxFit.cover,
                           key: ValueKey(widget.movieBannerImage),
                         )
                       : Image.asset(
                           movieBackDrop2,
-                          width: getBottomSheetWidth(screenWidth: screenWidth) + 30,
+                          width:
+                              getBottomSheetWidth(screenWidth: screenWidth) +
+                              30,
                           fit: BoxFit.cover,
                           key: const ValueKey('fallback-banner'),
                         ),
@@ -70,8 +80,13 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
               left: screenWidth > 600 ? 40 : 0,
               right: screenWidth > 600 ? 40 : 0,
               child: Align(
-                alignment: screenWidth > 600 ? Alignment.bottomLeft : Alignment.bottomCenter,
-                child: MovieTitleLogo(key: ValueKey(widget.movieId), movieId: widget.movieId),
+                alignment: screenWidth > 600
+                    ? Alignment.bottomLeft
+                    : Alignment.bottomCenter,
+                child: MovieTitleLogo(
+                  key: ValueKey(widget.movieId),
+                  movieId: widget.movieId,
+                ),
               ),
             ),
           Positioned(
@@ -79,19 +94,24 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
             right: 0,
             child: InkWell(
               onTap: () {
-                final movieInfoProvider = Provider.of<MovieInfoProvider>(context, listen: false);
-                movieInfoProvider.removePreviousAllMoviesIds();
-                Navigator.of(context).pop();
+                handleDetailClose(context, fallbackRoute: '/');
               },
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                ),
-                padding: const EdgeInsets.all(2),
-                margin: const EdgeInsets.all(10),
-                child: Icon(Icons.clear, color: Theme.of(context).colorScheme.onSurface),
-              ),
+              child: context.canPop()
+                  ? Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
+                      ),
+                      padding: const EdgeInsets.all(2),
+                      margin: const EdgeInsets.all(10),
+                      child: Icon(
+                        Icons.clear,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    )
+                  : const SizedBox.shrink(),
             ),
           ),
           Positioned(
@@ -99,18 +119,7 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
             left: 0,
             child: InkWell(
               onTap: () {
-                final movieInfoProvider = Provider.of<MovieInfoProvider>(context, listen: false);
-                if (movieInfoProvider.previousMoviesIds.isNotEmpty) {
-                  String movieId = movieInfoProvider.previousMoviesIds.elementAt(0);
-                  movieInfoProvider.getMoviesInfoAPI(movieId: movieId, appendToResponse: "credits");
-                  movieInfoProvider.getMovieReviewsInfoAPI(movieId: movieId, pageNo: "1");
-                  movieInfoProvider.getMovieVideos(movieId: movieId);
-                  movieInfoProvider.removePreviousMoviesIds();
-                } else {
-                  final movieInfoProvider = Provider.of<MovieInfoProvider>(context, listen: false);
-                  movieInfoProvider.removePreviousAllMoviesIds();
-                  Navigator.of(context).pop();
-                }
+                handleDetailClose(context, fallbackRoute: '/');
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -119,7 +128,10 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
                 ),
                 padding: const EdgeInsets.all(2),
                 margin: const EdgeInsets.all(10),
-                child: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
+                child: Icon(
+                  Icons.arrow_back,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
             ),
           ),
@@ -135,7 +147,8 @@ class ImageViewWidget extends StatelessWidget {
   final String url;
   final double width;
 
-  const ImageViewWidget({Key? key, required this.url, required this.width}) : super(key: key);
+  const ImageViewWidget({Key? key, required this.url, required this.width})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {

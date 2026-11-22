@@ -15,7 +15,10 @@ class Navigation {
     required double screenWidth,
     String title = 'movie',
   }) {
-    context.push('/movie/${buildSeoSlug(movieId, title)}');
+    context.push(
+      '/movie/${buildSeoSlug(movieId, title)}',
+      extra: const {detailPresentationExtra: detailPresentationModal},
+    );
   }
 
   /// Navigated from Actors Info Screen to Movies Info Screen
@@ -25,7 +28,10 @@ class Navigation {
     required double screenWidth,
     String title = 'movie',
   }) {
-    context.push('/movie/${buildSeoSlug(movieId, title)}');
+    context.push(
+      '/movie/${buildSeoSlug(movieId, title)}',
+      extra: const {detailPresentationExtra: detailPresentationModal},
+    );
   }
 
   updateMovieInfoScreen({
@@ -35,7 +41,10 @@ class Navigation {
     required ScrollController? scrollController,
   }) {
     if (canNavigateToNewPage) {
-      context.push('/movie/${buildSeoSlug(movieId, 'movie')}');
+      context.push(
+        '/movie/${buildSeoSlug(movieId, 'movie')}',
+        extra: const {detailPresentationExtra: detailPresentationModal},
+      );
     } else {
       final movieInfoProvider = Provider.of<MovieInfoProvider>(
         context,

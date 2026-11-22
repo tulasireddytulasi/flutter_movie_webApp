@@ -40,6 +40,7 @@ class _ActorCardState extends State<ActorCard> {
           onTap: () {
             context.push(
               '/person/${buildSeoSlug(widget.actorId, widget.actorName)}',
+              extra: const {detailPresentationExtra: detailPresentationModal},
             );
           },
           hoverColor: Theme.of(

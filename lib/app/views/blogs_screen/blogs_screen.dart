@@ -52,6 +52,10 @@ class _BlogsScreenState extends State<BlogsScreen> {
                               onTap: () {
                                 context.push(
                                   '/blog/${buildSeoSlug('${index + 1}', blogInfo["blogTitle"])}',
+                                  extra: const {
+                                    detailPresentationExtra:
+                                        detailPresentationModal,
+                                  },
                                 );
                               },
                               child: BlogCard(
