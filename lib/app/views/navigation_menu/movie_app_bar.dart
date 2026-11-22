@@ -8,6 +8,7 @@ class MovieAppBar extends StatefulWidget {
   final List<String> titles;
   final Color backGroundColor;
   final Future<bool> Function(int)? canChange;
+  final VoidCallback? onSearch;
 
   const MovieAppBar({
     Key? key,
@@ -16,6 +17,7 @@ class MovieAppBar extends StatefulWidget {
     required this.titles,
     required this.backGroundColor,
     this.canChange,
+    this.onSearch,
   }) : super(key: key);
 
   @override
@@ -62,7 +64,13 @@ class _MovieAppBarState extends State<MovieAppBar> {
         List<Widget> _navBarItemList = [];
 
         for (var i = 0; i < _titles.length; i++) {
-          _navBarItemList.add(appBarLabelItem(index: i, title: _titles[i], selectedIndex: selectedIndex));
+          _navBarItemList.add(
+            appBarLabelItem(
+              index: i,
+              title: _titles[i],
+              selectedIndex: selectedIndex,
+            ),
+          );
         }
 
         return Container(
@@ -72,7 +80,9 @@ class _MovieAppBarState extends State<MovieAppBar> {
             boxShadow: selectedIndex == 0
                 ? [
                     BoxShadow(
-                      color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.4),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.shadow.withValues(alpha: 0.4),
                       offset: const Offset(0, -4),
                       blurRadius: 10,
                     ),
@@ -98,7 +108,7 @@ class _MovieAppBarState extends State<MovieAppBar> {
               ),
               const Spacer(),
               InkWell(
-                onTap: () => _select(1),
+                onTap: widget.onSearch ?? () => _select(1),
                 child: Padding(
                   padding: const EdgeInsets.only(left: 14, right: 14),
                   child: SvgPicture.asset(
@@ -122,7 +132,11 @@ class _MovieAppBarState extends State<MovieAppBar> {
     );
   }
 
-  Widget appBarLabelItem({required int index, required String title, required int selectedIndex}) {
+  Widget appBarLabelItem({
+    required int index,
+    required String title,
+    required int selectedIndex,
+  }) {
     return InkWell(
       onTap: () => _select(index),
       child: Container(
@@ -130,10 +144,10 @@ class _MovieAppBarState extends State<MovieAppBar> {
         child: Text(
           title,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: index == selectedIndex
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+            color: index == selectedIndex
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
       ),
     );

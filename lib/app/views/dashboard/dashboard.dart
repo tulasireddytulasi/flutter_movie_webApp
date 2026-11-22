@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/app/core/utils/constants.dart';
-import 'package:moviewebapp/app/views/all_movies_screen/movies_list_screen.dart';
+import 'package:go_router/go_router.dart';
 // import 'package:moviewebapp/app/views/dashboard/main_banner_widget/main_banner.dart';
 import 'package:moviewebapp/app/views/dashboard/widgets/appwrite_movies_sections.dart';
 import 'package:moviewebapp/app/views/dashboard/widgets/movie_label.dart';
@@ -41,9 +40,15 @@ class _DashboardState extends State<Dashboard> {
     /// Update the state based on scroll position
     _isScrolled = _scrollController.position.pixels >= 100;
     if (_isScrolled) {
-      dashBoardProvider.setAppBarColorAndElevation(color: Theme.of(context).scaffoldBackgroundColor, elevation: 1.0);
+      dashBoardProvider.setAppBarColorAndElevation(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 1.0,
+      );
     } else {
-      dashBoardProvider.setAppBarColorAndElevation(color: Theme.of(context).scaffoldBackgroundColor, elevation: 0.0);
+      dashBoardProvider.setAppBarColorAndElevation(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 0.0,
+      );
     }
   }
 
@@ -107,7 +112,8 @@ class _DashboardState extends State<Dashboard> {
                 physics: const NeverScrollableScrollPhysics(),
                 scrollDirection: Axis.vertical,
                 itemBuilder: (context, index) {
-                  final Map<String, dynamic> movieData = dashBoardProvider.moviesDataMapObject["$index"];
+                  final Map<String, dynamic> movieData =
+                      dashBoardProvider.moviesDataMapObject["$index"];
                   return Padding(
                     padding: const EdgeInsets.only(top: 14, bottom: 6),
                     child: Column(
@@ -118,32 +124,18 @@ class _DashboardState extends State<Dashboard> {
                         MovieLabel(
                           movieLabel: movieData["movieLabel"],
                           onTap: () {
-                            String movieType = movieData["movieType"];
-                            // Todo: In future will remove this comparison
-                            if (movieType == Constants.marvelMovies) {
-                              movieType = Constants.popular;
-                            }
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => MovieListScreen(
-                                  showAppBar: true,
-                                  screenTitle: movieData["movieLabel"],
-                                  movieType: movieType,
-                                  withOriginalLanguage: movieData["withOriginalLanguage"],
-                                  withGenres: movieData["withGenres"],
-                                ),
-                              ),
-                            );
+                            context.go('/movies');
                           },
                         ),
                         SizedBox(
                           height: MoviesCard.widthFor(screenWidth) * 1.5 + 12,
                           child: MoviesList(
-                            movieType: dashBoardProvider.moviesDataMapObject["$index"]["movieType"],
-                            withOriginalLanguage: dashBoardProvider.moviesDataMapObject["$index"]
-                                ["withOriginalLanguage"],
-                            withGenres: dashBoardProvider.moviesDataMapObject["$index"]["withGenres"],
+                            movieType: dashBoardProvider
+                                .moviesDataMapObject["$index"]["movieType"],
+                            withOriginalLanguage: dashBoardProvider
+                                .moviesDataMapObject["$index"]["withOriginalLanguage"],
+                            withGenres: dashBoardProvider
+                                .moviesDataMapObject["$index"]["withGenres"],
                           ),
                         ),
                       ],

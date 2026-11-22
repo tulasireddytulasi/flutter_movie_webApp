@@ -142,6 +142,7 @@ class _AppwriteMoviesSection extends StatelessWidget {
                         context: context,
                         movieId: movieId,
                         screenWidth: screenWidth,
+                        title: movie.title ?? 'movie',
                       ),
                     );
                   },

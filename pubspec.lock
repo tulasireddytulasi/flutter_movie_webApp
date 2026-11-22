@@ -393,10 +393,18 @@ packages:
     source: hosted
     version: "5.0.0"
   flutter_web_plugins:
-    dependency: transitive
+    dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
+  go_router:
+    dependency: "direct main"
+    description:
+      name: go_router
+      sha256: d4105f50c438c37d0d1372b1fbf1617fe9be398b559fa29d2067756ebbd42b69
+      url: "https://pub.dev"
+    source: hosted
+    version: "18.1.4"
   google_fonts:
     dependency: "direct main"
     description:

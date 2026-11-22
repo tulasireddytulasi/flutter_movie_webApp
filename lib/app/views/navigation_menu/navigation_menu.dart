@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:moviewebapp/app/views/all_actors_page/all_actors_page.dart';
 import 'package:moviewebapp/app/views/all_movies_screen/movies_list_screen.dart';
 import 'package:moviewebapp/app/views/blogs_screen/blogs_screen.dart';
 import 'package:moviewebapp/app/views/dashboard/dashboard.dart';
 import 'package:moviewebapp/app/views/navigation_menu/custom_bottom_navbar_2.dart';
-import 'package:moviewebapp/app/views/movie_import_screen/movie_import_screen.dart';
 
 import 'package:moviewebapp/app/views/navigation_menu/movie_app_bar.dart';
 import 'package:moviewebapp/app/providers/dashboard_provider.dart';
@@ -14,7 +14,8 @@ import 'package:moviewebapp/app/core/utils/assets_path.dart';
 import 'package:provider/provider.dart';
 
 class NavigationMenu extends StatefulWidget {
-  const NavigationMenu({Key? key}) : super(key: key);
+  const NavigationMenu({Key? key, this.navigationShell}) : super(key: key);
+  final StatefulNavigationShell? navigationShell;
 
   @override
   State<NavigationMenu> createState() => _NavigationMenuState();
@@ -22,26 +23,28 @@ class NavigationMenu extends StatefulWidget {
 
 class _NavigationMenuState extends State<NavigationMenu> {
   late ValueNotifier<int> _currentScreenNo;
-  final _importKey = GlobalKey<MovieImportScreenState>();
-  late final _screens = [
-    const Dashboard(),
-    // const TwitterFeedScreen(),
-    const MovieListScreen(
-      withOriginalLanguage: "en",
-      movieType: "popular",
-      withGenres: "",
-      screenTitle: "Popular Movies",
-      showAppBar: false,
-      showLeadingIcon: false,
-    ),
-    const AllActorsPage(showAppBar: false, showLeadingIcon: false),
-    const BlogsScreen(showAppBar: false),
-    MovieImportScreen(key: _importKey),
+  final List<String> appBarTitles = ["Home", "Movies", "People", "Blogs"];
+  final List<String> bottomBarTitles = [
+    "Dashboard",
+    "Movies",
+    "People",
+    "Blogs",
+    "Search",
   ];
-  final List<String> appBarTitles = ["Home", "Movies", "People", "Blogs", "Import"];
-  final List<String> bottomBarTitles = ["Dashboard", "Movies", "People", "Blogs", "Import"];
-  final List<String> iconAssetPaths = [homeIcon, videoIcon, tvIcon, blogIcon, userIcon];
-  final List<IconData?> navigationIcons = [null, null, null, null, Icons.cloud_upload_outlined];
+  final List<String> iconAssetPaths = [
+    homeIcon,
+    videoIcon,
+    tvIcon,
+    blogIcon,
+    userIcon,
+  ];
+  final List<IconData?> navigationIcons = [
+    null,
+    null,
+    null,
+    null,
+    Icons.search,
+  ];
 
   @override
   void initState() {
@@ -49,83 +52,79 @@ class _NavigationMenuState extends State<NavigationMenu> {
     _currentScreenNo = ValueNotifier<int>(0);
   }
 
-  Future<bool> _canChangeScreen(int index) async {
-    if (index == _currentScreenNo.value || _currentScreenNo.value != 4) return true;
-    final importState = _importKey.currentState;
-    return importState == null || await importState.confirmLeave();
-  }
-
-  setMovies({required int screenNo, required bool showAppBar, required bool showLeadingIcon}) {
-    switch (screenNo) {
-      case 1:
-        _screens[screenNo] = MovieListScreen(
-          withOriginalLanguage: "en",
-          movieType: "popular",
-          withGenres: "",
-          screenTitle: "Popular Movies",
-          showAppBar: showAppBar,
-          showLeadingIcon: showLeadingIcon,
-        );
-        break;
-      case 2:
-        _screens[screenNo] = AllActorsPage(showAppBar: showAppBar, showLeadingIcon: showLeadingIcon);
-        break;
-      case 3:
-        _screens[screenNo] = BlogsScreen(showAppBar: showAppBar);
-        break;
-    }
-  }
+  Future<bool> _canChangeScreen(int index) async => true;
 
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
 
-    return Consumer<DashBoardProvider>(builder: (context, dashBoardProvider, child) {
-      return Scaffold(
-        appBar: screenWidth >= 750
-            ? PreferredSize(
-                preferredSize: const Size.fromHeight(60.0),
-                child: MovieAppBar(
+    return Consumer<DashBoardProvider>(
+      builder: (context, dashBoardProvider, child) {
+        return Scaffold(
+          appBar: screenWidth >= 750
+              ? PreferredSize(
+                  preferredSize: const Size.fromHeight(60.0),
+                  child: MovieAppBar(
+                    defaultSelectedIndex: 0,
+                    canChange: _canChangeScreen,
+                    backGroundColor:
+                        Theme.of(context).appBarTheme.backgroundColor ??
+                        Theme.of(context).colorScheme.surface,
+                    onChange: (value) =>
+                        widget.navigationShell?.goBranch(value),
+                    onSearch: () => context.go('/search'),
+                    titles: appBarTitles,
+                  ),
+                )
+              : null,
+          // extendBodyBehindAppBar: true,
+          body: Stack(
+            children: [
+              ValueListenableBuilder<int>(
+                valueListenable: _currentScreenNo,
+                builder: (context, hasConsent, child) {
+                  return widget.navigationShell ??
+                      IndexedStack(
+                        index: _currentScreenNo.value,
+                        children: const [
+                          Dashboard(),
+                          MovieListScreen(
+                            withOriginalLanguage: "en",
+                            movieType: "popular",
+                            withGenres: "",
+                            screenTitle: "Popular Movies",
+                            showAppBar: false,
+                            showLeadingIcon: false,
+                          ),
+                          AllActorsPage(
+                            showAppBar: false,
+                            showLeadingIcon: false,
+                          ),
+                          BlogsScreen(showAppBar: false),
+                        ],
+                      );
+                },
+              ),
+            ],
+          ),
+          bottomNavigationBar: (screenWidth <= 750)
+              ? CustomBottomNavigationBar(
                   defaultSelectedIndex: 0,
                   canChange: _canChangeScreen,
-                  backGroundColor:
-                      Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).colorScheme.surface,
                   onChange: (value) {
-                    setMovies(screenNo: value, showAppBar: false, showLeadingIcon: false);
-                    _currentScreenNo.value = value;
+                    if (widget.navigationShell != null) {
+                      widget.navigationShell!.goBranch(value);
+                    } else {
+                      _currentScreenNo.value = value;
+                    }
                   },
-                  titles: appBarTitles,
-                ),
-              )
-            : null,
-        // extendBodyBehindAppBar: true,
-        body: Stack(
-          children: [
-            ValueListenableBuilder<int>(
-              valueListenable: _currentScreenNo,
-              builder: (context, hasConsent, child) {
-                return IndexedStack(
-                  index: _currentScreenNo.value,
-                  children: _screens,
-                );
-              },
-            ),
-          ],
-        ),
-        bottomNavigationBar: (screenWidth <= 750)
-            ? CustomBottomNavigationBar(
-                defaultSelectedIndex: 0,
-                canChange: _canChangeScreen,
-                onChange: (value) {
-                  setMovies(screenNo: value, showAppBar: true, showLeadingIcon: false);
-                  _currentScreenNo.value = value;
-                },
-                titles: bottomBarTitles,
-                imgUrls: iconAssetPaths,
-                icons: navigationIcons,
-              )
-            : const SizedBox.shrink(),
-      );
-    });
+                  titles: bottomBarTitles,
+                  imgUrls: iconAssetPaths,
+                  icons: navigationIcons,
+                )
+              : const SizedBox.shrink(),
+        );
+      },
+    );
   }
 }

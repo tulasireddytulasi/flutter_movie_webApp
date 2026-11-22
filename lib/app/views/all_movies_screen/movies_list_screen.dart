@@ -30,7 +30,9 @@ class MovieListScreen extends StatefulWidget {
 }
 
 class _MovieListScreenState extends State<MovieListScreen> {
-  final PagingController<int, Movies> _pagingController = PagingController(firstPageKey: 1);
+  final PagingController<int, Movies> _pagingController = PagingController(
+    firstPageKey: 1,
+  );
   final Map<int, String> _cursorByPage = {};
   late final MoviesProvider _moviesProvider;
 
@@ -78,14 +80,14 @@ class _MovieListScreenState extends State<MovieListScreen> {
               leading: widget.showLeadingIcon
                   ? IconButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(
-                        Icons.arrow_back,
-                      ),
+                      icon: const Icon(Icons.arrow_back),
                     )
                   : null,
               title: Text(
                 widget.screenTitle,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
               ),
             )
           : null,
@@ -111,6 +113,7 @@ class _MovieListScreenState extends State<MovieListScreen> {
                     context: context,
                     movieId: item.id.toString(),
                     screenWidth: screenWidth,
+                    title: item.title ?? 'movie',
                   );
                 },
                 movieName: item.title ?? "",

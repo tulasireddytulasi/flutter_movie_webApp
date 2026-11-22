@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/app/views/blogs_screen/blogs_view_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:moviewebapp/app/core/routing/app_router.dart';
 import 'package:moviewebapp/app/views/blogs_screen/dummy_data.dart';
 import 'package:moviewebapp/app/views/blogs_screen/widgets/blod_card.dart';
 
@@ -38,38 +39,31 @@ class _BlogsScreenState extends State<BlogsScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Column(
-                    children: DummyData.blogsData.map((blogInfo) {
-                      return InkWell(
-                        onTap: () {
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BlogViewScreen(
-                                  createdDate: blogInfo["blogCreateDate"],
-                                  blogReadTime: blogInfo["blogReadTime"],
-                                  authorName: "MARVEL",
-                                  poster1: "",
-                                  poster2: "",
-                                  heading1: "",
-                                  blogSubHeading1: "",
-                                  heading2: "",
-                                  blogSubHeading2: "",
-                                  heading3: "",
-                                  blogSubHeading3: "",
-                                  mainContent: "",
-                                ),
+                    children: [
+                      for (
+                        var index = 0;
+                        index < DummyData.blogsData.length;
+                        index++
+                      )
+                        Builder(
+                          builder: (context) {
+                            final blogInfo = DummyData.blogsData[index];
+                            return InkWell(
+                              onTap: () {
+                                context.push(
+                                  '/blog/${buildSeoSlug('${index + 1}', blogInfo["blogTitle"])}',
+                                );
+                              },
+                              child: BlogCard(
+                                blogTitle: blogInfo["blogTitle"],
+                                blogPoster: blogInfo["blogPoster"],
+                                blogCreateDate: blogInfo["blogCreateDate"],
+                                blogReadTime: blogInfo["blogReadTime"],
                               ),
                             );
-                          });
-                        },
-                        child: BlogCard(
-                            blogTitle: blogInfo["blogTitle"],
-                            blogPoster: blogInfo["blogPoster"],
-                            blogCreateDate: blogInfo["blogCreateDate"],
-                            blogReadTime: blogInfo["blogReadTime"]),
-                      );
-                    }).toList(),
+                          },
+                        ),
+                    ],
                   ),
                   const SizedBox(height: 100),
                 ],

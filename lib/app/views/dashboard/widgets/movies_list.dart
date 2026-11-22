@@ -80,7 +80,8 @@ class _MoviesListState extends State<MoviesList> {
           return const Center(child: Text('No movies found.'));
         } else {
           final movies = snapshot.data!.results ?? <Movies>[];
-          if (movies.isEmpty) return const Center(child: Text('No movies found.'));
+          if (movies.isEmpty)
+            return const Center(child: Text('No movies found.'));
           return ListView.separated(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 5),
             itemCount: movies.length,
@@ -97,6 +98,7 @@ class _MoviesListState extends State<MoviesList> {
                   context: context,
                   movieId: movie.id?.toString() ?? "",
                   screenWidth: screenWidth,
+                  title: movie.title ?? 'movie',
                 ),
               );
             },

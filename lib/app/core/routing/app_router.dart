@@ -1,0 +1,158 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:moviewebapp/app/views/actors_page/actors_page.dart';
+import 'package:moviewebapp/app/views/all_actors_page/all_actors_page.dart';
+import 'package:moviewebapp/app/views/all_movies_screen/movies_list_screen.dart';
+import 'package:moviewebapp/app/views/blogs_screen/blogs_screen.dart';
+import 'package:moviewebapp/app/views/dashboard/dashboard.dart';
+import 'package:moviewebapp/app/views/movie_info_screen/movie_info.dart';
+import 'package:moviewebapp/app/views/navigation_menu/navigation_menu.dart';
+
+String buildSeoSlug(String id, String text) {
+  final slug = text
+      .trim()
+      .toLowerCase()
+      .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
+      .replaceAll(RegExp(r'^-+|-+$'), '');
+  return '$id-${slug.isEmpty ? 'details' : slug}';
+}
+
+String extractRowId(String slugParam) => slugParam.split('-').first;
+
+class DialogPage<T> extends Page<T> {
+  const DialogPage({
+    required this.child,
+    this.barrierColor = const Color(0x80000000),
+  });
+
+  final Widget child;
+  final Color? barrierColor;
+
+  @override
+  Route<T> createRoute(BuildContext context) {
+    return DialogRoute<T>(
+      context: context,
+      settings: this,
+      barrierColor: barrierColor,
+      barrierDismissible: true,
+      builder: (_) => child,
+    );
+  }
+}
+
+class SearchScreen extends StatelessWidget {
+  const SearchScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text('Search')));
+  }
+}
+
+class BlogDetailScreen extends StatelessWidget {
+  const BlogDetailScreen({super.key, required this.blogId});
+
+  final String blogId;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Blog')),
+      body: Center(child: Text('Blog $blogId')),
+    );
+  }
+}
+
+final appRouter = GoRouter(
+  initialLocation: '/',
+  routes: [
+    StatefulShellRoute.indexedStack(
+      builder: (context, state, navigationShell) {
+        return NavigationMenu(navigationShell: navigationShell);
+      },
+      branches: [
+        StatefulShellBranch(
+          routes: [
+            GoRoute(path: '/', builder: (context, state) => const Dashboard()),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/movies',
+              builder: (context, state) => const MovieListScreen(
+                withOriginalLanguage: 'en',
+                movieType: 'popular',
+                withGenres: '',
+                screenTitle: 'Popular Movies',
+                showAppBar: false,
+                showLeadingIcon: false,
+              ),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/people',
+              builder: (context, state) => const AllActorsPage(
+                showAppBar: false,
+                showLeadingIcon: false,
+              ),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/blogs',
+              builder: (context, state) => const BlogsScreen(showAppBar: false),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/search',
+              builder: (context, state) => const SearchScreen(),
+            ),
+          ],
+        ),
+      ],
+    ),
+    GoRoute(
+      path: '/movie/:slug',
+      pageBuilder: (context, state) {
+        final movieId = extractRowId(state.pathParameters['slug']!);
+        final child = MovieInfoScreen(movieId: movieId);
+        if (kIsWeb) {
+          return DialogPage(child: child);
+        }
+        return MaterialPage(child: child);
+      },
+    ),
+    GoRoute(
+      path: '/person/:slug',
+      pageBuilder: (context, state) {
+        final personId = extractRowId(state.pathParameters['slug']!);
+        final child = ActorsPage(actorId: personId);
+        if (kIsWeb) {
+          return DialogPage(child: child);
+        }
+        return MaterialPage(child: child);
+      },
+    ),
+    GoRoute(
+      path: '/blog/:slug',
+      pageBuilder: (context, state) {
+        final blogId = extractRowId(state.pathParameters['slug']!);
+        final child = BlogDetailScreen(blogId: blogId);
+        if (kIsWeb) {
+          return DialogPage(child: child);
+        }
+        return MaterialPage(child: child);
+      },
+    ),
+  ],
+);
