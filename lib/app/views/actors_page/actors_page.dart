@@ -94,47 +94,37 @@ class _ActorsPageState extends State<ActorsPage> {
       body: SafeArea(
         child: Consumer<ActorsInfoProvider>(
           builder: (context, actorsInfoProvider, child) {
-            final double _pageWidth =
+            final double pageWidth =
                 getBottomSheetWidth(screenWidth: _screenWidth) + 30;
-            return SingleChildScrollView(
-              controller: scrollController,
-              child: Center(
-                child: Container(
-                  // alignment: Alignment.bottomCenter,
-                  width: _pageWidth,
-                  margin: EdgeInsets.only(top: _screenWidth >= 600 ? 50 : 0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(_webView ? 20 : 0),
-                      topLeft: Radius.circular(_webView ? 20 : 0),
+            return ScrollConfiguration(
+              behavior: ScrollConfiguration.of(
+                context,
+              ).copyWith(scrollbars: false),
+              child: SingleChildScrollView(
+                controller: scrollController,
+                child: Center(
+                  child: Container(
+                    // alignment: Alignment.bottomCenter,
+                    width: pageWidth,
+                    margin: EdgeInsets.only(top: _screenWidth >= 600 ? 50 : 0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(_webView ? 20 : 0),
+                        topLeft: Radius.circular(_webView ? 20 : 0),
+                      ),
+                      color: Theme.of(context).colorScheme.surface,
+                      shape: BoxShape.rectangle,
                     ),
-                    color: Theme.of(context).colorScheme.surface,
-                    shape: BoxShape.rectangle,
-                  ),
-                  child: Column(
-                    //  mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Visibility(
-                        visible: _webView ? true : false,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                handleDetailClose(
-                                  context,
-                                  fallbackRoute: '/people',
-                                );
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(2),
-                                margin: const EdgeInsets.all(10),
-                                child: const Icon(Icons.arrow_back),
-                              ),
-                            ),
-                            if (context.canPop())
+                    child: Column(
+                      //  mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Visibility(
+                          visible: _webView ? true : false,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
                               InkWell(
                                 onTap: () {
                                   handleDetailClose(
@@ -143,222 +133,237 @@ class _ActorsPageState extends State<ActorsPage> {
                                   );
                                 },
                                 child: Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.outlineVariant,
-                                      width: 2,
-                                    ),
-                                    shape: BoxShape.circle,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.surfaceContainerHighest,
-                                  ),
                                   padding: const EdgeInsets.all(2),
                                   margin: const EdgeInsets.all(10),
-                                  child: const Icon(Icons.clear),
+                                  child: const Icon(Icons.arrow_back),
                                 ),
                               ),
-                          ],
-                        ),
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(20),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(5),
-                              child: actorsInfoProvider.profilePic != ""
-                                  ? Image.network(
-                                      ApiConstants.movieImageBaseUrlw500 +
-                                          actorsInfoProvider.profilePic,
-                                      height: getProfileImageSize(
-                                        screenSize: _screenWidth,
+                              if (context.canPop())
+                                InkWell(
+                                  onTap: () {
+                                    handleDetailClose(
+                                      context,
+                                      fallbackRoute: '/people',
+                                    );
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.outlineVariant,
+                                        width: 2,
                                       ),
-                                      width: getProfileImageSize(
-                                        screenSize: _screenWidth,
-                                      ),
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Container(),
-                            ),
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: _pageWidth / 2,
-                                margin: const EdgeInsets.only(left: 0, top: 20),
-                                child: Text(
-                                  actorsInfoProvider.actorName,
-                                  softWrap: true,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 4,
-                                  style: Theme.of(context).textTheme.titleLarge,
-                                ),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.only(
-                                      left: 0,
-                                      right: 5,
-                                      top: 10,
-                                      bottom: 0,
-                                    ),
-                                    child: Icon(
-                                      Icons.map,
+                                      shape: BoxShape.circle,
                                       color: Theme.of(
                                         context,
-                                      ).colorScheme.onSurfaceVariant,
+                                      ).colorScheme.surfaceContainerHighest,
                                     ),
+                                    padding: const EdgeInsets.all(2),
+                                    margin: const EdgeInsets.all(10),
+                                    child: const Icon(Icons.clear),
                                   ),
-                                  Container(
-                                    margin: const EdgeInsets.only(
-                                      left: 0,
-                                      top: 10,
-                                    ),
-                                    child: RichText(
-                                      softWrap: true,
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 4,
-                                      text: TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text: actorsInfoProvider
-                                                .totalMoviesActed
-                                                .toString(),
-                                            style: Theme.of(
-                                              context,
-                                            ).textTheme.titleLarge,
-                                          ),
-                                          TextSpan(
-                                            text: " movies",
-                                            style: Theme.of(
-                                              context,
-                                            ).textTheme.bodyLarge,
-                                          ),
-                                        ],
+                                ),
+                            ],
+                          ),
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(20),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(5),
+                                child: actorsInfoProvider.profilePic != ""
+                                    ? Image.network(
+                                        ApiConstants.movieImageBaseUrlw500 +
+                                            actorsInfoProvider.profilePic,
+                                        height: getProfileImageSize(
+                                          screenSize: _screenWidth,
+                                        ),
+                                        width: getProfileImageSize(
+                                          screenSize: _screenWidth,
+                                        ),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Container(),
+                              ),
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: pageWidth / 2,
+                                  margin: const EdgeInsets.only(left: 0, top: 20),
+                                  child: Text(
+                                    actorsInfoProvider.actorName,
+                                    softWrap: true,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 4,
+                                    style: Theme.of(context).textTheme.titleLarge,
+                                  ),
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.only(
+                                        left: 0,
+                                        right: 5,
+                                        top: 10,
+                                        bottom: 0,
+                                      ),
+                                      child: Icon(
+                                        Icons.map,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                       ),
                                     ),
+                                    Container(
+                                      margin: const EdgeInsets.only(
+                                        left: 0,
+                                        top: 10,
+                                      ),
+                                      child: RichText(
+                                        softWrap: true,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 4,
+                                        text: TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: actorsInfoProvider
+                                                  .totalMoviesActed
+                                                  .toString(),
+                                              style: Theme.of(
+                                                context,
+                                              ).textTheme.titleLarge,
+                                            ),
+                                            TextSpan(
+                                              text: " movies",
+                                              style: Theme.of(
+                                                context,
+                                              ).textTheme.bodyLarge,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Container(
+                                  width: 55,
+                                  margin: const EdgeInsets.only(left: 0, top: 10),
+                                  child: Text(
+                                    actorsInfoProvider.role,
+                                    softWrap: true,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 4,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.titleMedium,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        Divider(
+                          height: 1,
+                          color: Theme.of(context).dividerColor,
+                          thickness: 1,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(
+                            left: 0,
+                            right: 0,
+                            top: 10,
+                            bottom: 10,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
                               Container(
-                                width: 55,
-                                margin: const EdgeInsets.only(left: 0, top: 10),
-                                child: Text(
-                                  actorsInfoProvider.role,
+                                padding: const EdgeInsets.only(
+                                  left: 20,
+                                  right: 5,
+                                ),
+                                child: Icon(
+                                  Icons.map,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                              SizedBox(
+                                width: pageWidth / 1.3,
+                                child: RichText(
                                   softWrap: true,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 4,
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.titleMedium,
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: actorsInfoProvider.dob,
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodyMedium,
+                                      ),
+                                      TextSpan(
+                                        text:
+                                            " in ${actorsInfoProvider.birthPlace}",
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodyMedium,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                      Divider(
-                        height: 1,
-                        color: Theme.of(context).dividerColor,
-                        thickness: 1,
-                      ),
-                      Container(
-                        padding: const EdgeInsets.only(
-                          left: 0,
-                          right: 0,
-                          top: 10,
-                          bottom: 10,
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.only(
-                                left: 20,
-                                right: 5,
-                              ),
-                              child: Icon(
-                                Icons.map,
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                            SizedBox(
-                              width: _pageWidth / 1.3,
-                              child: RichText(
-                                softWrap: true,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 4,
-                                text: TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: actorsInfoProvider.dob,
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.bodyMedium,
-                                    ),
-                                    TextSpan(
-                                      text:
-                                          " in ${actorsInfoProvider.birthPlace}",
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.bodyMedium,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
+                        Container(
+                          width: pageWidth / 1,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surfaceContainer,
+                          ),
+                          padding: const EdgeInsets.only(
+                            left: 20,
+                            top: 20,
+                            right: 10,
+                            bottom: 15,
+                          ),
+                          child: ExpandableText(
+                            text: actorsInfoProvider.biography,
+                            maxLines: 3,
+                            textStyle: Theme.of(context).textTheme.bodyMedium,
+                          ),
                         ),
-                      ),
-                      Container(
-                        width: _pageWidth / 1,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surfaceContainer,
+                        const LabelWidget(label: "Actor Pics"),
+                        Container(
+                          height: _screenWidth >= 900
+                              ? 250
+                              : 130, //getSimilarMoviesSectionHeight(screenSize: _screenWidth),
+                          margin: const EdgeInsets.only(top: 0, left: 10),
+                          child: ActorsImages(),
                         ),
-                        padding: const EdgeInsets.only(
-                          left: 20,
-                          top: 20,
-                          right: 10,
-                          bottom: 15,
+                        const LabelWidget(label: "Known For"),
+                        Container(
+                          height: getSimilarMoviesSectionHeight(
+                            screenSize: _screenWidth,
+                          ),
+                          margin: const EdgeInsets.only(top: 0, left: 10),
+                          child: ActorMoviesWidget(actorId: widget.actorId),
                         ),
-                        child: ExpandableText(
-                          text: actorsInfoProvider.biography,
-                          maxLines: 3,
-                          textStyle: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ),
-                      const LabelWidget(label: "Actor Pics"),
-                      Container(
-                        height: _screenWidth >= 900
-                            ? 250
-                            : 130, //getSimilarMoviesSectionHeight(screenSize: _screenWidth),
-                        margin: const EdgeInsets.only(top: 0, left: 10),
-                        child: ActorsImages(),
-                      ),
-                      const LabelWidget(label: "Known For"),
-                      Container(
-                        height: getSimilarMoviesSectionHeight(
-                          screenSize: _screenWidth,
-                        ),
-                        margin: const EdgeInsets.only(top: 0, left: 10),
-                        child: ActorMoviesWidget(actorId: widget.actorId),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
