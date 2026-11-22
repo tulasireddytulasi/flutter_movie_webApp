@@ -48,151 +48,157 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
           backgroundColor: Theme.of(context).colorScheme.surface.withValues(alpha: 0),
           extendBodyBehindAppBar: true,
           body: SafeArea(
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              child: Center(
-                child: Container(
-                  alignment: Alignment.bottomCenter,
-                  width: getBottomSheetWidth(screenWidth: screenWidth) + 30,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.only(topRight: Radius.circular(20), topLeft: Radius.circular(20)),
-                    shape: BoxShape.rectangle,
-                  ),
-                  margin: EdgeInsets.only(top: screenWidth >= 525 ? 50 : 0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      MovieBannerWidget(
-                        movieId: movieInfoProvider.currentMovieId,
-                        movieBannerImage: movieInfoProvider.backdropPath,
-                        showBanner: true,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: screenWidth <= 525 ? 0 : 40, right: screenWidth <= 525 ? 0 : 50),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const RatingWidget(),
-                            Container(
-                              alignment: Alignment.topLeft,
-                              margin: const EdgeInsets.only(left: 15, top: 5),
-                              child: SelectableText(
-                                movieInfoProvider.movieTitle,
-                                showCursor: true,
-                                cursorColor: Theme.of(context).colorScheme.primary,
-                                style: Theme.of(context).textTheme.headlineMedium,
+            child: ScrollConfiguration(
+              behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: Center(
+                  child: Container(
+                    alignment: Alignment.bottomCenter,
+                    width: getBottomSheetWidth(screenWidth: screenWidth) + 30,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      borderRadius: BorderRadius.only(topRight: Radius.circular(20), topLeft: Radius.circular(20)),
+                      shape: BoxShape.rectangle,
+                    ),
+                    margin: EdgeInsets.only(top: screenWidth >= 525 ? 50 : 0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        MovieBannerWidget(
+                          movieId: movieInfoProvider.currentMovieId,
+                          movieBannerImage: movieInfoProvider.backdropPath,
+                          showBanner: true,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: screenWidth <= 525 ? 0 : 40,
+                            right: screenWidth <= 525 ? 0 : 50,
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const RatingWidget(),
+                              Container(
+                                alignment: Alignment.topLeft,
+                                margin: const EdgeInsets.only(left: 15, top: 5),
+                                child: SelectableText(
+                                  movieInfoProvider.movieTitle,
+                                  showCursor: true,
+                                  cursorColor: Theme.of(context).colorScheme.primary,
+                                  style: Theme.of(context).textTheme.headlineMedium,
+                                ),
                               ),
-                            ),
-                            Container(
-                              alignment: Alignment.topLeft,
-                              margin: const EdgeInsets.only(left: 15, top: 5),
-                              child: SelectableText(
-                                "${movieInfoProvider.runtime} . ${movieInfoProvider.genre} . ${movieInfoProvider.releaseYear}",
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
-                                showCursor: true,
-                                cursorColor: Theme.of(context).colorScheme.primary,
+                              Container(
+                                alignment: Alignment.topLeft,
+                                margin: const EdgeInsets.only(left: 15, top: 5),
+                                child: SelectableText(
+                                  "${movieInfoProvider.runtime} . ${movieInfoProvider.genre} . ${movieInfoProvider.releaseYear}",
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                  ),
+                                  showCursor: true,
+                                  cursorColor: Theme.of(context).colorScheme.primary,
+                                ),
                               ),
-                            ),
-                            Container(
-                              alignment: Alignment.topLeft,
-                              margin: const EdgeInsets.only(left: 15, top: 20),
-                              child: ExpandableText(
-                                text: movieInfoProvider.overview,
-                                maxLines: 3,
-                                textStyle: Theme.of(context).textTheme.bodyMedium,
+                              Container(
+                                alignment: Alignment.topLeft,
+                                margin: const EdgeInsets.only(left: 15, top: 20),
+                                child: ExpandableText(
+                                  text: movieInfoProvider.overview,
+                                  maxLines: 3,
+                                  textStyle: Theme.of(context).textTheme.bodyMedium,
+                                ),
                               ),
-                            ),
-                            Container(
-                              alignment: Alignment.topLeft,
-                              margin: const EdgeInsets.only(left: 15, top: 20),
-                              child: Text("Top Cast", style: Theme.of(context).textTheme.titleLarge),
-                            ),
-                            Container(
-                              height: getActorSectionHeight(screenSize: screenWidth),
-                              margin: const EdgeInsets.only(top: 20),
-                              child: const Cast(),
-                            ),
-                            Container(
-                              alignment: Alignment.topLeft,
-                              margin: const EdgeInsets.only(left: 15, top: 20),
-                              child: Text("Similar Movies", style: Theme.of(context).textTheme.titleLarge),
-                            ),
-                            Container(
-                              height: getSimilarMoviesSectionHeight(screenSize: screenWidth),
-                              margin: const EdgeInsets.only(top: 20),
-                              child: SimilarMovies(
-                                movieId: movieInfoProvider.currentMovieId,
-                                franchiseId: movieInfoProvider.franchiseId,
-                                theme: movieInfoProvider.theme,
-                                genreIds: movieInfoProvider.genreIds,
-                                scrollController: _scrollController,
+                              Container(
+                                alignment: Alignment.topLeft,
+                                margin: const EdgeInsets.only(left: 15, top: 20),
+                                child: Text("Top Cast", style: Theme.of(context).textTheme.titleLarge),
                               ),
-                            ),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    if (movieInfoProvider.youTubeKey.isNotEmpty) {
-                                      Navigation().youTubeScreen(
-                                        context: context,
-                                        youTubeVideoKey: movieInfoProvider.youTubeKey,
-                                      );
-                                    } else {
-                                      showAlert(context: context);
-                                    }
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.only(top: 20, bottom: 20, left: 10),
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.rectangle,
-                                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                                    ),
-                                    height: 50,
-                                    width: 130,
-                                    child: Text(
-                                      "TRAILER",
-                                      style: Theme.of(context).textTheme.labelLarge?.copyWith(fontSize: 20),
+                              Container(
+                                height: getActorSectionHeight(screenSize: screenWidth),
+                                margin: const EdgeInsets.only(top: 20),
+                                child: const Cast(),
+                              ),
+                              Container(
+                                alignment: Alignment.topLeft,
+                                margin: const EdgeInsets.only(left: 15, top: 20),
+                                child: Text("Similar Movies", style: Theme.of(context).textTheme.titleLarge),
+                              ),
+                              Container(
+                                height: getSimilarMoviesSectionHeight(screenSize: screenWidth),
+                                margin: const EdgeInsets.only(top: 20),
+                                child: SimilarMovies(
+                                  movieId: movieInfoProvider.currentMovieId,
+                                  franchiseId: movieInfoProvider.franchiseId,
+                                  theme: movieInfoProvider.theme,
+                                  genreIds: movieInfoProvider.genreIds,
+                                  scrollController: _scrollController,
+                                ),
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      if (movieInfoProvider.youTubeKey.isNotEmpty) {
+                                        Navigation().youTubeScreen(
+                                          context: context,
+                                          youTubeVideoKey: movieInfoProvider.youTubeKey,
+                                        );
+                                      } else {
+                                        showAlert(context: context);
+                                      }
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.only(top: 20, bottom: 20, left: 10),
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.rectangle,
+                                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                      ),
+                                      height: 50,
+                                      width: 130,
+                                      child: Text(
+                                        "TRAILER",
+                                        style: Theme.of(context).textTheme.labelLarge?.copyWith(fontSize: 20),
+                                      ),
                                     ),
                                   ),
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    if (movieInfoProvider.youTubeKey.isNotEmpty) {
-                                      Navigation().youTubeScreen(
-                                        context: context,
-                                        youTubeVideoKey: movieInfoProvider.youTubeKey,
-                                      );
-                                    } else {
-                                      showAlert(context: context);
-                                    }
-                                  },
-                                  child: const TrailerButtons(),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-                            Container(
-                              alignment: Alignment.topLeft,
-                              margin: const EdgeInsets.only(left: 15, top: 20),
-                              child: Text("Movie reviews", style: Theme.of(context).textTheme.titleLarge),
-                            ),
-                            SizedBox(height: 234, child: ReviewsList(movieId: widget.movieId)),
-                          ],
+                                  InkWell(
+                                    onTap: () {
+                                      if (movieInfoProvider.youTubeKey.isNotEmpty) {
+                                        Navigation().youTubeScreen(
+                                          context: context,
+                                          youTubeVideoKey: movieInfoProvider.youTubeKey,
+                                        );
+                                      } else {
+                                        showAlert(context: context);
+                                      }
+                                    },
+                                    child: const TrailerButtons(),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              Container(
+                                alignment: Alignment.topLeft,
+                                margin: const EdgeInsets.only(left: 15, top: 20),
+                                child: Text("Movie reviews", style: Theme.of(context).textTheme.titleLarge),
+                              ),
+                              SizedBox(height: 234, child: ReviewsList(movieId: widget.movieId)),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
