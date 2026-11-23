@@ -223,7 +223,7 @@ final appRouter = GoRouter(
                 movieType: 'popular',
                 withGenres: '',
                 screenTitle: 'Popular Movies',
-                showAppBar: false,
+                showAppBar: true,
                 showLeadingIcon: false,
               ),
             ),
@@ -234,7 +234,7 @@ final appRouter = GoRouter(
             GoRoute(
               path: '/people',
               builder: (context, state) => const AllActorsPage(
-                showAppBar: false,
+                showAppBar: true,
                 showLeadingIcon: false,
               ),
             ),
@@ -244,7 +244,7 @@ final appRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/blogs',
-              builder: (context, state) => const BlogsScreen(showAppBar: false),
+              builder: (context, state) => const BlogsScreen(showAppBar: true),
             ),
           ],
         ),

@@ -67,30 +67,6 @@ class _DashboardState extends State<Dashboard> {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      // appBar: screenWidth < 750 ? AppBar(
-      //   backgroundColor: dashBoardProvider.appBarBackgroundColor,
-      //   elevation: dashBoardProvider.appBarElevation,
-      //   title: Text(
-      //     "TheFridayMovies",
-      //     style: theme.textTheme.headlineMedium,
-      //   ),
-      //   actions: [
-      //     IconButton(
-      //       onPressed: () => showAlert(),
-      //       icon: Icon(
-      //         Icons.notifications,
-      //         color: theme.colorScheme.onSurface,
-      //       ),
-      //     ),
-      //     IconButton(
-      //       onPressed: () => showAlert(),
-      //       icon: Icon(
-      //         Icons.person,
-      //         color: theme.colorScheme.onSurface,
-      //       ),
-      //     ),
-      //   ],
-      // ) : null,
       body: NotificationListener<ScrollNotification>(
         onNotification: (scrollNotification) {
           return true;
