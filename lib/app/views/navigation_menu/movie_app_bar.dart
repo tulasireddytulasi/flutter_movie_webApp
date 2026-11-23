@@ -61,10 +61,10 @@ class _MovieAppBarState extends State<MovieAppBar> {
     return ValueListenableBuilder<int>(
       valueListenable: _selectedIndexNotifier,
       builder: (context, selectedIndex, child) {
-        List<Widget> _navBarItemList = [];
+        List<Widget> navBarItemList = [];
 
         for (var i = 0; i < _titles.length; i++) {
-          _navBarItemList.add(
+          navBarItemList.add(
             appBarLabelItem(
               index: i,
               title: _titles[i],
@@ -104,7 +104,7 @@ class _MovieAppBarState extends State<MovieAppBar> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
-                children: _navBarItemList,
+                children: navBarItemList,
               ),
               const Spacer(),
               InkWell(

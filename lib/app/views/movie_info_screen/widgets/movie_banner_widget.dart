@@ -4,7 +4,9 @@ import 'package:moviewebapp/app/core/routing/detail_navigation.dart';
 import 'package:moviewebapp/app/core/responses/api_constants.dart';
 import 'package:moviewebapp/app/core/utils/assets_path.dart';
 import 'package:moviewebapp/app/core/utils/common_functions.dart';
+import 'package:moviewebapp/app/providers/movie_info_provider.dart';
 import 'package:moviewebapp/app/views/movie_info_screen/widgets/movie_title_logo.dart';
+import 'package:provider/provider.dart';
 
 class MovieBannerWidget extends StatefulWidget {
   final String movieBannerImage;
@@ -119,7 +121,20 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
             left: 0,
             child: InkWell(
               onTap: () {
-                handleDetailClose(context, fallbackRoute: '/');
+               // handleDetailClose(context, fallbackRoute: '/');
+
+                final movieInfoProvider = Provider.of<MovieInfoProvider>(context, listen: false);
+                if (movieInfoProvider.previousMoviesIds.isNotEmpty) {
+                  String movieId = movieInfoProvider.previousMoviesIds.elementAt(0);
+                  movieInfoProvider.getMoviesInfoAPI(movieId: movieId, appendToResponse: "credits");
+                  movieInfoProvider.getMovieReviewsInfoAPI(movieId: movieId, pageNo: "1");
+                  movieInfoProvider.getMovieVideos(movieId: movieId);
+                  movieInfoProvider.removePreviousMoviesIds();
+                } else {
+                  final movieInfoProvider = Provider.of<MovieInfoProvider>(context, listen: false);
+                  movieInfoProvider.removePreviousAllMoviesIds();
+                  Navigator.of(context).pop();
+                }
               },
               child: Container(
                 decoration: BoxDecoration(

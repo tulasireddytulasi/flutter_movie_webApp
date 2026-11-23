@@ -62,6 +62,7 @@ class _CastCardState extends State<CastCard> {
           builder: (context, navigationProvider, child) {
             return InkWell(
               onTap: () {
+                Navigator.pop(context);
                 context.push(
                   '/people/${buildSeoSlug(widget.actorId, widget.actorName)}',
                   extra: const {
