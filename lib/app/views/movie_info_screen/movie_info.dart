@@ -112,6 +112,7 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                             MovieBannerWidget(
                               movieId: movieInfoProvider.currentMovieId,
                               movieBannerImage: movieInfoProvider.backdropPath,
+                              movieLogoPath: movieInfoProvider.logoPath,
                               showBanner: true,
                             ),
                             Padding(

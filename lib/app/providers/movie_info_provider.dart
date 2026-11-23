@@ -38,6 +38,9 @@ class MovieInfoProvider extends ChangeNotifier {
   String _backdropPath = "";
   String get backdropPath => _backdropPath;
 
+  String? _logoPath;
+  String? get logoPath => _logoPath;
+
   final String _budget = "";
   String get budget => _budget;
 
@@ -192,6 +195,7 @@ class MovieInfoProvider extends ChangeNotifier {
     _movieTitle = '';
     _overview = '';
     _backdropPath = '';
+    _logoPath = null;
     _releaseDate = '';
     _releaseYear = '';
     _releaseMonth = '';
@@ -279,6 +283,7 @@ class MovieInfoProvider extends ChangeNotifier {
       _overview = _getMovieInfo.overview ?? 'NA';
       _currentMovieId = _getMovieInfo.id?.toString() ?? movieId;
       _backdropPath = _getMovieInfo.backdropPath ?? '';
+      _logoPath = row['logo'] as String?;
 
       final movieReleaseDate = DateTime.tryParse(
         _getMovieInfo.releaseDate ?? '',

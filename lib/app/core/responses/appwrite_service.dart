@@ -103,6 +103,7 @@ class AppwriteService {
             'vote_count',
             'poster_path',
             'backdrop_path',
+            'logo',
             'language',
             'franchise',
             'theme',

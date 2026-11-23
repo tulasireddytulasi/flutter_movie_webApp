@@ -12,12 +12,14 @@ class MovieBannerWidget extends StatefulWidget {
   final String movieBannerImage;
   final bool showBanner;
   final String movieId;
+  final String? movieLogoPath;
 
   const MovieBannerWidget({
     super.key,
     required this.movieBannerImage,
     required this.showBanner,
     this.movieId = '',
+    this.movieLogoPath,
   });
 
   @override
@@ -88,6 +90,7 @@ class _MovieBannerWidgetState extends State<MovieBannerWidget> {
                 child: MovieTitleLogo(
                   key: ValueKey(widget.movieId),
                   movieId: widget.movieId,
+                  logoPath: widget.movieLogoPath,
                 ),
               ),
             ),
