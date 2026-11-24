@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviewebapp/app/core/utils/assets_path.dart';
+import 'package:moviewebapp/app/views/navigation_menu/movie_account_button.dart';
 
 class MovieAppBar extends StatefulWidget {
   final int defaultSelectedIndex;
@@ -64,13 +65,7 @@ class _MovieAppBarState extends State<MovieAppBar> {
         List<Widget> navBarItemList = [];
 
         for (var i = 0; i < _titles.length; i++) {
-          navBarItemList.add(
-            appBarLabelItem(
-              index: i,
-              title: _titles[i],
-              selectedIndex: selectedIndex,
-            ),
-          );
+          navBarItemList.add(appBarLabelItem(index: i, title: _titles[i], selectedIndex: selectedIndex));
         }
 
         return Container(
@@ -80,9 +75,7 @@ class _MovieAppBarState extends State<MovieAppBar> {
             boxShadow: selectedIndex == 0
                 ? [
                     BoxShadow(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.shadow.withValues(alpha: 0.4),
+                      color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.4),
                       offset: const Offset(0, -4),
                       blurRadius: 10,
                     ),
@@ -95,17 +88,9 @@ class _MovieAppBarState extends State<MovieAppBar> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 14, right: 14),
-                child: IconButton(
-                  icon: Image.asset(movieIcon),
-                  iconSize: 42,
-                  onPressed: () {},
-                ),
+                child: IconButton(icon: Image.asset(movieIcon), iconSize: 42, onPressed: () {}),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: navBarItemList,
-              ),
+              Row(mainAxisAlignment: MainAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: navBarItemList),
               const Spacer(),
               InkWell(
                 onTap: widget.onSearch ?? () => _select(1),
@@ -125,6 +110,7 @@ class _MovieAppBarState extends State<MovieAppBar> {
                   ),
                 ),
               ),
+              const Padding(padding: EdgeInsets.only(right: 14), child: MovieAccountButton()),
             ],
           ),
         );
@@ -132,11 +118,7 @@ class _MovieAppBarState extends State<MovieAppBar> {
     );
   }
 
-  Widget appBarLabelItem({
-    required int index,
-    required String title,
-    required int selectedIndex,
-  }) {
+  Widget appBarLabelItem({required int index, required String title, required int selectedIndex}) {
     return InkWell(
       onTap: () => _select(index),
       child: Container(

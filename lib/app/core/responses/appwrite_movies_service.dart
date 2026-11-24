@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:appwrite/appwrite.dart';
 import 'package:moviewebapp/app/core/config/appwrite_config.dart';
 import 'package:moviewebapp/app/models/get_movies_model.dart';
 
 class AppwriteMoviesService {
+  // Use the supplied database service, or connect to the configured project.
   AppwriteMoviesService({TablesDB? tables})
     : _tables =
           tables ??
@@ -19,17 +22,88 @@ class AppwriteMoviesService {
   static const int _pageSize = 20;
 
   final TablesDB _tables;
+  // Coordinate writes per user/movie without blocking unrelated movies.
+  final Map<(String, String), Future<void>> _pendingLikeWrites = {};
 
+  // Return the user's like row ID, or null when the movie is not liked.
+  Future<String?> findLike(String userId, String movieId) async {
+    final key = (userId, movieId);
+    var pending = _pendingLikeWrites[key];
+    // A movie reopened during a write must read the updated status.
+    while (pending != null) {
+      await pending;
+      pending = _pendingLikeWrites[key];
+    }
+
+    final result = await _tables.listRows(
+      databaseId: AppwriteConfig.databaseId,
+      tableId: AppwriteConfig.likesTableId,
+      ttl: 0, // Like status must not use cached query results.
+      queries: [
+        Query.equal('user_id', userId),
+        Query.equal('item_type', 'movie'),
+        Query.equal('item_id', movieId),
+        Query.limit(1),
+      ],
+    );
+    return result.rows.isEmpty ? null : result.rows.first.$id;
+  }
+
+  // Delete an existing like or create one; return the new row ID or null after deletion.
+  Future<String?> toggleLike(
+    String userId,
+    String movieId, {
+    required String? likeId,
+  }) async {
+    final key = (userId, movieId);
+    var pending = _pendingLikeWrites[key];
+    while (pending != null) {
+      await pending;
+      pending = _pendingLikeWrites[key];
+    }
+
+    final completed = Completer<void>();
+    _pendingLikeWrites[key] = completed.future;
+    try {
+      if (likeId != null) {
+        await _tables.deleteRow(
+          databaseId: AppwriteConfig.databaseId,
+          tableId: AppwriteConfig.likesTableId,
+          rowId: likeId,
+        );
+        return null;
+      }
+
+      final row = await _tables.createRow(
+        databaseId: AppwriteConfig.databaseId,
+        tableId: AppwriteConfig.likesTableId,
+        rowId: ID.unique(),
+        data: {'user_id': userId, 'item_type': 'movie', 'item_id': movieId},
+        // Table permissions allow public reads; only the owner may delete.
+        permissions: [Permission.delete(Role.user(userId))],
+      );
+      return row.$id;
+    } finally {
+      // Unblock waiting requests on failure too; errors still reach the caller.
+      _pendingLikeWrites.remove(key);
+      completed.complete();
+    }
+  }
+
+  // Fetch up to 20 non-adult movies, ordered by newest release first.
   Future<List<Movies>> getLatestMovies() => _listMovies([Query.equal('adult', false)], latestFirst: true);
 
+  // Fetch a franchise's movies, ordered oldest first unless latestFirst is enabled.
   Future<List<Movies>> getMoviesByFranchise(int franchiseId, {bool latestFirst = false}) => _listMovies([
     Query.equal('franchise', [franchiseId]),
   ], latestFirst: latestFirst);
 
+  // Fetch movies matching a theme, ordered newest first by default.
   Future<List<Movies>> getMoviesByTheme(String theme, {bool latestFirst = true}) => _listMovies([
     Query.equal('theme', [theme]),
   ], latestFirst: latestFirst);
 
+  // Read a genre's related movies, optionally sort newest first, and return up to 20.
   Future<List<Movies>> getMoviesByGenre(int genreId, {bool latestFirst = true}) async {
     final genre = await _tables.getRow(
       databaseId: AppwriteConfig.databaseId,
@@ -56,6 +130,7 @@ class AppwriteMoviesService {
     return List.unmodifiable(movies.take(_pageSize));
   }
 
+  // Apply filters and release-date ordering to a cached, single-page movie query.
   Future<List<Movies>> _listMovies(List<String> filters, {required bool latestFirst}) async {
     final page = await _tables.listRows(
       databaseId: AppwriteConfig.databaseId,
@@ -73,6 +148,7 @@ class AppwriteMoviesService {
     return List.unmodifiable(movies);
   }
 
+  // Sort the list in place by newest release, putting missing dates last.
   void _sortLatestFirst(List<Movies> movies) {
     movies.sort((first, second) {
       final firstDate = first.releaseDate;
@@ -83,6 +159,7 @@ class AppwriteMoviesService {
     });
   }
 
+  // Convert an Appwrite row to a movie, rejecting nonnumeric IDs.
   Movies _movieFromRow(String rowId, Map<String, dynamic> data) {
     final id = int.tryParse(rowId);
     if (id == null) {

@@ -1,7 +1,10 @@
 import 'dart:developer';
 
+import 'package:appwrite/appwrite.dart';
+import 'package:appwrite/models.dart' as models;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:moviewebapp/app/core/responses/appwrite_movies_service.dart';
 import 'package:moviewebapp/app/core/responses/appwrite_service.dart';
 import 'package:moviewebapp/app/models/get_movie_info_model.dart';
 import 'package:moviewebapp/app/models/review_model.dart';
@@ -11,12 +14,185 @@ import 'package:moviewebapp/app/views/movie_info_screen/movie_info.dart';
 import 'package:moviewebapp/app/core/responses/api_constants.dart';
 import 'package:moviewebapp/app/core/responses/movie_apis.dart';
 import 'package:moviewebapp/app/core/utils/constants.dart';
+import 'package:moviewebapp/app/providers/auth_session.dart';
 
 class MovieInfoProvider extends ChangeNotifier {
-  MovieInfoProvider({AppwriteService? appwriteService})
-    : _appwriteService = appwriteService ?? AppwriteService();
+  MovieInfoProvider({
+    required AuthSession authSession,
+    AppwriteService? appwriteService,
+    AppwriteMoviesService? appwriteMoviesService,
+  }) : _authSession = authSession,
+       _appwriteService = appwriteService ?? AppwriteService(),
+       _appwriteMoviesService =
+           appwriteMoviesService ??
+           AppwriteMoviesService(tables: TablesDB(authSession.client)) {
+    // Login/logout refreshes the current movie's like without involving the widget.
+    _lastAuthState = _authSession.state;
+    _authSession.addListener(_onAuthSessionChanged);
+  }
 
   final AppwriteService _appwriteService;
+  final AppwriteMoviesService _appwriteMoviesService;
+  final AuthSession _authSession;
+  late AsyncSnapshot<models.User?> _lastAuthState;
+
+  void _onAuthSessionChanged() {
+    final session = _authSession.state;
+    // OTP form updates do not change the session or require another like query.
+    if (identical(session, _lastAuthState)) return;
+    _lastAuthState = session;
+    _loadMovieLike();
+  }
+
+  String? _likeRowId;
+  String? _likeError;
+  bool _loadingLike = false;
+  bool _savingLike = false;
+  bool _loginOpen = false;
+  bool _disposed = false;
+  int _likeRequestId = 0;
+
+  bool get _likeAvailable =>
+      _currentMovieId.isNotEmpty && !_isLoadingMovie && _movieError == null;
+  bool get hasLikedMovie => _likeRowId != null;
+  bool get isMovieLikeBusy =>
+      _loadingLike ||
+      _savingLike ||
+      _loginOpen ||
+      _authSession.state.connectionState == ConnectionState.waiting;
+  bool get canToggleMovieLike => _likeAvailable && !isMovieLikeBusy;
+  String? get movieLikeError => _authSession.state.hasError
+      ? 'Could not check login status. Tap retry to try again.'
+      : _likeError;
+
+  void _setMovieLikeState({
+    String? rowId,
+    bool loading = false,
+    bool saving = false,
+    String? error,
+  }) {
+    if (_disposed) return;
+    _likeRowId = rowId;
+    _loadingLike = loading;
+    _savingLike = saving;
+    _likeError = error;
+    notifyListeners();
+  }
+
+  Future<void> _loadMovieLike() async {
+    if (_disposed) return;
+    final requestId = ++_likeRequestId;
+    final session = _authSession.state;
+    final userId = session.data?.$id;
+    final movieId = _currentMovieId;
+    if (!_likeAvailable ||
+        session.connectionState == ConnectionState.waiting ||
+        session.hasError ||
+        userId == null) {
+      _setMovieLikeState();
+      return;
+    }
+
+    _setMovieLikeState(loading: true);
+    try {
+      final rowId = await _appwriteMoviesService.findLike(userId, movieId);
+      // Discard responses for a previous movie, user or disposed provider.
+      if (!_disposed && requestId == _likeRequestId) {
+        _setMovieLikeState(rowId: rowId);
+      }
+    } catch (error, stack) {
+      log('Could not load movie like', error: error, stackTrace: stack);
+      if (!_disposed && requestId == _likeRequestId) {
+        _setMovieLikeState(
+          error: 'Could not load your like. Tap retry to try again.',
+        );
+      }
+    }
+  }
+
+  bool _isCurrentLike(String movieId, String userId) =>
+      !_disposed &&
+      _likeAvailable &&
+      _currentMovieId == movieId &&
+      _authSession.state.data?.$id == userId;
+
+  Future<String?> toggleMovieLike({
+    required Future<models.User?> Function() requestLogin,
+  }) async {
+    if (_disposed || !canToggleMovieLike) return null;
+    final session = _authSession.state;
+    if (session.hasError) {
+      await _authSession.refresh();
+      return movieLikeError;
+    }
+
+    final userId = session.data?.$id;
+    if (userId == null) {
+      final movieId = _currentMovieId;
+      models.User? user;
+      _loginOpen = true;
+      notifyListeners();
+      try {
+        // The widget supplies the dialog; the provider decides when login is needed.
+        user = await requestLogin();
+      } catch (error, stack) {
+        log('Could not open movie login', error: error, stackTrace: stack);
+        return 'Could not open login. Please try again.';
+      } finally {
+        _loginOpen = false;
+        if (!_disposed) notifyListeners();
+      }
+      if (user == null || !_isCurrentLike(movieId, user.$id)) return null;
+      await _loadMovieLike();
+      if (!_isCurrentLike(movieId, user.$id)) return null;
+      if (_likeError != null) return _likeError;
+      // A guest's first tap adds a like, but never removes an existing one.
+      if (!hasLikedMovie) {
+        return toggleMovieLike(requestLogin: requestLogin);
+      }
+      return null;
+    }
+
+    if (_likeError != null) {
+      await _loadMovieLike();
+      return _likeError;
+    }
+
+    final requestId = ++_likeRequestId;
+    final movieId = _currentMovieId;
+    final rowId = _likeRowId;
+    _setMovieLikeState(rowId: rowId, saving: true);
+    try {
+      final updatedRowId = await _appwriteMoviesService.toggleLike(
+        userId,
+        movieId,
+        likeId: rowId,
+      );
+      if (!_disposed && requestId == _likeRequestId) {
+        _setMovieLikeState(rowId: updatedRowId);
+      }
+      return null;
+    } catch (error, stack) {
+      log('Could not update movie like', error: error, stackTrace: stack);
+      if (!_isCurrentLike(movieId, userId)) return null;
+      const message = 'Could not update your like. Please try again.';
+      if (requestId != _likeRequestId) return message;
+
+      // Another tab may already have created this user's like.
+      if (error is AppwriteException && error.code == 409 && rowId == null) {
+        await _loadMovieLike();
+        if (!_isCurrentLike(movieId, userId)) return null;
+        return _likeError ?? (hasLikedMovie ? null : message);
+      }
+      // Reload after uncertain writes so the heart reflects the server's state.
+      if (error is AppwriteException && error.code == 401) {
+        await _authSession.refresh();
+      } else {
+        await _loadMovieLike();
+      }
+      return message;
+    }
+  }
 
   bool _isLoadingMovie = false;
   bool get isLoadingMovie => _isLoadingMovie;
@@ -211,7 +387,8 @@ class MovieInfoProvider extends ChangeNotifier {
     _actorId.clear();
     _actorImageUrl.clear();
     _actorName.clear();
-    notifyListeners();
+    // Clear the previous movie's like and invalidate its pending requests.
+    _loadMovieLike();
 
     try {
       final row = await _appwriteService.fetchMovieById(movieId);
@@ -346,14 +523,18 @@ class MovieInfoProvider extends ChangeNotifier {
     } finally {
       if (requestId == _movieRequestId) {
         _isLoadingMovie = false;
-        notifyListeners();
+        // Load likes only when movie details finish, not on trailer/review updates.
+        _loadMovieLike();
       }
     }
   }
 
   @override
   void dispose() {
+    _disposed = true;
+    _likeRequestId++;
     _movieRequestId++;
+    _authSession.removeListener(_onAuthSessionChanged);
     super.dispose();
   }
 

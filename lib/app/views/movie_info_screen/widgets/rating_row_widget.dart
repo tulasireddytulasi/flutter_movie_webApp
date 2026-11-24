@@ -4,6 +4,7 @@ import 'package:moviewebapp/app/core/responses/api_constants.dart';
 import 'package:moviewebapp/app/core/utils/common_functions.dart';
 import 'package:moviewebapp/app/providers/movie_info_provider.dart';
 import 'package:moviewebapp/app/providers/universal_provider.dart';
+import 'package:moviewebapp/app/views/movie_info_screen/widgets/movie_like_button.dart';
 import 'package:provider/provider.dart';
 
 class RatingWidget extends StatelessWidget {
@@ -39,21 +40,7 @@ class RatingWidget extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: InkWell(
-              child: const Icon(
-                Icons.favorite_border,
-                size: 28,
-              ),
-              onTap: () {
-                showCustomSnackBar(
-                  context: context,
-                  message: 'Opps!, This is not available!',
-                );
-              },
-            ),
-          ),
+          const MovieLikeButton(),
           Padding(
             padding: const EdgeInsets.all(12),
             child: InkWell(

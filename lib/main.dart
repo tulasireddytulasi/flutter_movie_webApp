@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:moviewebapp/app/core/routing/app_router.dart';
 import 'package:moviewebapp/app/providers/actors_info_provider.dart';
+import 'package:moviewebapp/app/providers/auth_session.dart';
 import 'package:moviewebapp/app/providers/dashboard_provider.dart';
 import 'package:moviewebapp/app/providers/movie_info_provider.dart';
 import 'package:moviewebapp/app/providers/movies_provider.dart';
@@ -24,10 +25,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => AuthSession()),
         ChangeNotifierProvider<PeopleProvider>(create: (_) => PeopleProvider()),
         ChangeNotifierProvider(create: (_) => DashBoardProvider()),
+        ChangeNotifierProvider(
+          create: (context) => MovieInfoProvider(
+            authSession: context.read<AuthSession>(),
+          ),
+        ),
         ChangeNotifierProvider(create: (_) => MoviesProvider()),
-        ChangeNotifierProvider(create: (_) => MovieInfoProvider()),
         ChangeNotifierProvider(create: (_) => ActorsInfoProvider()),
         ChangeNotifierProvider(create: (_) => NavigationProvider()),
         ChangeNotifierProvider(create: (_) => UniversalProvider()),
