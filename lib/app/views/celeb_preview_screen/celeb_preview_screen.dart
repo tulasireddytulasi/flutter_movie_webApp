@@ -4,6 +4,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:moviewebapp/app/models/post_model.dart';
 import 'widgets/preview_info_card.dart';
 
+typedef _ImageTransform = ({double scale, Offset offset});
+
 class ImmersivePostDetailScreen extends StatefulWidget {
   final PostModel post;
 
@@ -13,36 +15,90 @@ class ImmersivePostDetailScreen extends StatefulWidget {
   State<ImmersivePostDetailScreen> createState() => _ImmersivePostDetailScreenState();
 }
 
-class _ImmersivePostDetailScreenState extends State<ImmersivePostDetailScreen> {
+class _ImmersivePostDetailScreenState extends State<ImmersivePostDetailScreen> with SingleTickerProviderStateMixin {
   late final PageController _pageController;
+  late final AnimationController _animationController;
 
   final ValueNotifier<bool> _showUINotifier = ValueNotifier<bool>(true);
   final ValueNotifier<int> _currentIndexNotifier = ValueNotifier<int>(0);
 
-  // Controls PageView scroll physics based on touch pointer count & zoom state
-  final ValueNotifier<bool> _isSwipeLockedNotifier = ValueNotifier<bool>(false);
-
-  // Track transformation state to check zoom accurately
-  final TransformationController _transformationController = TransformationController();
+  final Set<int> _activePointers = {};
+  final _pointerCount = ValueNotifier<int>(0);
+  final _transform = ValueNotifier<_ImageTransform>((scale: 1.0, offset: Offset.zero));
+  Animation<double>? _scaleAnimation;
+  Animation<Offset>? _offsetAnimation;
+  double _baseScale = 1.0;
+  Offset _doubleTapPosition = Offset.zero;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 250))
+      ..addListener(() {
+        _transform.value = (
+          scale: _scaleAnimation?.value ?? _transform.value.scale,
+          offset: _offsetAnimation?.value ?? _transform.value.offset,
+        );
+      });
   }
 
   @override
   void dispose() {
-    _transformationController.dispose();
+    _animationController.dispose();
+    _transform.dispose();
+    _pointerCount.dispose();
     _pageController.dispose();
     _showUINotifier.dispose();
     _currentIndexNotifier.dispose();
-    _isSwipeLockedNotifier.dispose();
     super.dispose();
   }
 
   void _toggleUI() {
     _showUINotifier.value = !_showUINotifier.value;
+  }
+
+  // Each newly selected image starts centered at its original scale.
+  void _resetTransform() {
+    _animationController.stop();
+    _baseScale = 1.0;
+    _transform.value = (scale: 1.0, offset: Offset.zero);
+  }
+
+  // Keep panning within the viewport boundaries used by imageview.
+  Offset _clampOffset(Offset offset, double scale, Size viewportSize) {
+    if (scale <= 1.0) return Offset.zero;
+    final maxDx = viewportSize.width * (scale - 1) / 2;
+    final maxDy = viewportSize.height * (scale - 1) / 2;
+    return Offset(offset.dx.clamp(-maxDx, maxDx), offset.dy.clamp(-maxDy, maxDy));
+  }
+
+  // Animate double-tap zoom and spring-back without rebuilding the overlays.
+  void _animateToTransform({required double scale, required Offset offset, Curve curve = Curves.easeOutCubic}) {
+    final animation = _animationController.drive(CurveTween(curve: curve));
+    _scaleAnimation = Tween<double>(begin: _transform.value.scale, end: scale).animate(animation);
+    _offsetAnimation = Tween<Offset>(begin: _transform.value.offset, end: offset).animate(animation);
+    _animationController.forward(from: 0);
+  }
+
+  // Toggle between 1x and 2.5x, zooming toward the double-tapped position.
+  void _handleDoubleTap(Size viewportSize) {
+    if (_activePointers.length > 1) return;
+    final scale = _transform.value.scale > 1.0 ? 1.0 : 2.5;
+    final center = Offset(viewportSize.width / 2, viewportSize.height / 2);
+    final offset = -(_doubleTapPosition - center) * (scale - 1);
+    _animateToTransform(scale: scale, offset: _clampOffset(offset, scale, viewportSize));
+  }
+
+  // Disable page swiping during a pinch without blocking image gestures.
+  void _updatePointer(int pointer, {required bool down}) {
+    if (down) {
+      _activePointers.add(pointer);
+    } else {
+      _activePointers.remove(pointer);
+    }
+    _baseScale = _transform.value.scale;
+    _pointerCount.value = _activePointers.length;
   }
 
   @override
@@ -56,12 +112,7 @@ class _ImmersivePostDetailScreenState extends State<ImmersivePostDetailScreen> {
           fit: StackFit.expand,
           children: [
             // 1. Full-Bleed Media Display
-            ValueListenableBuilder<bool>(
-              valueListenable: _isSwipeLockedNotifier,
-              builder: (context, isSwipeLocked, child) {
-                return _buildMediaViewer(isSwipeLocked);
-              },
-            ),
+            _buildMediaViewer(),
 
             // 2. Overlay Metadata & Controls
             ValueListenableBuilder<bool>(
@@ -81,14 +132,8 @@ class _ImmersivePostDetailScreenState extends State<ImmersivePostDetailScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                _buildCircleButton(
-                                  icon: Icons.arrow_back,
-                                  onTap: () => Navigator.of(context).pop(),
-                                ),
-                                _buildCircleButton(
-                                  icon: Icons.more_vert,
-                                  onTap: () {},
-                                ),
+                                _buildCircleButton(icon: Icons.arrow_back, onTap: () => Navigator.of(context).pop()),
+                                _buildCircleButton(icon: Icons.more_vert, onTap: () {}),
                               ],
                             ),
                           ),
@@ -110,7 +155,7 @@ class _ImmersivePostDetailScreenState extends State<ImmersivePostDetailScreen> {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: List.generate(
                                         widget.post.imageUrls.length,
-                                            (index) => AnimatedContainer(
+                                        (index) => AnimatedContainer(
                                           duration: const Duration(milliseconds: 250),
                                           margin: const EdgeInsets.symmetric(horizontal: 3.0),
                                           width: currentIndex == index ? 8.0 : 6.0,
@@ -145,70 +190,89 @@ class _ImmersivePostDetailScreenState extends State<ImmersivePostDetailScreen> {
     );
   }
 
-  Widget _buildMediaViewer(bool isSwipeLocked) {
+  Widget _buildMediaViewer() {
     final images = widget.post.imageUrls.isNotEmpty ? widget.post.imageUrls : [widget.post.avatarUrl];
 
-    return PageView.builder(
-      controller: _pageController,
-      itemCount: images.length,
-      // Keep standard physics, we block gestures upstream using AbsorbPointer
-      physics: const BouncingScrollPhysics(),
-      onPageChanged: (index) {
-        _currentIndexNotifier.value = index;
-        _transformationController.value = Matrix4.identity(); // Reset zoom on page change
-        _isSwipeLockedNotifier.value = false;
-      },
-      itemBuilder: (context, index) {
-        return ValueListenableBuilder<bool>(
-          valueListenable: _isSwipeLockedNotifier,
-          builder: (context, isLocked, child) {
-            // AbsorbPointer completely blocks PageView from receiving touch events when locked/zoomed
-            return AbsorbPointer(
-              absorbing: isLocked,
-              child: InteractiveViewer(
-                transformationController: _transformationController,
-                minScale: 1.0,
-                maxScale: 4.0,
-                onInteractionStart: (details) {
-                  // If 2 fingers touch or already zoomed, instantly lock swiping
-                  if (details.pointerCount >= 2 || _transformationController.value.getMaxScaleOnAxis() > 1.0) {
-                    _isSwipeLockedNotifier.value = true;
-                  }
-                },
-                onInteractionUpdate: (details) {
-                  final double currentScale = _transformationController.value.getMaxScaleOnAxis();
-                  // Lock if zooming/pinching with 2+ fingers OR if current image is scaled in (> 1.0)
-                  final bool shouldLock = details.pointerCount >= 2 || currentScale > 1.0;
-                  if (_isSwipeLockedNotifier.value != shouldLock) {
-                    _isSwipeLockedNotifier.value = shouldLock;
-                  }
-                },
-                onInteractionEnd: (details) {
-                  final double currentScale = _transformationController.value.getMaxScaleOnAxis();
-                  // Only unlock page swiping if scale snaps completely back to 1.0 and fingers are lifted
-                  if (currentScale <= 1.001) {
-                    _isSwipeLockedNotifier.value = false;
-                  }
-                },
-                child: Center(
-                  child: CachedNetworkImage(
-                    imageUrl: images[index],
-                    fit: BoxFit.contain,
-                    width: double.infinity,
-                    height: double.infinity,
-                    placeholder: (context, url) => const Center(
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white54),
-                    ),
-                    errorWidget: (context, url, error) => const Center(
-                      child: Icon(Icons.error, color: Colors.white54, size: 32),
+    return Listener(
+      onPointerDown: (event) => _updatePointer(event.pointer, down: true),
+      onPointerUp: (event) => _updatePointer(event.pointer, down: false),
+      onPointerCancel: (event) => _updatePointer(event.pointer, down: false),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final viewportSize = Size(constraints.maxWidth, constraints.maxHeight);
+          return ValueListenableBuilder<int>(
+            valueListenable: _pointerCount,
+            builder: (context, fingerCount, _) => ValueListenableBuilder<_ImageTransform>(
+              valueListenable: _transform,
+              builder: (context, transform, _) {
+                final maxDx = viewportSize.width * (transform.scale - 1) / 2;
+                final atHorizontalEdge = transform.offset.dx.abs() >= maxDx - 2.0;
+                final allowPageSwipe = fingerCount <= 1 && (transform.scale <= 1.0 || atHorizontalEdge);
+
+                return PageView.builder(
+                  controller: _pageController,
+                  itemCount: images.length,
+                  physics: allowPageSwipe ? const PageScrollPhysics() : const NeverScrollableScrollPhysics(),
+                  onPageChanged: (index) {
+                    _currentIndexNotifier.value = index;
+                    _resetTransform();
+                  },
+                  itemBuilder: (context, index) => GestureDetector(
+                    onTap: _toggleUI,
+                    onDoubleTapDown: (details) {
+                      _doubleTapPosition = details.localPosition;
+                    },
+                    onDoubleTap: () => _handleDoubleTap(viewportSize),
+                    onScaleStart: (_) {
+                      _animationController.stop();
+                      _baseScale = _transform.value.scale;
+                    },
+                    onScaleUpdate: (details) {
+                      final current = _transform.value;
+                      // Two fingers zoom; one finger pans a zoomed image.
+                      if (_activePointers.length == 2) {
+                        final scale = (_baseScale * details.scale).clamp(0.5, 4.0);
+                        _transform.value = (scale: scale, offset: _clampOffset(current.offset, scale, viewportSize));
+                      } else if (_activePointers.length == 1 && current.scale > 1.0) {
+                        _transform.value = (
+                          scale: current.scale,
+                          offset: _clampOffset(current.offset + details.focalPointDelta, current.scale, viewportSize),
+                        );
+                      }
+                    },
+                    onScaleEnd: (_) {
+                      if (_transform.value.scale < 1.0) {
+                        _animateToTransform(scale: 1.0, offset: Offset.zero, curve: Curves.easeOutBack);
+                      }
+                    },
+                    child: ClipRect(
+                      child: Center(
+                        child: Transform.translate(
+                          offset: transform.offset,
+                          child: Transform.scale(
+                            scale: transform.scale,
+                            alignment: Alignment.center,
+                            child: CachedNetworkImage(
+                              imageUrl: images[index],
+                              fit: BoxFit.contain,
+                              width: viewportSize.width,
+                              height: viewportSize.height,
+                              placeholder: (context, url) =>
+                                  const Center(child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white54)),
+                              errorWidget: (context, url, error) =>
+                                  const Center(child: Icon(Icons.error, color: Colors.white54, size: 32)),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            );
-          },
-        );
-      },
+                );
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -222,10 +286,7 @@ class _ImmersivePostDetailScreenState extends State<ImmersivePostDetailScreen> {
           child: Container(
             width: 40.0,
             height: 40.0,
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.4),
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.4), shape: BoxShape.circle),
             child: Icon(icon, color: const Color(0xFFFFFFFF), size: 20.0),
           ),
         ),
