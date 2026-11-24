@@ -18,6 +18,7 @@ class AppwriteMoviesService {
   static const int mcuFranchiseId = 3010;
   static const int conjuringFranchiseId = 1030;
   static const int horrorGenreId = 27;
+  static const int sciFiGenreId = 878;
   static const String monsterTheme = 'monster';
   static const int _pageSize = 20;
 

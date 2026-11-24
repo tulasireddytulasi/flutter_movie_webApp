@@ -81,45 +81,6 @@ class _DashboardState extends State<Dashboard> {
               const MainBanner(),
               // const MovieBannerCard(),
               const AppwriteMoviesSections(),
-              ListView.builder(
-                itemCount: dashBoardProvider.moviesDataMapObject.length,
-                shrinkWrap: true,
-                padding: const EdgeInsets.all(0),
-                physics: const NeverScrollableScrollPhysics(),
-                scrollDirection: Axis.vertical,
-                itemBuilder: (context, index) {
-                  final Map<String, dynamic> movieData =
-                      dashBoardProvider.moviesDataMapObject["$index"];
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 14, bottom: 6),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        MovieLabel(
-                          movieLabel: movieData["movieLabel"],
-                          onTap: () {
-                            context.go('/movies');
-                          },
-                        ),
-                        SizedBox(
-                          height: MoviesCard.widthFor(screenWidth) * 1.5 + 12,
-                          child: MoviesList(
-                            movieType: dashBoardProvider
-                                .moviesDataMapObject["$index"]["movieType"],
-                            withOriginalLanguage: dashBoardProvider
-                                .moviesDataMapObject["$index"]["withOriginalLanguage"],
-                            withGenres: dashBoardProvider
-                                .moviesDataMapObject["$index"]["withGenres"],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 100),
             ],
           ),
         ),

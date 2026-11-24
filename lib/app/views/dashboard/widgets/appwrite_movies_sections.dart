@@ -53,6 +53,13 @@ class _AppwriteMoviesSectionsState extends State<AppwriteMoviesSections> {
           latestFirst: true,
         ),
       ),
+      _MoviesSectionData(
+        title: 'Latest Sci-Fi Movies',
+        movies: provider.getMoviesByGenre(
+          AppwriteMoviesService.sciFiGenreId,
+          latestFirst: true,
+        ),
+      ),
     ];
   }
 
