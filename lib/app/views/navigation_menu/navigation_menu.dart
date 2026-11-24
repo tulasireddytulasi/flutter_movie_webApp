@@ -93,14 +93,9 @@ class _NavigationMenuState extends State<NavigationMenu> {
                             movieType: "popular",
                             withGenres: "",
                             screenTitle: "Popular Movies",
-                            showAppBar: false,
-                            showLeadingIcon: false,
                           ),
-                          AllActorsPage(
-                            showAppBar: false,
-                            showLeadingIcon: false,
-                          ),
-                          BlogsScreen(showAppBar: false),
+                          AllActorsPage(),
+                          BlogsScreen(),
                         ],
                       );
                 },

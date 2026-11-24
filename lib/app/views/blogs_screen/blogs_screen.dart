@@ -5,8 +5,7 @@ import 'package:moviewebapp/app/views/blogs_screen/dummy_data.dart';
 import 'package:moviewebapp/app/views/blogs_screen/widgets/blod_card.dart';
 
 class BlogsScreen extends StatefulWidget {
-  const BlogsScreen({Key? key, required this.showAppBar}) : super(key: key);
-  final bool showAppBar;
+  const BlogsScreen({super.key});
 
   @override
   State<BlogsScreen> createState() => _BlogsScreenState();
@@ -16,14 +15,10 @@ class _BlogsScreenState extends State<BlogsScreen> {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isDesktopOrTablet = screenWidth >= 600;
     return Scaffold(
-      appBar: widget.showAppBar
-          ? AppBar(
-              title: Text(
-                "Marvel Blogs",
-                style: Theme.of(context).appBarTheme.titleTextStyle,
-              ),
-            )
+      appBar: !isDesktopOrTablet
+          ? AppBar(title: Text("Marvel Blogs", style: Theme.of(context).appBarTheme.titleTextStyle))
           : null,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -40,11 +35,7 @@ class _BlogsScreenState extends State<BlogsScreen> {
                 children: [
                   Column(
                     children: [
-                      for (
-                        var index = 0;
-                        index < DummyData.blogsData.length;
-                        index++
-                      )
+                      for (var index = 0; index < DummyData.blogsData.length; index++)
                         Builder(
                           builder: (context) {
                             final blogInfo = DummyData.blogsData[index];
@@ -52,10 +43,7 @@ class _BlogsScreenState extends State<BlogsScreen> {
                               onTap: () {
                                 context.push(
                                   '/blog/${buildSeoSlug('${index + 1}', blogInfo["blogTitle"])}',
-                                  extra: const {
-                                    detailPresentationExtra:
-                                        detailPresentationModal,
-                                  },
+                                  extra: const {detailPresentationExtra: detailPresentationModal},
                                 );
                               },
                               child: BlogCard(

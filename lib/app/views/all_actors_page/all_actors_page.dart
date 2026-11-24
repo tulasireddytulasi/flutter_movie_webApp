@@ -9,9 +9,7 @@ import 'package:moviewebapp/app/providers/people_provider.dart';
 import 'package:provider/provider.dart';
 
 class AllActorsPage extends StatefulWidget {
-  const AllActorsPage({Key? key, required this.showAppBar, required this.showLeadingIcon}) : super(key: key);
-  final bool showAppBar;
-  final bool showLeadingIcon;
+  const AllActorsPage({super.key});
 
   @override
   State<AllActorsPage> createState() => _AllActorsPageState();
@@ -36,9 +34,7 @@ class _AllActorsPageState extends State<AllActorsPage> {
 
   Future<void> _fetchPopularActors({required int pageKey}) async {
     try {
-      final page = await _peopleProvider.fetchPopularPeoplePage(
-        cursorAfter: _cursorByPage[pageKey],
-      );
+      final page = await _peopleProvider.fetchPopularPeoplePage(cursorAfter: _cursorByPage[pageKey]);
       if (!mounted) return;
 
       final nextCursor = page.nextCursor;
@@ -64,27 +60,14 @@ class _AllActorsPageState extends State<AllActorsPage> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final bool screenWidth600 = screenWidth >= 600;
+    final bool isDesktopOrTablet = screenWidth >= 600;
     layoutData = getActorCircularWidgetWidth(screenWidth: screenWidth);
     columns = layoutData["columns"].toInt();
     ratio = layoutData["ratio"];
 
     return Scaffold(
-      appBar: widget.showAppBar
-          ? AppBar(
-              leading: widget.showLeadingIcon
-                  ? IconButton(
-                      onPressed: () {},
-                      icon: const Icon(
-                        Icons.arrow_back,
-                      ),
-                    )
-                  : null,
-              title: Text(
-                "Popular Actors",
-                style: Theme.of(context).appBarTheme.titleTextStyle,
-              ),
-            )
+      appBar: !isDesktopOrTablet
+          ? AppBar(title: Text("Popular Actors", style: Theme.of(context).appBarTheme.titleTextStyle))
           : null,
       body: SafeArea(
         child: Center(
@@ -92,7 +75,7 @@ class _AllActorsPageState extends State<AllActorsPage> {
             padding: const EdgeInsets.all(10.0),
             width: 1200,
             alignment: Alignment.topCenter,
-            child: screenWidth600
+            child: isDesktopOrTablet
                 ? PagedGridView<int, Actors>(
                     showNewPageProgressIndicatorAsGridChild: false,
                     showNewPageErrorIndicatorAsGridChild: false,

@@ -10,20 +10,16 @@ import 'package:provider/provider.dart';
 
 class MovieListScreen extends StatefulWidget {
   const MovieListScreen({
-    Key? key,
+    super.key,
     required this.withOriginalLanguage,
     required this.movieType,
     this.withGenres,
     required this.screenTitle,
-    required this.showAppBar,
-    this.showLeadingIcon = true,
-  }) : super(key: key);
+  });
   final String withOriginalLanguage;
   final String movieType;
   final String? withGenres;
   final String screenTitle;
-  final bool showAppBar;
-  final bool showLeadingIcon;
 
   @override
   State<MovieListScreen> createState() => _MovieListScreenState();
@@ -73,16 +69,11 @@ class _MovieListScreenState extends State<MovieListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final bool isDesktopOrTablet = screenWidth >= 600;
     return Scaffold(
-      appBar: widget.showAppBar
+      appBar: !isDesktopOrTablet
           ? AppBar(
-              leading: widget.showLeadingIcon
-                  ? IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.arrow_back),
-                    )
-                  : null,
               title: Text(
                 widget.screenTitle,
                 style: Theme.of(
