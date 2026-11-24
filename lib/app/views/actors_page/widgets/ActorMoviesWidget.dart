@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:moviewebapp/app/models/actor_movie_model.dart';
 import 'package:moviewebapp/app/views/widgets/custom_message.dart';
 import 'package:moviewebapp/app/views/widgets/movies_card.dart';
@@ -62,11 +63,16 @@ class _ActorMoviesWidgetState extends State<ActorMoviesWidget> {
                     movieName: movie.title ?? '',
                     poster: movie.posterPath ?? '',
                     movieId: movieId,
-                    voidCallback: () => Navigation().navigateFromActorInfoScreenToMoviesInfoPage(
-                      context: context,
-                      movieId: movieId,
-                      screenWidth: _screenWidth,
-                    ),
+                    voidCallback: () {
+                      /// The [context.pop()] used to close the Actors Info Screen
+                      context.pop();
+                      /// Navigated from Actors Info Screen to Movies Info Screen
+                      Navigation().navigateFromActorInfoScreenToMoviesInfoPage(
+                        context: context,
+                        movieId: movieId,
+                        screenWidth: _screenWidth,
+                      );
+                    },
                   );
                 });
           } else {
