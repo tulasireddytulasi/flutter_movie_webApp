@@ -49,3 +49,4 @@ build/
 .ios/
 .macos/
 .windows/
+.linux/
