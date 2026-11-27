@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/core/responses/api_constants.dart';
+import 'package:moviewebapp/app/core/utils/platform_utils.dart';
 import 'package:moviewebapp/app/providers/universal_provider.dart';
+import 'package:moviewebapp/app/views/image_preview_screen/widget/carousel_arrow_button.dart';
 import 'package:moviewebapp/app/views/image_preview_screen/widget/custom_app_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -8,11 +10,11 @@ typedef _ImageTransform = ({double scale, Offset offset});
 
 class ImagePreviewScreen extends StatefulWidget {
   const ImagePreviewScreen({
-    Key? key,
+    super.key,
     required this.actorsImages,
     required this.actorNames,
     required this.currentIndex,
-  }) : super(key: key);
+  });
 
   final List<String> actorsImages;
   final List<String> actorNames;
@@ -22,41 +24,33 @@ class ImagePreviewScreen extends StatefulWidget {
   State<ImagePreviewScreen> createState() => _ImagePreviewScreenState();
 }
 
-class _ImagePreviewScreenState extends State<ImagePreviewScreen>
-    with SingleTickerProviderStateMixin {
+class _ImagePreviewScreenState extends State<ImagePreviewScreen> with SingleTickerProviderStateMixin {
   late final UniversalProvider universalProvider;
   late final PageController _pageController;
   late final AnimationController _animationController;
+  late final ValueNotifier<int> _currentIndex;
 
   final Set<int> _activePointers = {};
   final _pointerCount = ValueNotifier<int>(0);
-  final _transform = ValueNotifier<_ImageTransform>((
-    scale: 1.0,
-    offset: Offset.zero,
-  ));
+  final _transform = ValueNotifier<_ImageTransform>((scale: 1.0, offset: Offset.zero));
   Animation<double>? _scaleAnimation;
   Animation<Offset>? _offsetAnimation;
   double _baseScale = 1.0;
   Offset _doubleTapPosition = Offset.zero;
-
-  int currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
     universalProvider = Provider.of<UniversalProvider>(context, listen: false);
     _pageController = PageController(initialPage: widget.currentIndex);
-    currentIndex = widget.currentIndex;
-    _animationController =
-        AnimationController(
-          vsync: this,
-          duration: const Duration(milliseconds: 250),
-        )..addListener(() {
-          _transform.value = (
-            scale: _scaleAnimation?.value ?? _transform.value.scale,
-            offset: _offsetAnimation?.value ?? _transform.value.offset,
-          );
-        });
+    _currentIndex = ValueNotifier<int>(widget.currentIndex);
+    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 250))
+      ..addListener(() {
+        _transform.value = (
+          scale: _scaleAnimation?.value ?? _transform.value.scale,
+          offset: _offsetAnimation?.value ?? _transform.value.offset,
+        );
+      });
   }
 
   @override
@@ -64,8 +58,18 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen>
     _animationController.dispose();
     _transform.dispose();
     _pointerCount.dispose();
+    _currentIndex.dispose();
     _pageController.dispose();
     super.dispose();
+  }
+
+  // Arrow buttons step one image at a time; zoom is cleared first so the
+  // carousel is never locked by the zoomed-image scroll physics.
+  void _showAdjacentImage(int delta) {
+    final target = _currentIndex.value + delta;
+    if (target < 0 || target >= widget.actorsImages.length) return;
+    _resetTransform();
+    _pageController.animateToPage(target, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
   }
 
   // Start each newly selected image at its original scale and position.
@@ -80,27 +84,14 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen>
     if (scale <= 1.0) return Offset.zero;
     final maxDx = viewportSize.width * (scale - 1) / 2;
     final maxDy = viewportSize.height * (scale - 1) / 2;
-    return Offset(
-      offset.dx.clamp(-maxDx, maxDx),
-      offset.dy.clamp(-maxDy, maxDy),
-    );
+    return Offset(offset.dx.clamp(-maxDx, maxDx), offset.dy.clamp(-maxDy, maxDy));
   }
 
   // Animate double-tap zoom and the spring-back after zooming below 1x.
-  void _animateToTransform({
-    required double scale,
-    required Offset offset,
-    Curve curve = Curves.easeOutCubic,
-  }) {
+  void _animateToTransform({required double scale, required Offset offset, Curve curve = Curves.easeOutCubic}) {
     final animation = _animationController.drive(CurveTween(curve: curve));
-    _scaleAnimation = Tween<double>(
-      begin: _transform.value.scale,
-      end: scale,
-    ).animate(animation);
-    _offsetAnimation = Tween<Offset>(
-      begin: _transform.value.offset,
-      end: offset,
-    ).animate(animation);
+    _scaleAnimation = Tween<double>(begin: _transform.value.scale, end: scale).animate(animation);
+    _offsetAnimation = Tween<Offset>(begin: _transform.value.offset, end: offset).animate(animation);
     _animationController.forward(from: 0);
   }
 
@@ -110,10 +101,7 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen>
     final scale = _transform.value.scale > 1.0 ? 1.0 : 2.5;
     final center = Offset(viewportSize.width / 2, viewportSize.height / 2);
     final offset = -(_doubleTapPosition - center) * (scale - 1);
-    _animateToTransform(
-      scale: scale,
-      offset: _clampOffset(offset, scale, viewportSize),
-    );
+    _animateToTransform(scale: scale, offset: _clampOffset(offset, scale, viewportSize));
   }
 
   // Track fingers so pinching cannot also swipe to another image.
@@ -136,48 +124,40 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen>
           if (widget.actorsImages.isEmpty || widget.actorNames.isEmpty) return;
           final String nameVal = widget.actorNames.length == 1
               ? widget.actorNames.first
-              : widget.actorNames[currentIndex];
+              : widget.actorNames[_currentIndex.value];
           final String name = "Actor Name: $nameVal";
           await universalProvider.shareImage(
             baseUrl: ApiConstants.movieImageBaseUrlw500,
-            imgUrl: widget.actorsImages[currentIndex],
+            imgUrl: widget.actorsImages[_currentIndex.value],
             descText: name,
           );
         },
       ),
-      body: Center(
-        child: Listener(
-          onPointerDown: (event) => _updatePointer(event.pointer, down: true),
-          onPointerUp: (event) => _updatePointer(event.pointer, down: false),
-          onPointerCancel: (event) =>
-              _updatePointer(event.pointer, down: false),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final viewportSize = Size(
-                constraints.maxWidth,
-                constraints.maxHeight,
-              );
-              return ValueListenableBuilder<int>(
-                valueListenable: _pointerCount,
-                builder: (context, fingerCount, _) =>
-                    ValueListenableBuilder<_ImageTransform>(
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Center(
+            child: Listener(
+              onPointerDown: (event) => _updatePointer(event.pointer, down: true),
+              onPointerUp: (event) => _updatePointer(event.pointer, down: false),
+              onPointerCancel: (event) => _updatePointer(event.pointer, down: false),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final viewportSize = Size(constraints.maxWidth, constraints.maxHeight);
+                  return ValueListenableBuilder<int>(
+                    valueListenable: _pointerCount,
+                    builder: (context, fingerCount, _) => ValueListenableBuilder<_ImageTransform>(
                       valueListenable: _transform,
                       builder: (context, transform, _) {
-                        final maxDx =
-                            viewportSize.width * (transform.scale - 1) / 2;
-                        final atHorizontalEdge =
-                            transform.offset.dx.abs() >= maxDx - 2.0;
-                        final allowPageSwipe =
-                            fingerCount <= 1 &&
-                            (transform.scale <= 1.0 || atHorizontalEdge);
+                        final maxDx = viewportSize.width * (transform.scale - 1) / 2;
+                        final atHorizontalEdge = transform.offset.dx.abs() >= maxDx - 2.0;
+                        final allowPageSwipe = fingerCount <= 1 && (transform.scale <= 1.0 || atHorizontalEdge);
                         return PageView.builder(
                           controller: _pageController,
-                          physics: allowPageSwipe
-                              ? const PageScrollPhysics()
-                              : const NeverScrollableScrollPhysics(),
+                          physics: allowPageSwipe ? const PageScrollPhysics() : const NeverScrollableScrollPhysics(),
                           itemCount: widget.actorsImages.length,
                           onPageChanged: (value) {
-                            currentIndex = value;
+                            _currentIndex.value = value;
                             _resetTransform();
                           },
                           itemBuilder: (context, index) => GestureDetector(
@@ -193,18 +173,12 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen>
                               final current = _transform.value;
                               // Two fingers zoom; one finger pans a zoomed image.
                               if (_activePointers.length == 2) {
-                                final scale = (_baseScale * details.scale)
-                                    .clamp(0.5, 4.0);
+                                final scale = (_baseScale * details.scale).clamp(0.5, 4.0);
                                 _transform.value = (
                                   scale: scale,
-                                  offset: _clampOffset(
-                                    current.offset,
-                                    scale,
-                                    viewportSize,
-                                  ),
+                                  offset: _clampOffset(current.offset, scale, viewportSize),
                                 );
-                              } else if (_activePointers.length == 1 &&
-                                  current.scale > 1.0) {
+                              } else if (_activePointers.length == 1 && current.scale > 1.0) {
                                 _transform.value = (
                                   scale: current.scale,
                                   offset: _clampOffset(
@@ -217,11 +191,7 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen>
                             },
                             onScaleEnd: (_) {
                               if (_transform.value.scale < 1.0) {
-                                _animateToTransform(
-                                  scale: 1.0,
-                                  offset: Offset.zero,
-                                  curve: Curves.easeOutBack,
-                                );
+                                _animateToTransform(scale: 1.0, offset: Offset.zero, curve: Curves.easeOutBack);
                               }
                             },
                             child: ClipRect(
@@ -232,8 +202,7 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen>
                                     scale: transform.scale,
                                     alignment: Alignment.center,
                                     child: Image.network(
-                                      ApiConstants.movieImageBaseUrlw780 +
-                                          widget.actorsImages[index],
+                                      ApiConstants.movieImageBaseUrlw780 + widget.actorsImages[index],
                                       fit: BoxFit.contain,
                                       width: viewportSize.width,
                                       height: viewportSize.height,
@@ -246,9 +215,42 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen>
                         );
                       },
                     ),
-              );
-            },
+                  );
+                },
+              ),
+            ),
           ),
+          if (showDesktopWebControls) _buildNavigationArrows(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavigationArrows() {
+    return ValueListenableBuilder<int>(
+      valueListenable: _currentIndex,
+      builder: (context, index, _) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            if (index > 0)
+              CarouselArrowButton(
+                icon: Icons.chevron_left,
+                tooltip: 'Previous image',
+                onPressed: () => _showAdjacentImage(-1),
+              )
+            else
+              const SizedBox.shrink(),
+            if (index < widget.actorsImages.length - 1)
+              CarouselArrowButton(
+                icon: Icons.chevron_right,
+                tooltip: 'Next image',
+                onPressed: () => _showAdjacentImage(1),
+              )
+            else
+              const SizedBox.shrink(),
+          ],
         ),
       ),
     );
