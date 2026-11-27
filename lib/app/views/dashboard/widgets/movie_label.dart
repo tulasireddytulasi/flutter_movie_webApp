@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MovieLabel extends StatelessWidget {
-  const MovieLabel({Key? key, required this.movieLabel, this.onTap}) : super(key: key);
+  const MovieLabel({super.key, required this.movieLabel, this.onTap});
   final String movieLabel;
   final VoidCallback? onTap;
 
