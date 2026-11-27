@@ -16,11 +16,7 @@ class MovieInfoScreen extends StatefulWidget {
   final String movieId;
   final bool fullPage;
 
-  const MovieInfoScreen({
-    super.key,
-    required this.movieId,
-    this.fullPage = false,
-  });
+  const MovieInfoScreen({super.key, required this.movieId, this.fullPage = false});
 
   @override
   State<MovieInfoScreen> createState() => _MovieInfoScreenState();
@@ -32,15 +28,9 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
   @override
   void initState() {
     super.initState();
-    final movieInfoProvider = Provider.of<MovieInfoProvider>(
-      context,
-      listen: false,
-    );
+    final movieInfoProvider = Provider.of<MovieInfoProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await movieInfoProvider.getMoviesInfoAPI(
-        movieId: widget.movieId,
-        appendToResponse: "credits",
-      );
+      await movieInfoProvider.getMoviesInfoAPI(movieId: widget.movieId, appendToResponse: "credits");
       await movieInfoProvider.getMovieVideos(movieId: widget.movieId);
     });
   }
@@ -64,35 +54,26 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
           body: SafeArea(
             child: Stack(
               children: [
-                if (widget.fullPage &&
-                    movieInfoProvider.backdropPath.isNotEmpty)
+                if (widget.fullPage && movieInfoProvider.backdropPath.isNotEmpty)
                   Positioned.fill(
                     child: Opacity(
                       opacity: 0.28,
                       child: Image.network(
-                        ApiConstants.movieImageBaseUrlw1280 +
-                            movieInfoProvider.backdropPath,
+                        ApiConstants.movieImageBaseUrlw1280 + movieInfoProvider.backdropPath,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) =>
-                            const ColoredBox(color: Colors.black),
+                        errorBuilder: (_, __, ___) => const ColoredBox(color: Colors.black),
                       ),
                     ),
                   ),
-                if (widget.fullPage)
-                  const Positioned.fill(
-                    child: ColoredBox(color: Color(0x99000000)),
-                  ),
+                if (widget.fullPage) const Positioned.fill(child: ColoredBox(color: Color(0x99000000))),
                 ScrollConfiguration(
-                  behavior: ScrollConfiguration.of(
-                    context,
-                  ).copyWith(scrollbars: false),
+                  behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
                   child: SingleChildScrollView(
                     controller: _scrollController,
                     child: Center(
                       child: Container(
                         alignment: Alignment.bottomCenter,
-                        width:
-                            getBottomSheetWidth(screenWidth: screenWidth) + 30,
+                        width: getBottomSheetWidth(screenWidth: screenWidth) + 30,
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.surface,
                           borderRadius: const BorderRadius.only(
@@ -101,9 +82,7 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                           ),
                           shape: BoxShape.rectangle,
                         ),
-                        margin: EdgeInsets.only(
-                          top: screenWidth >= 525 ? 50 : 0,
-                        ),
+                        margin: EdgeInsets.only(top: screenWidth >= 525 ? 50 : 0),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -128,99 +107,56 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                                   const RatingWidget(),
                                   Container(
                                     alignment: Alignment.topLeft,
-                                    margin: const EdgeInsets.only(
-                                      left: 15,
-                                      top: 5,
-                                    ),
+                                    margin: const EdgeInsets.only(left: 15, top: 5),
                                     child: SelectableText(
                                       movieInfoProvider.movieTitle,
                                       showCursor: true,
-                                      cursorColor: Theme.of(
-                                        context,
-                                      ).colorScheme.primary,
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.headlineMedium,
+                                      cursorColor: Theme.of(context).colorScheme.primary,
+                                      style: Theme.of(context).textTheme.headlineMedium,
                                     ),
                                   ),
                                   Container(
                                     alignment: Alignment.topLeft,
-                                    margin: const EdgeInsets.only(
-                                      left: 15,
-                                      top: 5,
-                                    ),
+                                    margin: const EdgeInsets.only(left: 15, top: 5),
                                     child: SelectableText(
                                       "${movieInfoProvider.runtime} . ${movieInfoProvider.genre} . ${movieInfoProvider.releaseYear}",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(
-                                            color: Theme.of(
-                                              context,
-                                            ).colorScheme.onSurfaceVariant,
-                                          ),
+                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                      ),
                                       showCursor: true,
-                                      cursorColor: Theme.of(
-                                        context,
-                                      ).colorScheme.primary,
+                                      cursorColor: Theme.of(context).colorScheme.primary,
                                     ),
                                   ),
                                   Container(
                                     alignment: Alignment.topLeft,
-                                    margin: const EdgeInsets.only(
-                                      left: 15,
-                                      top: 20,
-                                    ),
+                                    margin: const EdgeInsets.only(left: 15, top: 20),
                                     child: ExpandableText(
                                       text: movieInfoProvider.overview,
                                       maxLines: 3,
-                                      textStyle: Theme.of(
-                                        context,
-                                      ).textTheme.bodyMedium,
+                                      textStyle: Theme.of(context).textTheme.bodyMedium,
                                     ),
                                   ),
                                   Container(
                                     alignment: Alignment.topLeft,
-                                    margin: const EdgeInsets.only(
-                                      left: 15,
-                                      top: 20,
-                                    ),
-                                    child: Text(
-                                      "Top Cast",
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.titleLarge,
-                                    ),
+                                    margin: const EdgeInsets.only(left: 15, top: 20),
+                                    child: Text("Top Cast", style: Theme.of(context).textTheme.titleLarge),
                                   ),
                                   Container(
-                                    height: getActorSectionHeight(
-                                      screenSize: screenWidth,
-                                    ),
+                                    height: getActorSectionHeight(screenSize: screenWidth),
                                     margin: const EdgeInsets.only(top: 20),
                                     child: const Cast(),
                                   ),
                                   Container(
                                     alignment: Alignment.topLeft,
-                                    margin: const EdgeInsets.only(
-                                      left: 15,
-                                      top: 20,
-                                    ),
-                                    child: Text(
-                                      "Similar Movies",
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.titleLarge,
-                                    ),
+                                    margin: const EdgeInsets.only(left: 15, top: 20),
+                                    child: Text("Similar Movies", style: Theme.of(context).textTheme.titleLarge),
                                   ),
                                   Container(
-                                    height: getSimilarMoviesSectionHeight(
-                                      screenSize: screenWidth,
-                                    ),
+                                    height: getSimilarMoviesSectionHeight(screenSize: screenWidth),
                                     margin: const EdgeInsets.only(top: 20),
                                     child: SimilarMovies(
                                       movieId: movieInfoProvider.currentMovieId,
-                                      franchiseId:
-                                          movieInfoProvider.franchiseId,
+                                      franchiseId: movieInfoProvider.franchiseId,
                                       theme: movieInfoProvider.theme,
                                       genreIds: movieInfoProvider.genreIds,
                                       scrollController: _scrollController,
@@ -229,59 +165,55 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                                   Row(
                                     mainAxisSize: MainAxisSize.min,
                                     mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
+                                      // InkWell(
+                                      //   onTap: () {
+                                      //     if (movieInfoProvider
+                                      //         .youTubeKey
+                                      //         .isNotEmpty) {
+                                      //       Navigation().youTubeScreen(
+                                      //         context: context,
+                                      //         youTubeVideoKey:
+                                      //             movieInfoProvider.youTubeKey,
+                                      //       );
+                                      //     } else {
+                                      //       showAlert(context: context);
+                                      //     }
+                                      //   },
+                                      //   child: Container(
+                                      //     margin: const EdgeInsets.only(
+                                      //       top: 20,
+                                      //       bottom: 20,
+                                      //       left: 10,
+                                      //     ),
+                                      //     alignment: Alignment.center,
+                                      //     decoration: BoxDecoration(
+                                      //       shape: BoxShape.rectangle,
+                                      //       borderRadius: BorderRadius.circular(
+                                      //         5,
+                                      //       ),
+                                      //       color: Theme.of(context)
+                                      //           .colorScheme
+                                      //           .surfaceContainerHighest,
+                                      //     ),
+                                      //     height: 50,
+                                      //     width: 130,
+                                      //     child: Text(
+                                      //       "TRAILER",
+                                      //       style: Theme.of(context)
+                                      //           .textTheme
+                                      //           .labelLarge
+                                      //           ?.copyWith(fontSize: 20),
+                                      //     ),
+                                      //   ),
+                                      // ),
                                       InkWell(
                                         onTap: () {
-                                          if (movieInfoProvider
-                                              .youTubeKey
-                                              .isNotEmpty) {
+                                          if (movieInfoProvider.youTubeKey.isNotEmpty) {
                                             Navigation().youTubeScreen(
                                               context: context,
-                                              youTubeVideoKey:
-                                                  movieInfoProvider.youTubeKey,
-                                            );
-                                          } else {
-                                            showAlert(context: context);
-                                          }
-                                        },
-                                        child: Container(
-                                          margin: const EdgeInsets.only(
-                                            top: 20,
-                                            bottom: 20,
-                                            left: 10,
-                                          ),
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.rectangle,
-                                            borderRadius: BorderRadius.circular(
-                                              5,
-                                            ),
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .surfaceContainerHighest,
-                                          ),
-                                          height: 50,
-                                          width: 130,
-                                          child: Text(
-                                            "TRAILER",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .labelLarge
-                                                ?.copyWith(fontSize: 20),
-                                          ),
-                                        ),
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          if (movieInfoProvider
-                                              .youTubeKey
-                                              .isNotEmpty) {
-                                            Navigation().youTubeScreen(
-                                              context: context,
-                                              youTubeVideoKey:
-                                                  movieInfoProvider.youTubeKey,
+                                              youTubeVideoKey: movieInfoProvider.youTubeKey,
                                             );
                                           } else {
                                             showAlert(context: context);
@@ -294,21 +226,10 @@ class _MovieInfoScreenState extends State<MovieInfoScreen> {
                                   const SizedBox(height: 10),
                                   Container(
                                     alignment: Alignment.topLeft,
-                                    margin: const EdgeInsets.only(
-                                      left: 15,
-                                      top: 20,
-                                    ),
-                                    child: Text(
-                                      "Movie reviews",
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.titleLarge,
-                                    ),
+                                    margin: const EdgeInsets.only(left: 15, top: 20),
+                                    child: Text("Movie reviews", style: Theme.of(context).textTheme.titleLarge),
                                   ),
-                                  SizedBox(
-                                    height: 234,
-                                    child: ReviewsList(movieId: widget.movieId),
-                                  ),
+                                  SizedBox(height: 234, child: ReviewsList(movieId: widget.movieId)),
                                 ],
                               ),
                             ),
@@ -332,10 +253,7 @@ void showAlert({required BuildContext context}) {
     context: context,
     builder: (context) => Center(
       child: AlertDialog(
-        content: Text(
-          "Video unavailable for this movie",
-          style: Theme.of(context).textTheme.bodyLarge,
-        ),
+        content: Text("Video unavailable for this movie", style: Theme.of(context).textTheme.bodyLarge),
       ),
     ),
   );
