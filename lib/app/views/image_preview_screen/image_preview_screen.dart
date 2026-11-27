@@ -1,3 +1,6 @@
+import 'dart:math' as math;
+
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/core/responses/api_constants.dart';
 import 'package:moviewebapp/app/core/utils/platform_utils.dart';
@@ -30,6 +33,7 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> with SingleTick
   late final AnimationController _animationController;
   late final ValueNotifier<int> _currentIndex;
 
+  final _viewportKey = GlobalKey();
   final Set<int> _activePointers = {};
   final _pointerCount = ValueNotifier<int>(0);
   final _transform = ValueNotifier<_ImageTransform>((scale: 1.0, offset: Offset.zero));
@@ -104,6 +108,34 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> with SingleTick
     _animateToTransform(scale: scale, offset: _clampOffset(offset, scale, viewportSize));
   }
 
+  // Mouse wheel zooms in and out. Ctrl + wheel and trackpad pinch reach the
+  // web as scale events, so they are handled the same way.
+  void _handlePointerSignal(PointerSignalEvent event) {
+    final double factor;
+    if (event is PointerScrollEvent && event.scrollDelta.dy != 0) {
+      factor = math.exp(-event.scrollDelta.dy / 300);
+    } else if (event is PointerScaleEvent) {
+      factor = event.scale;
+    } else {
+      return;
+    }
+    GestureBinding.instance.pointerSignalResolver.register(event, (_) => _zoomAt(event.localPosition, factor));
+  }
+
+  // Scale around the cursor so the image point under it stays in place.
+  void _zoomAt(Offset focalPoint, double factor) {
+    final viewportSize = _viewportKey.currentContext?.size;
+    if (viewportSize == null) return;
+    final current = _transform.value;
+    final scale = (current.scale * factor).clamp(1.0, 4.0);
+    if (scale == current.scale) return;
+    final fromCenter = focalPoint - viewportSize.center(Offset.zero);
+    final offset = fromCenter - (fromCenter - current.offset) * (scale / current.scale);
+    _animationController.stop();
+    _baseScale = scale;
+    _transform.value = (scale: scale, offset: _clampOffset(offset, scale, viewportSize));
+  }
+
   // Track fingers so pinching cannot also swipe to another image.
   void _updatePointer(int pointer, {required bool down}) {
     if (down) {
@@ -138,6 +170,8 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> with SingleTick
         children: [
           Center(
             child: Listener(
+              key: _viewportKey,
+              onPointerSignal: _handlePointerSignal,
               onPointerDown: (event) => _updatePointer(event.pointer, down: true),
               onPointerUp: (event) => _updatePointer(event.pointer, down: false),
               onPointerCancel: (event) => _updatePointer(event.pointer, down: false),
