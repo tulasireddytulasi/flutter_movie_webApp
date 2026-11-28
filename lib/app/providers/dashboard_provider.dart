@@ -3,11 +3,17 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/core/repository/json_objects/marvel_movies_json.dart';
+import 'package:moviewebapp/app/core/responses/appwrite_movies_service.dart';
 import 'package:moviewebapp/app/models/get_movies_model.dart';
 import 'package:moviewebapp/app/core/responses/movie_apis.dart';
 import 'package:moviewebapp/app/core/utils/constants.dart';
 
 class DashBoardProvider extends ChangeNotifier {
+  DashBoardProvider({AppwriteMoviesService? appwriteMoviesService})
+    : _appwriteMoviesService = appwriteMoviesService ?? AppwriteMoviesService();
+
+  final AppwriteMoviesService _appwriteMoviesService;
+
   Color _appBarBackgroundColor = Colors.transparent;
 
   Color get appBarBackgroundColor => _appBarBackgroundColor;
@@ -76,7 +82,35 @@ class DashBoardProvider extends ChangeNotifier {
 
   Map<String, dynamic> get moviesDataMapObject => _moviesDataMapObject;
 
-  setAppBarColorAndElevation({required Color color, required double elevation}) {
+  Future<List<Movies>> getLatestMovies() =>
+      _appwriteMoviesService.getLatestMovies();
+
+  Future<List<Movies>> getMoviesByFranchise(
+    int franchiseId, {
+    bool latestFirst = false,
+  }) => _appwriteMoviesService.getMoviesByFranchise(
+    franchiseId,
+    latestFirst: latestFirst,
+  );
+
+  Future<List<Movies>> getMoviesByGenre(
+    int genreId, {
+    bool latestFirst = true,
+  }) => _appwriteMoviesService.getMoviesByGenre(
+    genreId,
+    latestFirst: latestFirst,
+  );
+
+  Future<List<Movies>> getMoviesByTheme(
+    String theme, {
+    bool latestFirst = true,
+  }) =>
+      _appwriteMoviesService.getMoviesByTheme(theme, latestFirst: latestFirst);
+
+  setAppBarColorAndElevation({
+    required Color color,
+    required double elevation,
+  }) {
     _appBarBackgroundColor = color;
     _appBarElevation = elevation;
     notifyListeners();
@@ -89,7 +123,7 @@ class DashBoardProvider extends ChangeNotifier {
   }) async {
     MoviesModel _movieModel = MoviesModel();
     try {
-      if(movieType == Constants.marvelMovies){
+      if (movieType == Constants.marvelMovies) {
         _movieModel = getMoviesFromJson(json.encode(MoviesRepo.marvelMovies));
         return _movieModel;
       }

@@ -29,17 +29,15 @@ class _YouTubePlayerState extends State<YouTubePlayer> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1B2230),
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(
             Icons.arrow_back,
-            color: Colors.white,
           ),
         ),
-        title: const Text(
+        title: Text(
           "YouTube player",
-          style: TextStyle(fontSize: 18, color: Colors.white),
+          style: Theme.of(context).appBarTheme.titleTextStyle,
         ),
       ),
       body: PlatformWebViewWidget(

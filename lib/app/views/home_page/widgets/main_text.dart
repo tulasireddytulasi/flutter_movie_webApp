@@ -7,7 +7,7 @@ class MainTextWidget extends StatefulWidget {
   const MainTextWidget({Key? key}) : super(key: key);
 
   @override
-  _MainTextWidgetState createState() => _MainTextWidgetState();
+  State<MainTextWidget> createState() => _MainTextWidgetState();
 }
 
 class _MainTextWidgetState extends State<MainTextWidget> {

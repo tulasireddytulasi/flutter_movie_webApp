@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="API reference for the movie web app's TMDB endpoints and Dart helpers.">
+  <title>Movie Web App | API Reference</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17242c;
+      --muted: #53636b;
+      --line: #d7e0df;
+      --paper: #f5f7f3;
+      --panel: #ffffff;
+      --teal: #087e78;
+      --teal-pale: #dff2ed;
+      --coral: #b94d38;
+      --coral-pale: #fae9e2;
+      --gold: #8a6413;
+      --gold-pale: #f7efd8;
+      --mono: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+      --sans: "Aptos", "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(8, 126, 120, .06) 0 1px, transparent 1px 24px),
+        var(--paper);
+      font: 16px/1.55 var(--sans);
+    }
+
+    .masthead {
+      padding: 48px max(24px, calc((100vw - 1180px) / 2)) 38px;
+      color: #fff;
+      background: var(--ink);
+      border-bottom: 5px solid var(--teal);
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: #92d8c8;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { max-width: 760px; margin-bottom: 10px; font-size: clamp(32px, 5vw, 52px); line-height: 1.08; }
+    .intro { max-width: 760px; margin-bottom: 24px; color: #d3dddc; }
+
+    .stats { display: flex; flex-wrap: wrap; gap: 10px; }
+    .stat {
+      padding: 7px 11px;
+      color: #fff;
+      background: rgba(255, 255, 255, .09);
+      border: 1px solid rgba(255, 255, 255, .2);
+      font-size: 13px;
+    }
+
+    main { width: min(1180px, calc(100% - 40px)); margin: 32px auto 64px; }
+    .transport {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1px;
+      margin-bottom: 34px;
+      background: var(--line);
+      border: 1px solid var(--line);
+    }
+
+    .transport div { min-width: 0; padding: 16px 18px; background: var(--panel); }
+    .transport strong { display: block; margin-bottom: 4px; font-size: 12px; text-transform: uppercase; color: var(--muted); }
+    code { font-family: var(--mono); font-size: .9em; overflow-wrap: anywhere; }
+    .section-heading { display: flex; align-items: baseline; gap: 12px; margin: 36px 0 12px; }
+    h2 { margin: 0; font-size: 25px; }
+    .section-heading span { color: var(--muted); font-size: 13px; }
+
+    .table-wrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th, td { padding: 14px 15px; vertical-align: top; border-bottom: 1px solid var(--line); }
+    th { color: var(--muted); background: #edf2ef; font-size: 12px; text-transform: uppercase; }
+    tr:last-child td { border-bottom: 0; }
+    td:first-child { min-width: 195px; }
+    td:nth-child(2) { min-width: 245px; }
+    td:nth-child(3) { min-width: 260px; }
+    .method { display: inline-block; margin-right: 7px; padding: 2px 6px; color: #075d58; background: var(--teal-pale); font: 700 11px var(--mono); }
+    .function { display: block; margin: 0 0 5px; }
+    .detail { display: block; margin-top: 6px; color: var(--muted); font-size: 13px; }
+
+    .notes {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .note { padding: 17px 18px; background: var(--panel); border-left: 4px solid var(--gold); }
+    .note.issue { border-color: var(--coral); }
+    .note h3 { margin-bottom: 7px; font-size: 16px; }
+    .note p { margin: 0; color: var(--muted); font-size: 14px; }
+    footer { padding-top: 20px; margin-top: 36px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+
+    @media (max-width: 720px) {
+      .masthead { padding: 34px 22px 28px; }
+      main { width: min(100% - 24px, 1180px); margin-top: 20px; }
+      .transport, .notes { grid-template-columns: 1fr; }
+      .section-heading { align-items: flex-start; flex-direction: column; gap: 2px; }
+      th, td { padding: 11px 12px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="masthead">
+    <p class="eyebrow">Developer reference / TMDB</p>
+    <h1>Movie Web App API Reference</h1>
+    <p class="intro">A catalog of the movie, actor, and image requests exposed by the app's Dart API layer.</p>
+    <div class="stats" aria-label="API summary">
+      <span class="stat">12 request patterns</span>
+      <span class="stat">17 Dart helpers</span>
+      <span class="stat">GET requests</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="transport" aria-label="Shared request configuration">
+      <div><strong>TMDB API base</strong><code>https://api.themoviedb.org/3/</code></div>
+      <div><strong>Request headers</strong><code>content-type: application/json</code><br><code>accept: application/json</code></div>
+      <div><strong>API key</strong>Read from <code>ApiConstants.apiKey</code> and sent as a query parameter.</div>
+    </section>
+
+    <section aria-labelledby="movies-heading">
+      <div class="section-heading"><h2 id="movies-heading">Movies</h2><span>TMDB movie and search resources</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Dart function</th><th>Request</th><th>Inputs and result</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>
+                <code class="function">getMoviesList</code>
+                <code class="function">getPopularMoviesList</code>
+                <code class="function">fetchMovies</code>
+              </td>
+              <td><span class="method">GET</span><code>movie/{movieType}</code></td>
+              <td><code>movieType</code>, <code>pageNo</code>, <code>withOriginalLanguage</code>, optional <code>withGenres</code>.<span class="detail">Query also includes <code>api_key</code>. Returns raw HTTP response, <code>MoviesModel</code>, or <code>List&lt;Movies&gt;</code> respectively.</span></td>
+            </tr>
+            <tr>
+              <td><code class="function">searchMovies</code></td>
+              <td><span class="method">GET</span><code>/search/movie</code></td>
+              <td><code>pageNo</code>, <code>movieQuery</code>, <code>withOriginalLanguage</code>; <code>language</code> defaults to <code>en-US</code>, <code>includeAdult</code> to <code>false</code>, and <code>withGenres</code> is optional.<span class="detail">Returns <code>List&lt;Movies&gt;</code>; checks for HTTP 200.</span></td>
+            </tr>
+            <tr>
+              <td><code class="function">getMoviesInfo</code><code class="function">getMoviesInfoData</code></td>
+              <td><span class="method">GET</span><code>movie/{movieId}</code></td>
+              <td><code>movieId</code>, <code>appendToResponse</code>. Query includes <code>api_key</code> and <code>append_to_response</code>.<span class="detail">Returns raw HTTP response or parsed <code>GetMovieInfo</code>.</span></td>
+            </tr>
+            <tr>
+              <td><code class="function">getSimilarMoviesList</code><code class="function">getSimilarMoviesListData</code></td>
+              <td><span class="method">GET</span><code>movie/{movieId}/recommendations</code></td>
+              <td><code>movieId</code>, <code>pageNo</code>, <code>withOriginalLanguage</code>. Query includes <code>api_key</code>.<span class="detail">Returns raw HTTP response or parsed <code>MoviesModel</code>.</span></td>
+            </tr>
+            <tr>
+              <td><code class="function">getMovieReviews</code></td>
+              <td><span class="method">GET</span><code>movie/{movieId}/reviews</code></td>
+              <td><code>movieId</code>, <code>pageNo</code>. Returns <code>ReviewModel</code>.</td>
+            </tr>
+            <tr>
+              <td><code class="function">getMovieLogosAPI</code></td>
+              <td><span class="method">GET</span><code>movie/{movieId}/images</code></td>
+              <td><code>movieId</code>. Returns <code>MovieLogosAndPostersModel</code>.</td>
+            </tr>
+            <tr>
+              <td><code class="function">getMovieVideosAPI</code></td>
+              <td><span class="method">GET</span><code>movie/{movieId}/videos</code></td>
+              <td><code>movieId</code>. Returns <code>YouTubeVideosModel</code>.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="people-heading">
+      <div class="section-heading"><h2 id="people-heading">People</h2><span>Actor profiles, images, and credits</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Dart function</th><th>Request</th><th>Inputs and result</th></tr></thead>
+          <tbody>
+            <tr><td><code class="function">getPopularActorsImages</code></td><td><span class="method">GET</span><code>person/{actorId}/images</code></td><td><code>actorId</code>. Returns <code>ActorImagesModel</code>.</td></tr>
+            <tr><td><code class="function">getActorsInfo</code></td><td><span class="method">GET</span><code>person/{actorId}</code></td><td><code>actorId</code>. Returns <code>ActorInfoModel</code>.</td></tr>
+            <tr>
+              <td><code class="function">getPopularActorsInfo</code><code class="function">fetchPopularActors</code></td>
+              <td><span class="method">GET</span><code>person/popular</code></td>
+              <td><code>languageCode</code>, <code>pageNo</code>. Returns <code>PopularActorsModel</code> or its <code>List&lt;Actors&gt;</code> result.</td>
+            </tr>
+            <tr><td><code class="function">getActorsActedMoviesInfo</code></td><td><span class="method">GET</span><code>person/{actorId}/movie_credits</code></td><td><code>actorId</code>. Returns <code>ActorMovieModel</code>.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="images-heading">
+      <div class="section-heading"><h2 id="images-heading">Image bytes</h2><span>Caller-supplied image URL</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Dart function</th><th>Request</th><th>Inputs and result</th></tr></thead>
+          <tbody>
+            <tr><td><code class="function">getImageAPI</code></td><td><span class="method">GET</span><code>{imgUrl}</code></td><td>Requires <code>imgUrl</code> and <code>baseUrl</code>. Returns response body bytes as <code>Uint8List</code>. When <code>baseUrl</code> is empty, the shared TMDB API base is used.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="notes" aria-label="Implementation notes">
+      <article class="note issue">
+        <h3>Search URL construction</h3>
+        <p><code>searchMovies</code> starts its path with <code>/</code>, while the shared helper concatenates the base URL and path. This can produce <code>/3//search/movie</code>; use a relative path or URI resolution to avoid the doubled slash.</p>
+      </article>
+      <article class="note issue">
+        <h3>Optional genre parameters</h3>
+        <p>The list and search helpers interpolate optional <code>withGenres</code> directly into the URL. If omitted, the current request contains <code>with_genres=null</code>.</p>
+      </article>
+      <article class="note">
+        <h3>Query encoding</h3>
+        <p>Query values are assembled through string interpolation. Values containing spaces or reserved characters should be URI-encoded when constructing requests.</p>
+      </article>
+      <article class="note">
+        <h3>Response handling</h3>
+        <p>All requests use GET through <code>getMethod</code>. <code>fetchMovies</code> and <code>searchMovies</code> explicitly check for status 200; other helpers parse the response body without a shared status check.</p>
+      </article>
+    </section>
+
+    <section aria-labelledby="movie-logo-heading">
+      <div class="section-heading"><h2 id="movie-logo-heading">Movie detail title logo</h2></div>
+      <p>Movie Info overlays a TMDB title logo near the lower-left of the backdrop
+        only when screen width is strictly greater than 600 logical pixels.
+        It reuses the movie images request, prefers an English logo and then a
+        language-neutral logo, and fades/scales the artwork in after loading.
+        Reduced-motion preferences disable the animation. Movie changes reset
+        the logo; missing or failed artwork is omitted while the text title remains.
+        Logo failures are logged and do not prevent viewing movie details.</p>
+    </section>
+
+    <section aria-labelledby="movie-rails-heading">
+      <div class="section-heading"><h2 id="movie-rails-heading">Dashboard movie rails</h2><span>Poster-first browsing</span></div>
+      <p>Dashboard rows use responsive 2:3 poster cards with compact gaps, rounded
+        corners and aligned section headings. Titles remain available through
+        tooltips and accessibility labels rather than separate captions. Chevron
+        buttons retain the existing View More navigation. Missing or failed posters
+        display a title placeholder rather than a different movie's artwork.</p>
+      <p>Movie cards shrink on press and spring back before opening the existing
+        detail route. Cancelled gestures reset without navigation; duplicate taps
+        are ignored during activation. Hover and keyboard focus highlight the card.
+        Reduced-motion preferences disable scaling. Row requests are retained across
+        rebuilds and refreshed only when the row's query parameters change.
+        The shared card styling and bounce also apply to actor movie rails.</p>
+      <p>MovieHomePage and the paginated MovieListScreen reuse the same poster
+        interaction in compact 2:3 grids: three columns on phones, expanding
+        columns on wider layouts, consistent narrow gutters, and no separate title
+        or date captions. Titles remain accessible through labels and tooltips.
+        No promotional badges are fabricated; artwork comes from existing TMDB posters.
+        The paginated screen retains its loading/error/retry behavior and stops
+        requesting pages when the server returns an empty page.</p>
+    </section>
+
+    <section aria-labelledby="search-upload-heading">
+      <div class="section-heading"><h2 id="search-upload-heading">Search movie upload</h2><span>Full-detail review and uploads inside Import</span></div>
+      <p>Choose <strong>Import &gt; Search API</strong>, search a title, select result
+        checkboxes, and click <strong>Fetch selected details</strong>. Each search result
+        shows a poster thumbnail beside its checkbox, with a placeholder when the
+        poster is missing or cannot load. Search results
+        provide TMDB IDs only; their sparse metadata is never used as an Appwrite
+        payload. Complete movie details and credits are fetched into the inline
+        review queue, without writing database rows or opening another route.
+        Search language controls discovery; detail and profile requests use en-US.</p>
+      <p>The inline queue uses the same <code>BulkMovieImportWorkspace</code> and
+        <code>BulkMovieImportController</code> as the standalone bulk screen.
+        Set franchise beside the search title field (blank writes null); it is the
+        shared upload default, not a TMDB search filter. Search also provides optional
+        country, language, and theme text fields alongside franchise. These trimmed
+        strings are uploaded to the corresponding movie columns; blank writes null
+        and clears a previous value. They are not TMDB search filters (the separate
+        Search language field still controls discovery). Values apply to new Search
+        upload plans; retries retain their original values, and other import screens
+        omit these columns. Confirm these three Appwrite columns are optional Strings
+        with sufficient sizes; schema errors are reported without truncation.
+        Set cast/crew unique-person counts (15 each
+        by default), and whether to include people/credits. Review and edit movie
+        fields or override settings per movie, then explicitly confirm
+        <strong>Upload selected</strong>. Result checkboxes choose IDs to fetch;
+        queue checkboxes choose fetched movies to upload.</p>
+      <p>Uploads use the current movies, genres, people, movie_cast and movie_crew
+        tables: three movie workers share one pool of 15 people. Existing profiles
+        are reused, missing profiles are coordinated across movies, genre writes
+        never upsert inverse relationships, and readback verifies stored values.
+        Failed detail fetches and unfinished uploads have separate retry actions;
+        successful work is kept, with per-movie and per-person statuses.</p>
+      <p>New searches, page changes, and clearing discovery results keep the review
+        queue, settings, edits and retry state. Switching API modes keeps the queue
+        but hides it in Movie list mode. Removing a queue item or clearing the queue
+        requires confirmation; no Appwrite rows are deleted. Active work or dialogs
+        block search/source changes and navigation. Leaving Import with a queue
+        warns about local state; navigation tabs retain it during the app session,
+        but closing/restarting the app loses it. Cancel requests finish in flight.</p>
+      <p><strong>Movie list API is browse-only.</strong> Its obsolete upload action is
+        disabled because the legacy table was removed. Use Search API, Movie ID
+        editor, or Bulk movie upload for current-schema ingestion. The legacy sparse
+        uploader has been removed; no importer recreates the deleted table.</p>
+    </section>
+
+    <section aria-labelledby="movie-editor-heading">
+      <div class="section-heading"><h2 id="movie-editor-heading">Movie ID editor</h2><span>Independent Movie Info and People Info tabs</span></div>
+      <p>Open <strong>Import &gt; Movie ID editor</strong>. Enter any positive TMDB movie ID
+        to fetch <code>movie/{id}?append_to_response=credits&amp;language=en-US</code>.
+        Movie Info shows all database movie fields in editable text fields, including genres
+        as a JSON array of ID/name objects and optional franchise (blank writes null).
+        Additional TMDB response fields, including the complete credit response, appear in
+        read-only text fields; they have no matching database columns and are not uploaded.
+        Fetching another movie replaces the editor; failed fetches keep the prior movie
+        explicitly labeled with its own ID. Changes remain in the editor across tab switches.</p>
+      <p><strong>Movie Info upload</strong> validates edited fields, ensures genres exist first and
+        the edited movie second, and verifies the written fields by readback. It does not
+        upload profiles or credits. Invalid numbers, dates, booleans, genre JSON, and required
+        values report explicit errors; optional text truncation warnings remain visible.
+        The MCU importer and standalone bulk importer remain available; Search API
+        now uses the shared inline full-detail workflow described above.</p>
+      <p><strong>People Info</strong> has separate unique cast and crew lists. Select checkboxes
+        or enter independent counts (default 15; 0 clears a group). Cast is ranked by TMDB order;
+        crew follows response order. All roles/jobs in selected sections are retained. Search
+        filters visible people without altering selection; count selection uses the full list.
+        A person selected in both groups is processed once, with shared status in both lists.</p>
+      <p>People upload requires the fetched movie ID to already exist in Appwrite. It never
+        implicitly uploads the movie or uses unsaved movie edits. Each of at most fifteen parallel
+        workers checks the person, fetches and creates a full profile only when missing, then
+        upserts and verifies that person's selected credits. Existing profiles are never
+        overwritten. Stable TMDB credit IDs and legacy-duplicate checks make retries safe.
+        Credits are grouped by person once and rendered lazily to avoid repeated full-list
+        scans and eager list widgets.</p>
+      <p>List statuses are <strong>Not uploaded, Uploading, Success, Failed, Already Exists</strong>.
+        Already Exists means the profile was reused and selected credits were verified.
+        A profile whose credit upload fails is Failed with a partial-write message, not
+        successful. Retry selected failed people without re-uploading successful ones.
+        A shared permission/schema/rate-limit failure stops scheduling new workers while
+        in-flight workers settle. Cancellation keeps stored rows; no destructive rollback
+        occurs. This screen uses the same temporary anonymous permissions and actual
+        Appwrite table IDs described below; it never creates schema or grants permissions.</p>
+    </section>
+
+    <section aria-labelledby="bulk-movie-heading">
+      <div class="section-heading"><h2 id="bulk-movie-heading">Bulk movie upload</h2><span>Multi-ID previews and bounded batch uploads</span></div>
+      <p>Open <strong>Import &gt; Bulk movie upload</strong>. Paste positive TMDB movie IDs
+        separated by commas, spaces, semicolons, or newlines. IDs are validated and
+        deduplicated before fetching. Up to three movie requests run concurrently.
+        Adding IDs preserves already fetched movies, their edits, and upload progress;
+        failed fetches can be retried independently. Preview cards show title, poster,
+        release date, selection, and status.</p>
+      <p>Set shared franchise (blank writes null), cast/crew unique-person counts
+        (default 15 each; zero skips a section), and whether to include people/credits.
+        <strong>Edit / override settings</strong> opens the supported movie fields,
+        including genre JSON, and optional per-movie counts, franchise, and upload mode.
+        Saving edits creates a new local upload plan without deleting stored rows.
+        Conflicting names for one shared genre ID in a batch are reported before writes.</p>
+      <p>One upload action processes at most <strong>three movies</strong> at a time.
+        All movie workers share a single <strong>15-person pool</strong>, not 15 per movie.
+        Each movie ensures genres exist and verifies its movie row before uploading
+        selected profiles and credits. All jobs/roles for selected unique people are kept.
+        Genre writes reuse the safe read/create/name-only update service; movie writes
+        retain strict unique-link verification and duplicate-link repair.</p>
+      <p>Concurrent movies share a single in-flight profile operation per person ID.
+        Existing profiles are reused without fetching or overwriting; missing profiles
+        are fetched, created, and verified once per batch. Genre writes are also
+        shared by ID/name. Profile/credit failures are visible inside each movie's
+        people statuses. TMDB uses bounded retries and Retry-After; exhausted rate limits
+        and shared permission/schema failures pause new work while in-flight work settles.</p>
+      <p>Movie statuses are <strong>Queued, Fetching, Ready, Uploading, Success, Partial,
+        Failed</strong>. Retry selected unfinished movies retains the original mapped
+        data/settings and skips verified genre rows, movie rows, people, and credits.
+        Changing shared defaults does not change a previous retry plan; edit that movie
+        to start a new plan. Successful movies are excluded from upload until edited.
+        Progress and edits live in memory while the screen is open, not across app restarts.
+        Cancellation preserves completed rows. This is an anonymous client importer,
+        not a background server job; keep the screen open until it finishes and revoke
+        temporary public writes afterwards. Existing single-movie and MCU screens remain available.</p>
+    </section>
+
+    <section aria-labelledby="mcu-heading">
+      <div class="section-heading"><h2 id="mcu-heading">MCU import</h2><span>Separate screen, full-schema ingestion</span></div>
+      <p>Open <strong>Import &gt; MCU import</strong>. Select from the 22 actual results in
+        <code>MoviesRepo.marvelMovies</code>; seed titles/posters are previews, not the source
+        of uploaded movie details. Franchise is user-entered and optional: blank stores
+        <code>null</code> (and clears a previous value on refresh); enter <code>mcu</code>
+        or another value if desired. The column must be optional and sized for the entered value.</p>
+      <p>Cast and crew limits default to 15 unique people each, per movie; 0 skips that group.
+        Cast people are chosen by ascending TMDB order, crew by TMDB response order.
+        All roles/jobs for chosen people are retained, including later credits, so credit
+        row counts can exceed the limits. A person selected for both groups is created only once.
+        Previously stored credits outside the selected import are kept with warnings, not deleted.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Import source</th><th>GET request</th><th>Data used</th></tr></thead>
+          <tbody>
+            <tr><td><code>TmdbMcuImportService.movie</code></td><td><code>movie/{id}?append_to_response=credits&amp;language=en-US</code></td><td>All 15 movie fields, genres (ID/name), complete cast and crew credits.</td></tr>
+            <tr><td><code>TmdbMcuImportService.person</code></td><td><code>person/{id}?language=en-US</code></td><td>All 13 profile fields, only for selected people missing from Appwrite. Existing people are reused without fetching or rewriting their profiles. Successful responses are cached for the screen session.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Requests use <code>ApiConstants.apiKey</code>, JSON headers, and no body.
+        Movie groups are processed sequentially; person fetching uses at most three workers.
+        TMDB requests time out after 30 seconds and make at most three attempts for transport
+        failures, 429, or 5xx. Retry-After is honored up to two minutes; longer waits stop the
+        item with a retry-later error. Permanent failures and malformed responses are visible.</p>
+      <p>Upload order: <strong>genres + people, then movies with native genre links, then
+        movie_cast + movie_crew</strong>. Movies, genres, and people use TMDB IDs as row IDs;
+        credits use stable TMDB <code>credit_id</code> values. Different roles/jobs are retained.
+        Movies use create/update; selected credits use upserts. Genres are checked by TMDB
+        row ID, created only when missing, and updated only if their name changes. Genre
+        updates send only the name, never the inverse movies relationship; unchanged genres
+        are read and verified without writes. This avoids genre upserts replaying existing
+        movie links and duplicating relationships on other movies. People are checked by TMDB row ID
+        before enrichment and created only if missing; a concurrent-create conflict reuses the
+        existing row without overwriting it. Permission/network failures are not treated as
+        missing people. Readback checks newly created profiles and supplied movie/credit fields and relationship IDs.
+        Movie writes use create/update rather than relationship upsert: unchanged genre sets
+        are omitted from updates, and supplied genre IDs are unique. Readback rejects
+        duplicate genre links instead of hiding them with a set comparison. If an existing
+        movie has duplicate genre links, the importer clears only those links and restores
+        the intended unique IDs; genre rows and cast/crew links are not deleted. This repair
+        uses two updates, not an atomic transaction: a network failure can leave a partial
+        relationship update, which is reported and can be repaired by retrying with the
+        intended genres. Avoid concurrent imports of the same movie.
+        Missing required data/invalid dates fail explicitly. Overlong optional prose/aliases
+        are truncated with field-specific warnings; IDs, dates, URLs, and image paths are
+        never silently shortened. Null optional dates are preserved; real dates become UTC
+        ISO 8601 midnight. Only relative image paths are stored.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Table</th><th>Actual table ID</th><th>Relationship fields</th></tr></thead>
+          <tbody>
+            <tr><td>movies</td><td><code>6aeeda38001f609f0ca2</code></td><td><code>genres</code> (ID array), inverse <code>cast</code>/<code>crew</code></td></tr>
+            <tr><td>genres</td><td><code>genres</code></td><td>Inverse <code>movies</code></td></tr>
+            <tr><td>people</td><td><code>people</code></td><td>Inverse <code>movie_cast</code>/<code>movie_crew</code></td></tr>
+            <tr><td>movie_cast</td><td><code>movie_cast</code></td><td><code>movie</code>, <code>person</code> (native references)</td></tr>
+            <tr><td>movie_crew</td><td><code>movie_crew</code></td><td><code>movie</code>, <code>person</code> (native references)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Endpoint: <code>https://nyc.cloud.appwrite.io/v1</code>; project:
+        <code>6a566f7e0020a7ca4f55</code>; database: <code>6ae9d8f70009a29b3b5b</code>
+        (The Friday Movies). Search uploads use these current tables after fetching
+        full details. The deleted legacy movie-list table is no longer targeted;
+        Movie list API supports fetching only.</p>
+      <p>The external architecture guide's literal database/movie IDs and inverse people keys
+        differ from the actual database. Actual movie/genre and credit/person deletion rules
+        are Restrict; movie-to-credit deletion is Cascade. Six movie/people indexes exist;
+        four cast/crew relationship-column indexes are unsupported by Appwrite. Do not add
+        shadow foreign keys or recreate schema. Default-bearing fields are optional in the
+        actual database; fetched required values are still validated and supplied explicitly.</p>
+      <article class="note issue">
+        <h3>Temporary anonymous access: administrator setup</h3>
+        <p>No login, anonymous session creation, Account API, or server API key is used.
+          In Appwrite, manually allow <strong>Any create, read, and update</strong> on all five
+          tables, enable the database/tables, and register the application's hostname.
+          Existing rows must permit read/update where row security is enabled.
+          Read permission alone is not sufficient for upserts. No delete permission is needed.
+          Anyone can insert or modify this public data, not just this screen.
+          <strong>Remove temporary Any create/update grants after importing</strong>, including
+          any per-row public grants you configured. Use proper authorization before production.</p>
+      </article>
+      <p>The client SDK cannot inspect column metadata. Preflight checks anonymous table reads
+        and relationship selections, not write grants or schema availability. Confirm that
+        <code>franchise</code> is an optional writable String sized for the entered value and that all
+        expected attributes exist. Check integer storage supports revenue/budget above
+        <code>2147483647</code>; the screen reports actual write/schema errors instead of changing
+        columns or permissions. Appwrite transport/5xx failures get bounded retries; SDK 429
+        stops the run because Retry-After is not exposed. In-flight writes finish on cancel;
+        new operations stop, and stored rows remain.</p>
+      <p>Start with one movie, inspect its fully verified result, then select the remaining
+        movies. Retry unfinished imports safely. Matching legacy credits with random IDs block
+        a movie with a migration warning rather than creating duplicates. Stale credits are
+        kept with warnings; no destructive synchronization or rollback is performed.
+        The screen reports partial writes, field warnings, and per-table verified counts.
+        Successful rows are never deleted. No reviews, recommendations, videos, extra images,
+        unrelated filmography, or new MCU discovery are fetched.</p>
+      <p>Import mappings validate raw JSON at the boundary instead of reusing browsing DTO
+        parsers that lose absent-versus-null fields. Browsing models/helpers remain unchanged.</p>
+    </section>
+
+    <footer>Source of truth: <code>lib/app/core/responses/movie_apis.dart</code>, <code>api_services.dart</code>, <code>api_constants.dart</code>, <code>tmdb_mcu_import_service.dart</code>, <code>appwrite_mcu_import_service.dart</code>, and <code>lib/app/models/mcu_import_models.dart</code>.</footer>
+  </main>
+</body>
+</html>

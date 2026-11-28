@@ -62,7 +62,9 @@ class Result {
         size: json["size"],
         type: json["type"],
         official: json["official"],
-        publishedAt: json["published_at"] == null ? null : DateTime.parse(json["published_at"]),
+        publishedAt: (json["published_at"] == null || json["published_at"].isEmpty)
+            ? null
+            : DateTime.tryParse(json["published_at"]),
         id: json["id"],
       );
 

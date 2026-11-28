@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   final int defaultSelectedIndex;
   final Function(int) onChange;
   final List<String> titles;
   final List<String> imgUrls;
+  final List<IconData?> icons;
+  final Future<bool> Function(int)? canChange;
 
   const CustomBottomNavigationBar({
     Key? key,
@@ -13,16 +14,33 @@ class CustomBottomNavigationBar extends StatefulWidget {
     required this.onChange,
     required this.titles,
     required this.imgUrls,
+    this.icons = const <IconData?>[],
+    this.canChange,
   }) : super(key: key);
 
   @override
-  _CustomBottomNavigationBarState createState() => _CustomBottomNavigationBarState();
+  State<CustomBottomNavigationBar> createState() => _CustomBottomNavigationBarState();
 }
 
 class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   int _selectedIndex = 0;
   List<String> _titles = [];
   List<String> _imgUrls = [];
+  bool _changing = false;
+
+  Future<void> _select(int index) async {
+    if (_changing) return;
+    _changing = true;
+    try {
+      final guard = widget.canChange;
+      if (guard != null && !await guard(index)) return;
+      if (!mounted) return;
+      widget.onChange(index);
+      setState(() => _selectedIndex = index);
+    } finally {
+      _changing = false;
+    }
+  }
 
   @override
   void initState() {
@@ -34,42 +52,38 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
 
   @override
   Widget build(BuildContext context) {
-    final double _screenWidth = MediaQuery.of(context).size.width;
-    List<Widget> _navBarItemList = [];
+    final double screenWidth = MediaQuery.of(context).size.width;
+    List<Widget> navBarItemList = [];
 
     for (var i = 0; i < _titles.length; i++) {
-      _navBarItemList.add(buildNavBarItem(i, _titles[i], _imgUrls[i]));
+      navBarItemList.add(buildNavBarItem(i, _titles[i], _imgUrls[i]));
     }
 
     return Container(
-      decoration: const BoxDecoration(
-        color: tealishBlue,
+      decoration: BoxDecoration(
+        color: Theme.of(context).bottomNavigationBarTheme.backgroundColor,
         border: Border(
           top: BorderSide(
-            color: BLACK,
+            color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
             width: 1.0,
           ),
         ),
       ),
       child: Container(
         padding: const EdgeInsets.all(2),
-        width: _screenWidth >= 600 ? 500 : null,
+        width: screenWidth >= 600 ? 500 : null,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: _navBarItemList,
+          children: navBarItemList,
         ),
       ),
     );
   }
 
   Widget buildNavBarItem(int index, String title, String imgUrl) {
+    final IconData? icon = index < widget.icons.length ? widget.icons[index] : null;
     return GestureDetector(
-      onTap: () {
-        widget.onChange(index);
-        setState(() {
-          _selectedIndex = index;
-        });
-      },
+      onTap: () => _select(index),
       child: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.only(bottom: 0),
@@ -78,16 +92,33 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
               const SizedBox(height: 10),
               CircleAvatar(
                 radius: 20,
-                backgroundColor: index == _selectedIndex ? LIGHTWHITE : tealishBlue.withOpacity(0.5),
-                child: Image.asset(
-                  imgUrl,
-                  width: 22,
-                  height: 22,
-                  color: index == _selectedIndex ? BLACK : WHITE,
-                ),
+                backgroundColor: index == _selectedIndex
+                    ? Theme.of(context).colorScheme.onSurface
+                    : Theme.of(context).scaffoldBackgroundColor,
+                child: icon == null
+                    ? Image.asset(
+                        imgUrl,
+                        width: 22,
+                        height: 22,
+                        color: index == _selectedIndex
+                            ? Theme.of(context).colorScheme.onPrimary
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
+                      )
+                    : Icon(
+                        icon,
+                        size: 22,
+                        color: index == _selectedIndex
+                            ? Theme.of(context).colorScheme.onPrimary
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
               ),
               const SizedBox(height: 2),
-              Text(title, style: const TextStyle(fontSize: 10, color: WHITE)),
+              Text(title,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: index == _selectedIndex
+                            ? Theme.of(context).bottomNavigationBarTheme.selectedItemColor
+                            : Theme.of(context).bottomNavigationBarTheme.unselectedItemColor,
+                      )),
             ],
           ),
         ),

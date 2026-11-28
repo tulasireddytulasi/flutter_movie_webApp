@@ -6,7 +6,7 @@ class TextResponsiveWidget extends StatefulWidget {
   const TextResponsiveWidget({Key? key}) : super(key: key);
 
   @override
-  _TextResponsiveWidgetState createState() => _TextResponsiveWidgetState();
+  State<TextResponsiveWidget> createState() => _TextResponsiveWidgetState();
 }
 
 class _TextResponsiveWidgetState extends State<TextResponsiveWidget> {

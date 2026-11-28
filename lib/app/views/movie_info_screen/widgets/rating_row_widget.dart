@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:moviewebapp/app/theme/app_theme.dart';
 import 'package:moviewebapp/app/core/responses/api_constants.dart';
 import 'package:moviewebapp/app/core/utils/common_functions.dart';
 import 'package:moviewebapp/app/providers/movie_info_provider.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 import 'package:moviewebapp/app/providers/universal_provider.dart';
+import 'package:moviewebapp/app/views/movie_info_screen/widgets/movie_like_button.dart';
 import 'package:provider/provider.dart';
 
 class RatingWidget extends StatelessWidget {
@@ -18,9 +19,9 @@ class RatingWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.star,
-              color: PALE_GOLD,
+              color: Theme.of(context).extension<AppThemeColors>()!.ratingStar,
             ),
             onPressed: () {},
           ),
@@ -28,33 +29,18 @@ class RatingWidget extends StatelessWidget {
             margin: const EdgeInsets.only(left: 0),
             child: Text(
               movieInfoProvider.rating,
-              style: const TextStyle(fontSize: 18, color: WHITE),
+              style: Theme.of(context).textTheme.titleMedium,
             ),
           ),
           Container(
             margin: const EdgeInsets.only(left: 0),
             child: Text(
               " | ${movieInfoProvider.voteCount}",
-              style: const TextStyle(fontSize: 14, color: ICON_GREY),
+              style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
           const Spacer(),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: InkWell(
-              child: const Icon(
-                Icons.favorite_border,
-                color: LIGHTWHITE,
-                size: 28,
-              ),
-              onTap: () {
-                showCustomSnackBar(
-                  context: context,
-                  message: 'Opps!, This is not available!',
-                );
-              },
-            ),
-          ),
+          const MovieLikeButton(),
           Padding(
             padding: const EdgeInsets.all(12),
             child: InkWell(
@@ -72,7 +58,6 @@ class RatingWidget extends StatelessWidget {
               },
               child: const Icon(
                 Icons.share,
-                color: LIGHTWHITE,
                 size: 28,
               ),
             ),
@@ -82,7 +67,6 @@ class RatingWidget extends StatelessWidget {
             child: InkWell(
               child: const Icon(
                 Icons.copy,
-                color: LIGHTWHITE,
                 size: 28,
               ),
               onTap: () {

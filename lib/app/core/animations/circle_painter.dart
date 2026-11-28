@@ -11,7 +11,7 @@ class CirclePainter extends CustomPainter {
   final Animation<double> _animation;
   void circle(Canvas canvas, Rect rect, double value) {
     final double opacity = (1.0 - (value / 4.0)).clamp(0.0, 1.0);
-    final Color _color = color.withOpacity(opacity);
+    final Color _color = color.withValues(alpha: opacity);
     final double size = rect.width / 2;
     final double area = size * size;
     final double radius = math.sqrt(area * value / 4);

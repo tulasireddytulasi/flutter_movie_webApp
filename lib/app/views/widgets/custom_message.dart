@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 
 class CustomMessage extends StatelessWidget {
   const CustomMessage({Key? key, required this.text}) : super(key: key);
@@ -11,10 +10,7 @@ class CustomMessage extends StatelessWidget {
     return Center(
       child: Text(
         text,
-        style: const TextStyle(
-          fontSize: 14,
-          color: WHITE,
-        ),
+        style: Theme.of(context).textTheme.bodyMedium,
       ),
     );
   }

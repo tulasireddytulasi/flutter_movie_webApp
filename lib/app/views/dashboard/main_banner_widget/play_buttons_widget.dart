@@ -43,7 +43,7 @@ class _PlayButtonsState extends State<PlayButtons> {
                     children: List.generate(
                       widget.genere.length,
                       (index) => TextSpan(
-                        text: widget.genere.length - 1 != index ? widget.genere[index] + " . " : widget.genere[index],
+                        text: widget.genere.length - 1 != index ? "${widget.genere[index]} . " : widget.genere[index],
                         style: const TextStyle(fontSize: 12, color: WHITE, fontWeight: FontWeight.normal),
                       ),
                     ),

@@ -3,7 +3,6 @@ import 'package:moviewebapp/app/models/get_movies_model.dart';
 import 'package:moviewebapp/app/providers/dashboard_provider.dart';
 import 'package:moviewebapp/app/views/widgets/movies_card.dart';
 import 'package:moviewebapp/app/core/utils/navigation/navigation.dart';
-import 'package:moviewebapp/app/views/widgets/shimmer_widget.dart';
 import 'package:provider/provider.dart';
 
 class MoviesList extends StatefulWidget {
@@ -19,50 +18,87 @@ class MoviesList extends StatefulWidget {
   final String? withGenres;
 
   @override
-  _MoviesListState createState() => _MoviesListState();
+  State<MoviesList> createState() => _MoviesListState();
 }
 
 class _MoviesListState extends State<MoviesList> {
   late DashBoardProvider dashBoardProvider;
+  late Future<MoviesModel> _movies;
 
   @override
   void initState() {
     super.initState();
     dashBoardProvider = Provider.of<DashBoardProvider>(context, listen: false);
+    _load();
+  }
+
+  void _load() {
+    _movies = dashBoardProvider.getAllMovies(
+      movieType: widget.movieType,
+      withGenres: widget.withGenres,
+      withOriginalLanguage: widget.withOriginalLanguage,
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant MoviesList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.movieType != widget.movieType ||
+        oldWidget.withGenres != widget.withGenres ||
+        oldWidget.withOriginalLanguage != widget.withOriginalLanguage) {
+      _load();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final double _screenWidth = MediaQuery.of(context).size.width;
+    final double screenWidth = MediaQuery.of(context).size.width;
 
-    return FutureBuilder(
-      future: dashBoardProvider.getAllMovies(
-        movieType: widget.movieType,
-        withGenres: widget.withGenres,
-        withOriginalLanguage: widget.withOriginalLanguage,
-      ),
+    return FutureBuilder<MoviesModel>(
+      future: _movies,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const ShimmerWidget(); // Loading indicator
+          return ListView.separated(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 5),
+            scrollDirection: Axis.horizontal,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: 8,
+            separatorBuilder: (_, __) => const SizedBox(width: 4),
+            itemBuilder: (_, __) => SizedBox(
+              width: MoviesCard.widthFor(screenWidth),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          );
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData) {
           return const Center(child: Text('No movies found.'));
         } else {
-          MoviesModel _movieModel = (snapshot.data!) as MoviesModel;
-          return ListView.builder(
-            itemCount: _movieModel.results?.length,
+          final movies = snapshot.data!.results ?? <Movies>[];
+          if (movies.isEmpty)
+            return const Center(child: Text('No movies found.'));
+          return ListView.separated(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 5),
+            itemCount: movies.length,
             scrollDirection: Axis.horizontal,
-            shrinkWrap: true,
+            separatorBuilder: (_, __) => const SizedBox(width: 2),
             itemBuilder: (BuildContext context, int index) {
+              final movie = movies[index];
               return MoviesCard(
-                movieName: _movieModel.results?[index].title ?? "",
-                poster: _movieModel.results?[index].posterPath ?? "",
-                movieId: _movieModel.results?[index].id.toString() ?? "",
+                key: ValueKey(movie.id ?? index),
+                movieName: movie.title ?? "",
+                poster: movie.posterPath ?? "",
+                movieId: movie.id?.toString() ?? "",
                 voidCallback: () => Navigation().navigateToMoviesInfoPage(
                   context: context,
-                  movieId: _movieModel.results?[index].id.toString() ?? "",
-                  screenWidth: _screenWidth,
+                  movieId: movie.id?.toString() ?? "",
+                  screenWidth: screenWidth,
+                  title: movie.title ?? 'movie',
                 ),
               );
             },

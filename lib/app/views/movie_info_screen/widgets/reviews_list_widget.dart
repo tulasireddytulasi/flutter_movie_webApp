@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviewebapp/app/views/movie_info_screen/widgets/reviews_card_widget.dart';
 import 'package:moviewebapp/app/providers/movie_info_provider.dart';
-import 'package:moviewebapp/app/core/utils/colors.dart';
 import 'package:provider/provider.dart';
 
 class ReviewsList extends StatefulWidget {
@@ -17,17 +16,14 @@ class _ReviewsListState extends State<ReviewsList> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final movieInfoProvider =
-          Provider.of<MovieInfoProvider>(context, listen: false);
-      movieInfoProvider.getMovieReviewsInfoAPI(
-          movieId: widget.movieId, pageNo: "1");
+      final movieInfoProvider = Provider.of<MovieInfoProvider>(context, listen: false);
+      movieInfoProvider.getMovieReviewsInfoAPI(movieId: widget.movieId, pageNo: "1");
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<MovieInfoProvider>(
-        builder: (context, movieInfoProvider, child) {
+    return Consumer<MovieInfoProvider>(builder: (context, movieInfoProvider, child) {
       return movieInfoProvider.reviewContent.isNotEmpty
           ? ListView.builder(
               itemCount: movieInfoProvider.reviewContent.length,
@@ -46,12 +42,11 @@ class _ReviewsListState extends State<ReviewsList> {
           : Container(
               width: double.infinity,
               alignment: Alignment.center,
-              child: const Text(
+              child: Text(
                 "No Movie Reviews",
-                style: TextStyle(fontSize: 18, color: GREY),
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
             );
-      ;
     });
   }
 }

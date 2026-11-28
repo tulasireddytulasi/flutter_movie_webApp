@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:moviewebapp/app/models/actor_movie_model.dart';
 import 'package:moviewebapp/app/views/widgets/custom_message.dart';
 import 'package:moviewebapp/app/views/widgets/movies_card.dart';
 import 'package:moviewebapp/app/providers/actors_info_provider.dart';
-import 'package:moviewebapp/app/core/responses/movie_apis.dart';
 import 'package:moviewebapp/app/core/utils/navigation/navigation.dart';
 import 'package:provider/provider.dart';
 
@@ -17,40 +17,22 @@ class ActorMoviesWidget extends StatefulWidget {
 }
 
 class _ActorMoviesWidgetState extends State<ActorMoviesWidget> {
-  ActorMovieModel _moviesModel = ActorMovieModel();
-
   late Future<ActorMovieModel> _moviesData;
-  final List<String> _title = [];
-  final List<String> _movieId = [];
-  final List<String> _img = [];
-  static int totalMovies = 0;
-
-  clearData() {
-    _title.clear();
-    _movieId.clear();
-    _img.clear();
-  }
-
-  processData({required ActorMovieModel moviesModel}) {
-    _moviesModel.cast?.forEach((element) {
-      _title.add(element.title ?? "");
-      _img.add(element.posterPath ?? "");
-      _movieId.add(element.id.toString());
-    });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final actorsInfoProvider = Provider.of<ActorsInfoProvider>(context, listen: false);
-      _moviesModel = moviesModel;
-      totalMovies = moviesModel.cast?.length ?? 0;
-      actorsInfoProvider.setTotalMoviesActed(totalMoviesActed: totalMovies);
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    _moviesData = getActorsActedMoviesInfo(
-      actorId: widget.actorId,
-    );
+    _loadMovies();
+  }
+
+  void _loadMovies() {
+    _moviesData = context.read<ActorsInfoProvider>().fetchActorMovies(actorId: widget.actorId);
+  }
+
+  @override
+  void didUpdateWidget(covariant ActorMoviesWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.actorId != widget.actorId) _loadMovies();
   }
 
   @override
@@ -63,24 +45,34 @@ class _ActorMoviesWidgetState extends State<ActorMoviesWidget> {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasError) {
-            return const CustomMessage(text: "Error");
+            return const CustomMessage(text: "Unable to load movies.");
           } else if (snapshot.hasData) {
-            clearData();
-            processData(moviesModel: snapshot.data!);
-            return ListView.builder(
-                itemCount: _title.length,
+            final movies = snapshot.data!.cast ?? <Cast>[];
+            if (movies.isEmpty) return const CustomMessage(text: "No Movies");
+            return ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                separatorBuilder: (_, __) => const SizedBox(width: 8),
+                itemCount: movies.length,
                 scrollDirection: Axis.horizontal,
                 shrinkWrap: true,
                 itemBuilder: (BuildContext context, int index) {
+                  final movie = movies[index];
+                  final movieId = movie.id?.toString() ?? '';
                   return MoviesCard(
-                    movieName: _title[index],
-                    poster: _img[index],
-                    movieId: _movieId[index],
-                    voidCallback: () => Navigation().navigateFromActorInfoScreenToMoviesInfoPage(
-                      context: context,
-                      movieId: _movieId[index],
-                      screenWidth: _screenWidth,
-                    ),
+                    key: ValueKey(movieId),
+                    movieName: movie.title ?? '',
+                    poster: movie.posterPath ?? '',
+                    movieId: movieId,
+                    voidCallback: () {
+                      /// The [context.pop()] used to close the Actors Info Screen
+                      context.pop();
+                      /// Navigated from Actors Info Screen to Movies Info Screen
+                      Navigation().navigateFromActorInfoScreenToMoviesInfoPage(
+                        context: context,
+                        movieId: movieId,
+                        screenWidth: _screenWidth,
+                      );
+                    },
                   );
                 });
           } else {

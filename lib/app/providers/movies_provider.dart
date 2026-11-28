@@ -2,48 +2,95 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:moviewebapp/app/core/responses/appwrite_service.dart';
 import 'package:moviewebapp/app/models/get_movies_model.dart';
 import 'package:moviewebapp/app/models/movie_banner_model.dart';
 import 'package:moviewebapp/app/models/movie_logos_and_posters_model.dart';
 import 'package:moviewebapp/app/models/youtube_video_model.dart';
 import 'package:moviewebapp/app/core/responses/movie_apis.dart';
 
+typedef MoviesPage = ({List<Movies> movies, String? nextCursor});
+
 class MoviesProvider extends ChangeNotifier {
+  MoviesProvider({AppwriteService? appwriteService}) : _appwriteService = appwriteService ?? AppwriteService();
+
+  final AppwriteService _appwriteService;
+
   MoviesModel _getPopularMoviesModel = MoviesModel();
+
   MoviesModel get getPopularMoviesModel => _getPopularMoviesModel;
 
   MovieLogosAndPostersModel _movieLogosAndPostersModel = MovieLogosAndPostersModel();
+
   MovieLogosAndPostersModel get movieLogosAndPostersModel => _movieLogosAndPostersModel;
 
   YouTubeVideosModel _youTubeVideosModel = YouTubeVideosModel();
+
   YouTubeVideosModel get youTubeVideosModel => _youTubeVideosModel;
 
   String _movieLogo = "";
+
   String get movieLogo => _movieLogo;
 
   final List<String> _title = [];
+
   List<String> get title => _title;
 
   final List<String> _movieId = [];
+
   List<String> get movieId => _movieId;
 
   final List<String> _img = [];
+
   List<String> get img => _img;
 
   final List<String> _date = [];
+
   List<String> get date => _date;
 
   final List<String> _similarMovieTitle = [];
+
   List<String> get similarMovieTitle => _similarMovieTitle;
 
   final List<String> _similarMovieId = [];
+
   List<String> get similarMovieId => _similarMovieId;
 
   final List<String> _similarMoviePosters = [];
+
   List<String> get similarMoviePosters => _similarMoviePosters;
 
   MovieBannerModel _movieBannerModel = MovieBannerModel();
+
   MovieBannerModel get movieBannerModel => _movieBannerModel;
+
+  Future<MoviesPage> fetchMovies({String? cursorAfter}) async {
+    try {
+      final page = await _appwriteService.fetchMoviesPage(cursorAfter: cursorAfter);
+      final movies = <Movies>[];
+
+      for (final row in page.rows) {
+        final id = int.tryParse(row[r'$id']?.toString() ?? '');
+        if (id == null) continue;
+
+        final releaseDate = row['release_date'];
+        movies.add(
+          Movies(
+            id: id,
+            title: row['title'] as String?,
+            posterPath: row['poster_path'] as String?,
+            releaseDate: releaseDate is String ? DateTime.tryParse(releaseDate) : null,
+            popularity: (row['popularity'] as num?)?.toDouble(),
+          ),
+        );
+      }
+
+      return (movies: List<Movies>.unmodifiable(movies), nextCursor: page.nextCursor);
+    } catch (error, stackTrace) {
+      log('MoviesProvider.fetchMovies failed', error: error, stackTrace: stackTrace);
+      rethrow;
+    }
+  }
 
   Future<void> getMovieDetails({required int pageNo, required String movieType}) async {
     try {
@@ -70,9 +117,9 @@ class MoviesProvider extends ChangeNotifier {
             "backDrop": _data?.backdropPath.toString(),
             "logo": _movieLogo,
             "youTubeVideoKey": _youTubeKey,
-            "genre": ["drama", "horror"]
-          }
-        ]
+            "genre": ["drama", "horror"],
+          },
+        ],
       };
       _movieBannerModel = movieBannerModelFromJson(jsonEncode(_movieData));
     } catch (error, stackTrace) {
@@ -105,22 +152,29 @@ class MoviesProvider extends ChangeNotifier {
     });
   }
 
-  Future<void> getSimilarMoviesAPI({required String movieId}) async {
+  Future<void> getSimilarMoviesAPI({
+    required String movieId,
+    int? franchiseId,
+    String? theme,
+    List<String>? genreIds,
+  }) async {
     _similarMovieTitle.clear();
     _similarMoviePosters.clear();
     _similarMovieId.clear();
     try {
-      _getPopularMoviesModel =
-          await getSimilarMoviesListData(movieId: movieId, pageNo: "1", withOriginalLanguage: "en");
-
-      _getPopularMoviesModel.results?.forEach((element) {
-        if (element.posterPath != null && element.posterPath!.isNotEmpty) {
-          _similarMovieTitle.add(element.title ?? "");
-          // _date.add(element.releaseDate!.toIso8601String());
-          _similarMoviePosters.add(element.posterPath ?? "");
-          _similarMovieId.add(element.id.toString());
+      final movies = await _appwriteService.fetchSimilarMovies(
+        currentMovieId: movieId,
+        franchiseId: franchiseId,
+        theme: theme,
+        genreIds: genreIds ?? const [],
+      );
+      for (final movie in movies) {
+        if (movie.posterPath != null && movie.posterPath!.isNotEmpty) {
+          _similarMovieTitle.add(movie.title ?? "");
+          _similarMoviePosters.add(movie.posterPath!);
+          _similarMovieId.add(movie.id?.toString() ?? "");
         }
-      });
+      }
     } catch (error) {
       log("_similarMoviePosters error: $error");
     }
