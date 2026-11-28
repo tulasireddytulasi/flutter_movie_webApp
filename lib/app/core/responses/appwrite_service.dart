@@ -30,13 +30,17 @@ class AppwriteService {
 
   final TablesDB _tables;
 
-  Future<AppwriteDataPage> fetchPopularPeoplePage({String? cursorAfter}) async {
+  Future<AppwriteDataPage> fetchPopularPeoplePage({
+    String? cursorAfter,
+    bool actingOnly = false,
+  }) async {
     try {
       final result = await _tables.listRows(
         databaseId: AppwriteConfig.databaseId,
         tableId: AppwriteConfig.peopleTableId,
         ttl: 3600, // Caches identical query results in Appwrite memory for 1 hour (3600s)
         queries: [
+          if (actingOnly) Query.equal('known_for_department', 'Acting'),
           Query.orderDesc('popularity'),
           Query.select([r'$id', 'adult', 'gender', 'known_for_department', 'name', 'popularity', 'profile_path']),
           Query.limit(pageSize),

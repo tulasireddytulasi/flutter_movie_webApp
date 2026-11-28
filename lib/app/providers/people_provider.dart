@@ -12,9 +12,9 @@ class PeopleProvider extends ChangeNotifier {
 
   final AppwriteService _appwriteService;
 
-    Future<PeoplePage> fetchPopularPeoplePage({String? cursorAfter}) async {
+    Future<PeoplePage> fetchPopularPeoplePage({String? cursorAfter, bool actingOnly = false}) async {
         try {
-            final page = await _appwriteService.fetchPopularPeoplePage(cursorAfter: cursorAfter);
+            final page = await _appwriteService.fetchPopularPeoplePage(cursorAfter: cursorAfter, actingOnly: actingOnly);
             final actors = <Actors>[];
 
             for (final row in page.rows) {

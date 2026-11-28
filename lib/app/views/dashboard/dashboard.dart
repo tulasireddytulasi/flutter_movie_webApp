@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:moviewebapp/app/views/dashboard/widgets/appwrite_movies_sections.dart';
 import 'package:moviewebapp/app/views/dashboard/widgets/movie_label.dart';
 import 'package:moviewebapp/app/views/dashboard/widgets/movies_list.dart';
+import 'package:moviewebapp/app/views/dashboard/widgets/top_heroes.dart';
 import 'package:moviewebapp/app/providers/dashboard_provider.dart';
 import 'package:moviewebapp/app/core/utils/common_functions.dart';
 import 'package:provider/provider.dart';
@@ -79,6 +80,7 @@ class _DashboardState extends State<Dashboard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const MainBanner(),
+              const TopHeroes(),
               // const MovieBannerCard(),
               const AppwriteMoviesSections(),
             ],
