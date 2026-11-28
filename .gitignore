@@ -58,3 +58,4 @@ build/
 /linux/flutter/generated_plugins.cmake
 /macos/Flutter/ephemeral/
 /macos/Flutter/GeneratedPluginRegistrant.swift
+/windows/flutter/
